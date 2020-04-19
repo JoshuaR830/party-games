@@ -1,0 +1,51 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@* <button id="startButton">Start</button> *@
+<input type="hidden" id="userInput"/>
+<h1>Thoughts and Crosses</h1>
+<div id="container" class="container hidden">
+    <div id="table">
+
+    </div>
+    <input type="hidden" id="messageInput"/>
+    <input type="hidden" id="sendButton" value="Calculate" />
+
+    <input type="hidden" id="set-minutes" min=0 max=59 value=2>
+    <input type="hidden" id="set-seconds" min=0 max=59 value=0>
+
+    <div id="score" class="score">0</div>
+    <div class="clock">
+        <div id="clock-minutes" class="counter"></div>
+        <div id="clock-seconds" class="counter"></div>
+    </div>
+
+    <div class="button-container">
+        <div id="startTimerButton" class="button --round"><span class="material-icons">play_arrow</span></div>
+        <div id="stopTimerButton" class="button --round"><span class="material-icons">stop</span></div>
+        <div id="delete-button" class="button --round"><span class="material-icons">delete_forever</span></div>
+    </div>
+
+    <input type="button" id="letterButton" value="Select letter" class="button"/>
+    <input type="button" id="categoryButton" value="Pick topic" class="button"/>
+    <input type="button" id="topicsButton" value="Set topics" class="button"/>
+    <input type="button" id="submitScoresButton" value="Submit score" class="button"/>
+
+    <input type="text" id="my-name" placeholder="Enter your name" class="button"/>
+
+
+    <div id="letter" class="category-button"></div>
+    <div id="category" class="category-button"></div>
+
+    <div id="messageList"></div>
+
+
+    <audio src="alarm.m4a" id="alarm-sound" preload="auto" controls="none" style="display: none;"></audio>
+</div>
+
+
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>

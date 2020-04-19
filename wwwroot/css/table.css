@@ -1,0 +1,166 @@
+body{
+    background-color: #d672db;
+}
+
+h1 {
+    font-size: 28px;
+    text-align: center;
+    color: #ffffff;
+}
+
+#table
+{
+    margin-top: 8px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80vmin;
+    height: 80vmin;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    box-sizing: border-box;
+}
+
+.row
+{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+    position: relative;
+    height: 33%;
+}
+
+.cell
+{
+    width: 33%;
+    height: 100%;
+    border: 1px solid #eff0d3;
+    box-sizing: border-box;
+    overflow: hidden;
+    position: relative;
+}
+
+.cell:hover{
+    cursor: pointer;
+}
+
+.category-title
+{
+    text-align: center;
+    font-size: 16px;
+}
+
+.answer 
+{
+    text-align: center;
+    width: calc(100% - 16px);
+    margin: 8px;
+    border-radius: 4px;
+    border: 1px solid white;
+    position: absolute;
+    bottom: 0px;
+}
+
+.answer:focus
+{
+    outline: -webkit-focus-ring-color auto 1px;
+    outline-color: #a85aac;
+}
+
+.selected
+{
+    background-color: #61c2b5;
+}
+
+#score
+{
+    border-radius: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 24px;
+    width: 80px;
+    text-align: center;
+    height: 80px;
+    line-height: 80px;
+    background-color: #61c2b5;
+    border: 1px solid #eff0d3;
+    color: #eff0d3;
+    margin-top: 36px;
+    user-select: none;
+}
+
+#score:hover
+{
+    cursor: pointer;
+}
+
+.clock 
+{
+    width:  198px;
+    margin-left: auto;
+    margin-right: auto;
+    user-select: none;
+}
+
+.button-container
+{
+    margin-left: auto;
+    margin-right: auto;
+    width: 200px;
+    display: flex;
+}
+
+.counter
+{
+    background-color: #61c2b5;
+    border: 1px solid #eff0d3;
+    color: #eff0d3;
+    display: inline-block;
+    width: 80px;
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+    font-size: 40px;
+    border-radius: 20px;
+    margin: 8px;
+}
+
+.counter:hover
+{
+    cursor: pointer;
+}
+
+.button
+{
+    background-color: #61c2b5;
+    border: 1px solid #eff0d3;
+    color: #eff0d3;
+    padding: 8px;
+    font-size: 16px;
+    border-radius: 20px;
+    margin: 8px;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+.button:hover
+{
+    cursor: pointer;
+}
+
+.--round
+{
+    border-radius: 50%;
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,100 @@
+.message-container
+{
+    background-color: white;
+    width: 50%;
+    height: 80%;
+    position: absolute;
+    right: 0;
+    overflow-y: auto;
+    z-index: -1;
+}
+
+.user-container
+{
+    background-color: white;
+    border-right: 1px solid black;
+    box-sizing: border-box;
+    width: 50%;
+    height: 80%;
+    left: 0;
+    position: absolute;
+    overflow-y: auto;
+    z-index: -1;
+}
+
+.message
+{
+    width: 360px;
+    padding: 20px;
+    margin: 8px;
+    height: auto;
+}
+
+.user
+{
+    color: black;
+    background-color: #ffffff;
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.user-focused{
+    background-color: #e6e6e6;
+}
+
+.new-message
+{
+    color: red;
+}
+
+.--left
+{
+    color: #000000;
+    background-color: #f1f0f0;
+    border-radius: 0 20px 20px 20px;
+    text-align: left;
+    margin-right: auto;
+}
+
+.--right
+{
+    color: #ffffff;
+    background-color: rgb(14, 230, 183);
+    border-radius: 20px 20px 0 20px;
+    text-align: right;
+    margin-left: auto;
+}
+
+.online
+{
+    border: 1px solid green;
+}
+
+.hidden
+{
+    display: none;
+}
+
+.message-input
+{
+    position: absolute;
+    right: 68px;
+    width: calc(50% - 76px);
+    bottom: 8px;
+    z-index: 100;
+}
+
+.send-button
+{
+    width: 52px;
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    z-index: 100;
+}
+
+.user-subtitle
+{
+    color: #5d5d5d;
+}

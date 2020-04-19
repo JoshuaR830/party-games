@@ -14,6 +14,12 @@ namespace Chat.Hubs
             await Clients.Group(user).SendAsync("ReceiveMessage", Context.ConnectionId, user, message);
         }
 
+        public async Task SendLetter(string letter, string user)
+        {
+            System.Console.WriteLine("Recieved Letter\n\n");
+            await Clients.Group(user).SendAsync("ReceiveLetter", letter);
+        }
+
         public async Task SendScore(string user, string name, string score)
         {
             var message = $"{name}: {score}";

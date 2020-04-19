@@ -95,14 +95,6 @@ h1 {
     cursor: pointer;
 }
 
-.clock 
-{
-    width:  198px;
-    margin-left: auto;
-    margin-right: auto;
-    user-select: none;
-}
-
 .button-container
 {
     margin-left: auto;
@@ -111,22 +103,56 @@ h1 {
     display: flex;
 }
 
-.counter
+.game-context-container 
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+    user-select: none;
+    border: 1px solid #eff0d3;
+    color: #eff0d3;
+    font-size: 32px;
+    justify-content: space-between;
+    line-height: 32px;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.clock 
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 108px;
+    user-select: none;
+    background-color: #61c2b5;
+    border: 1px solid #eff0d3;
+    color: #eff0d3;
+    font-size: 32px;
+    justify-content: center;
+    line-height: 32px;
+    border-radius: 8px;
+}
+
+.widget
+{
+    display: flex;
+    flex-wrap: nowrap;
+    width: 40px;
+    height: 32px;
+    line-height: 32px;
+    align-content: center;
+    justify-content: center;
+}
+
+.--with-color
 {
     background-color: #61c2b5;
     border: 1px solid #eff0d3;
     color: #eff0d3;
-    display: inline-block;
-    width: 80px;
-    height: 100px;
-    line-height: 100px;
-    text-align: center;
-    font-size: 40px;
-    border-radius: 20px;
-    margin: 8px;
+    border-radius: 8px;
 }
 
-.counter:hover
+.widget:hover
 {
     cursor: pointer;
 }

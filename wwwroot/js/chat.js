@@ -57,6 +57,11 @@ connection.on("ReceiveStopTimer", function () {
     stopTimer();
 });
 
+connection.on("ReceiveLetter", function(letter) {
+    console.log("Received letter");
+    document.getElementById('letter').textContent = letter;
+});
+
 // document.getElementById('startButton').addEventListener('click', function () {
 document.getElementById('clock-minutes').textContent = document.getElementById('set-minutes').value;
 document.getElementById('clock-seconds').textContent = document.getElementById('set-seconds').value;
@@ -87,7 +92,9 @@ for (var x = 0; x < 3; x++) {
                 return;
             }
 
-            if (event.currentTarget.querySelector('.answer').value.length <= 0) {
+            if (event.currentTarget.querySelector('.answer') == null) {
+                console.log("Not found");
+            } else if (event.currentTarget.querySelector('.answer').value.length <= 0) {
                 event.currentTarget.querySelector('.answer').focus();
                 return;
             }
@@ -119,9 +126,9 @@ document.getElementById('topicsButton').addEventListener('click', function(event
 })
 
 document.getElementById('letterButton').addEventListener('click', function(event) {
-    var topic = letterPicker();
-    document.getElementById('letter').textContent = topic;
-})
+    var letter = letterPicker();
+    connection.invoke("SendLetter", letter, "GroupOfJoshua");
+});
 
 document.getElementById("container").classList.remove("hidden");
 connection.start().then(function () {

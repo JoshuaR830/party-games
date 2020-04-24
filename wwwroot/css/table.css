@@ -73,9 +73,9 @@ h1 {
     background-color: #61c2b5;
 }
 
-#score
+/* #score
 {
-    border-radius: 50%;
+    border-radius: 8px;
     margin-left: auto;
     margin-right: auto;
     font-size: 24px;
@@ -88,7 +88,7 @@ h1 {
     color: #eff0d3;
     margin-top: 36px;
     user-select: none;
-}
+} */
 
 #score:hover
 {
@@ -99,7 +99,7 @@ h1 {
 {
     margin-left: auto;
     margin-right: auto;
-    width: 200px;
+    width: 100%;
     display: flex;
 }
 
@@ -111,9 +111,9 @@ h1 {
     user-select: none;
     border: 1px solid #eff0d3;
     color: #eff0d3;
-    font-size: 32px;
+    font-size: 1em;
     justify-content: space-between;
-    line-height: 32px;
+    line-height: 1em;
     border-radius: 8px;
     padding: 8px;
 }

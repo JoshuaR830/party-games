@@ -6,6 +6,14 @@ namespace Chat.Hubs
 {
     public class ChatHub : Hub
     {
+        public async Task StartGame(string user, string letter, int[] time, string topics)
+        {
+            System.Console.WriteLine("Start\n\n");
+            await Clients.Group(user).SendAsync("ReceiveLetter", letter);
+            await Clients.Group(user).SendAsync("ReceiveTopics", Context.ConnectionId, user, topics);
+            await Clients.Group(user).SendAsync("ReceiveTimeStart", time);
+        }
+
         public async Task SendMessage(string user, string message)
         {
             // await SendDirectMessage("my group", "user", message);

@@ -7,35 +7,36 @@
 <input type="hidden" id="userInput"/>
 <h1>Thoughts and Crosses</h1>
 <div id="container" class="container hidden">
-    <div id="table">
-
-    </div>
     <input type="hidden" id="messageInput"/>
     <input type="hidden" id="sendButton" value="Calculate" />
 
-    <input type="hidden" id="set-minutes" min=0 max=59 value=2>
-    <input type="hidden" id="set-seconds" min=0 max=59 value=0>
+    <input type="hidden" id="set-minutes" min=0 max=59 value=02>
+    <input type="hidden" id="set-seconds" min=0 max=59 value=30>
 
-    <div id="score" class="score">0</div>
     <div class="game-context-container">
-        <div id="letter" class="widget --with-color"></div>
-        <div class="clock">
+        Letter: <div id="letter" class="widget --with-color"></div>
+        Score: <div id="score" class="widget --with-color">0</div>
+
+        Timer:<div class="clock">
             <div id="clock-minutes" class="widget"></div>:<div id="clock-seconds" class="widget"></div>
         </div>
     </div>
 
     <div class="button-container">
+        <input type="text" id="my-name" placeholder="Enter your name" class="button" style="width: calc(100% - 152px)"/>
         <div id="startTimerButton" class="button --round"><span class="material-icons">play_arrow</span></div>
         <div id="stopTimerButton" class="button --round"><span class="material-icons">stop</span></div>
         <div id="delete-button" class="button --round"><span class="material-icons">delete_forever</span></div>
     </div>
 
-    <input type="button" id="letterButton" value="Select letter" class="button"/>
-    <input type="button" id="categoryButton" value="Pick topic" class="button"/>
-    <input type="button" id="topicsButton" value="Set topics" class="button"/>
-    <input type="button" id="submitScoresButton" value="Submit score" class="button"/>
+    <input type="hidden" id="letterButton" value="Select letter" class="button"/>
+    <input type="hidden" id="categoryButton" value="Pick topic" class="button"/>
+    <input type="hidden" id="topicsButton" value="Set topics" class="button"/>
+    <input type="hidden" id="submitScoresButton" value="Submit score" class="button"/>
+    <input type="button" id="startGame" value="Start" class="button"/>
 
-    <input type="text" id="my-name" placeholder="Enter your name" class="button"/>
+
+    <div id="table"></div>
 
 
     <div id="category" class="category-button"></div>

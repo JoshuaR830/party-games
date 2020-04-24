@@ -122,7 +122,12 @@ document.getElementById('categoryButton').addEventListener('click', function(eve
 })
 
 document.getElementById('topicsButton').addEventListener('click', function(event) {
-    selectNineTopics();
+    let topics = selectNineTopics();
+    var message = topics.toString();
+    
+    connection.invoke("SendTopics", "GroupOfJoshua", message).catch(function (err) {
+        return console.error(err.toString());
+    });
 })
 
 document.getElementById('letterButton').addEventListener('click', function(event) {
@@ -262,11 +267,7 @@ function selectNineTopics()
         topics.push(topicPicker());
     }
 
-    var message = topics.toString();
-    
-    connection.invoke("SendTopics", "GroupOfJoshua", message).catch(function (err) {
-        return console.error(err.toString());
-    });
+    return topics;
 }
 
 function topicSetter(topics) {
@@ -305,6 +306,20 @@ document.getElementById('startTimerButton').addEventListener('click', function()
     let timerSecs = parseInt(document.getElementById('set-seconds').value);
     
     connection.invoke("SendTime", "GroupOfJoshua", [timerMins, timerSecs]);
+});
+
+document.getElementById('startGame').addEventListener('click', function() {
+    let timerMins = parseInt(document.getElementById('set-minutes').value);
+    let timerSecs = parseInt(document.getElementById('set-seconds').value);
+
+    let user = "GroupOfJoshua";
+    let letter = letterPicker();
+    let time = [timerMins, timerSecs];
+    let topics = selectNineTopics().toString();
+
+    console.log(">>>" + letter)
+
+    connection.invoke("StartGame", user, letter, time, topics);
 });
 
 function startTimer(timerMins, timerSecs) {

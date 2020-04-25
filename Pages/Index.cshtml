@@ -10,30 +10,41 @@
     <input type="hidden" id="messageInput"/>
     <input type="hidden" id="sendButton" value="Calculate" />
 
-    <input type="hidden" id="set-minutes" min=0 max=59 value=02>
-    <input type="hidden" id="set-seconds" min=0 max=59 value=30>
 
-    <div class="game-context-container">
-        Letter: <div id="letter" class="widget --with-color"></div>
-        Score: <div id="score" class="widget --with-color">0</div>
 
-        Timer:<div class="clock">
+    @* <div class="game-context-container"> *@
+        @* Letter: <div id="letter" class="widget --with-color"></div> *@
+        @* Score: <div id="score" class="widget --with-color">0</div> *@
+
+        @* Timer:<div class="clock">
             <div id="clock-minutes" class="widget"></div>:<div id="clock-seconds" class="widget"></div>
+        </div> *@
+    @* </div> *@
+
+    <div id="startGame" class="start-fab"><span class="icons">play_arrow</span></div>
+    <div style="background-color: red; height: 54px; position: fixed; top: 0; left: 0; width: 100%; z-index: 100;">
+        <div class="letter-fab"><span class="material-icons" style="line-height: 50px">edit</span><span id="letter"></span></div>
+        <div class="timer-fab">
+            <div class="clock">
+                <span class="icons">alarm</span>
+                <div id="clock-minutes" class="widget"></div>:<div id="clock-seconds" class="widget"></div>
+            </div>
         </div>
     </div>
+    <div class="score-fab"><span class="material-icons">emoji_events</span><span id="score"></span></div>
 
-    <div class="button-container">
+    @* <div class="button-container">
         <input type="text" id="my-name" placeholder="Enter your name" class="button" style="width: calc(100% - 152px)"/>
         <div id="startTimerButton" class="button --round"><span class="material-icons">play_arrow</span></div>
         <div id="stopTimerButton" class="button --round"><span class="material-icons">stop</span></div>
         <div id="delete-button" class="button --round"><span class="material-icons">delete_forever</span></div>
-    </div>
+    </div> *@
 
     <input type="hidden" id="letterButton" value="Select letter" class="button"/>
     <input type="hidden" id="categoryButton" value="Pick topic" class="button"/>
     <input type="hidden" id="topicsButton" value="Set topics" class="button"/>
     <input type="hidden" id="submitScoresButton" value="Submit score" class="button"/>
-    <input type="button" id="startGame" value="Start" class="button"/>
+    @* <input type="button" id="startGame" value="Start" class="button"/> *@
 
 
     <div id="table"></div>
@@ -46,6 +57,15 @@
 
     <audio src="alarm.m4a" id="alarm-sound" preload="auto" controls="none" style="display: none;"></audio>
 </div>
+
+<div class="popup-modal js-login-modal">
+    @Html.Partial("LoginPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-timer-modal">
+    @Html.Partial("TimerPopup")
+</div>
+
 
 
 

@@ -4,7 +4,11 @@ var randomNumbers = [];
 var lettersNumbers = [];
 var timer;
 
-var categories = ["Boys name", "Girls name", "Hobby", "Company", "Fictional character", "Something outside", "Book", "Bird", "Electrical item", "Kitchen item", "Body part", "Song", "Something savoury", "Something sweet", "Colour", "Toy", "Movie", "Job/Occupation", "Sport/Game", "Place", "Food", "TV programme", "Transport", "Type of Pet", "Actor/ Actress", "Family member", "Holiday destination", "Cooking implement", "Super hero/villain", "Weather", "Animal", "Something you make", "Drink", "Ice cream flavour", "Artist", "Brand", "Musical instrument"]
+// window.addEventListener("beforeunload", function(event) {
+//     event.returnValue = "Hello"
+// })
+
+var categories = ["Boys name", "Girls name", "Hobby", "Company", "Fictional character", "Something outside", "Book", "Electrical item", "Kitchen item", "Body part", "Song", "Something savoury", "Something sweet", "Colour", "Toy", "Movie", "Job/Occupation", "Sport/Game", "Place", "Food", "TV programme", "Transport", "Pet", "Actor/ Actress", "Family member", "Holiday destination", "Cooking implement", "Weather", "Animal/Bird", "Something you make", "Drink", "Ice cream", "Artist", "Brand", "Musical instrument", "Fundraising Activity"]
 var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "XYZ"];
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
@@ -63,8 +67,8 @@ connection.on("ReceiveLetter", function(letter) {
 });
 
 // document.getElementById('startButton').addEventListener('click', function () {
-document.getElementById('clock-minutes').textContent = document.getElementById('set-minutes').value;
-document.getElementById('clock-seconds').textContent = document.getElementById('set-seconds').value;
+document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
+document.getElementById('clock-seconds').textContent = pad(document.getElementById('set-seconds').value);
 
 console.log(list[0][0]);
 var row;
@@ -350,8 +354,8 @@ function updateClock(seconds) {
     let minutes = Math.floor(seconds/60);
     seconds = seconds % 60;
 
-    document.getElementById('clock-minutes').textContent = minutes;
-    document.getElementById('clock-seconds').textContent = seconds;
+    document.getElementById('clock-minutes').textContent = pad(minutes);
+    document.getElementById('clock-seconds').textContent = pad(seconds);
 }
 
 function triggerAlarm()
@@ -369,22 +373,22 @@ function stopTimer() {
     if(timer != undefined) {
         clearInterval(timer);
         console.log(document.getElementById('set-minutes').value)
-        document.getElementById('clock-minutes').textContent = document.getElementById('set-minutes').value;
-        document.getElementById('clock-seconds').textContent = document.getElementById('set-seconds').value;
+        document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
+        document.getElementById('clock-seconds').textContent = pad(document.getElementById('set-seconds').value);
     }
     sound.pause();
 }
 
-document.getElementById("clock-minutes").addEventListener('click', incrementMinutes);
-document.getElementById("clock-seconds").addEventListener('click', incrementSeconds);
+// document.getElementById("clock-minutes").addEventListener('click', incrementMinutes);
+// document.getElementById("clock-seconds").addEventListener('click', incrementSeconds);
 document.getElementById("delete-button").addEventListener('click', function() {
     if(timer != undefined) {
         clearInterval(timer);
     }
     document.getElementById('set-minutes').value = 0;
     document.getElementById('set-seconds').value = 0;
-    document.getElementById('clock-minutes').textContent = 0;
-    document.getElementById('clock-seconds').textContent = 0;
+    document.getElementById('clock-minutes').textContent = pad(0);
+    document.getElementById('clock-seconds').textContent = pad(0);
 
 });
 
@@ -395,7 +399,7 @@ function incrementMinutes() {
     } else {
         document.getElementById('set-minutes').value = 0;
     }
-    document.getElementById('clock-minutes').textContent = document.getElementById('set-minutes').value;
+    document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
 }
 
 function incrementSeconds() {
@@ -409,6 +413,117 @@ function incrementSeconds() {
         document.getElementById('set-minutes').value = minutes += 1;
     }
 
-    document.getElementById('clock-seconds').textContent = document.getElementById('set-seconds').value;
-    document.getElementById('clock-minutes').textContent = document.getElementById('set-minutes').value;
+    document.getElementById('clock-seconds').textContent = pad(document.getElementById('set-seconds').value);
+    document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
+}
+
+
+document.querySelector('.login-button').addEventListener('click', function(event) {
+    let nameInput = document.getElementById('my-name');
+    var name = nameInput.value;
+    if (name.length > 0) {
+        document.querySelector('.js-login-modal').classList.add('popup-hidden');
+    } else {
+        nameInput.style.borderColor = "#ff0000";
+    }
+    console.log();
+});
+
+document.querySelector('.timer-fab').addEventListener('click', function(event) {
+    document.querySelector('.js-timer-modal').classList.remove('popup-hidden');
+})
+
+document.querySelectorAll('.js-close-timer-modal').forEach(function(el){
+    el.addEventListener('click', function(event) {
+        document.querySelector('.js-timer-modal').classList.add('popup-hidden');
+    })
+})
+
+document.getElementById('decrement-minutes').addEventListener('click', function() {
+    var setMinutes = document.querySelector('#set-minutes');
+    var num = parseInt(setMinutes.value);
+
+    if (num > 0) {
+        setMinutes.value = num - 1;
+    }
+
+    document.querySelector('#clock-minutes').textContent = pad(setMinutes.value);
+})
+document.getElementById('increment-minutes').addEventListener('click', function() {
+    var setMinutes = document.querySelector('#set-minutes');
+    var num = parseInt(setMinutes.value);
+    if (num < 59) {
+        setMinutes.value = num + 1;
+    }
+    document.querySelector('#clock-minutes').textContent = pad(setMinutes.value);
+})
+document.getElementById('decrement-seconds').addEventListener('click', function() {
+    var setSeconds = document.querySelector('#set-seconds');
+    var setMinutes = document.querySelector('#set-minutes');
+    var num = parseInt(setSeconds.value);
+
+    if (num > 0) {
+        setSeconds.value = num - 1;
+    } else {
+        setSeconds.value = 59;
+        let minutes = parseInt(setMinutes.value);
+        if(minutes > 0){
+            minutes -= 1;
+        }
+        document.getElementById('clock-minutes').value = minutes;
+        setMinutes.value = minutes;
+    }
+
+
+    document.querySelector('#clock-seconds').textContent = pad(setSeconds.value);
+})
+document.getElementById('increment-seconds').addEventListener('click', function() {
+    var setSeconds = document.querySelector('#set-seconds');
+    var setMinutes = document.querySelector('#set-minutes');
+    var num = parseInt(setSeconds.value);
+    if (num < 59) {
+        setSeconds.value = num + 1;
+    } else {
+        setSeconds.value = 0;
+        let minutes = parseInt(setMinutes.value) + 1;
+        document.getElementById('clock-minutes').value = minutes;
+        setMinutes.value = minutes;
+    }
+    document.querySelector('#clock-seconds').textContent = pad(setSeconds.value);
+})
+
+
+function incrementMinutes() {
+    let minutes = parseInt(document.getElementById('set-minutes').value);
+    if (minutes < 59) {
+        document.getElementById('set-minutes').value = minutes += 1;
+    } else {
+        document.getElementById('set-minutes').value = 0;
+    }
+    document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
+}
+
+function incrementSeconds() {
+    let seconds = parseInt(document.getElementById('set-seconds').value);
+
+    if (seconds < 59) {
+        document.getElementById('set-seconds').value = seconds += 1;
+    } else {
+        document.getElementById('set-seconds').value = 0;
+        let minutes = parseInt(document.getElementById('set-minutes').value);
+        document.getElementById('set-minutes').value = minutes += 1;
+    }
+
+    document.getElementById('clock-seconds').textContent = pad(document.getElementById('set-seconds').value);
+    document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
+}
+
+
+function pad(time)
+{
+    let paddedTime = time;
+    if(time < 10) {
+        paddedTime = `0${time}`
+    }
+    return paddedTime;
 }

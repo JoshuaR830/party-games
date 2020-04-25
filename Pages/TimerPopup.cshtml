@@ -1,0 +1,27 @@
+<div class="popup">
+    <div class="timer">
+        <div class="name-label" for="user-name">Set timer</div>
+        <form>
+            <div style="display: inline-block;">
+                <div id="increment-minutes" class="icons set-time">keyboard_arrow_up</div>
+                <input type="number" id="set-minutes" min=0 max=59 value=2>
+                <div id="decrement-minutes" class="icons set-time">keyboard_arrow_down</div>
+            </div>
+            <div style="display: inline-block;">
+                <div id="increment-seconds" class="icons set-time">keyboard_arrow_up</div>
+                <input type="number" id="set-seconds" min=0 max=59 value=30>
+                <div id="decrement-seconds" class="icons set-time">keyboard_arrow_down</div>
+            </div>
+
+            <div class="button-container">
+                <div id="startTimerButton" class="button --round"><span class="material-icons">play_arrow</span></div>
+                <div id="stopTimerButton" class="button --round"><span class="material-icons">stop</span></div>
+                <div id="delete-button" class="button --round"><span class="material-icons">delete_forever</span></div>
+            </div>
+
+            @* <input id="my-name" name="user-name" type="text" class="popup-input"> *@
+            <div class="set-button js-close-timer-modal">Set</div>
+        </form>
+        <div class="close-button js-close-timer-modal"><span class="icons">close</span></div>
+    </div>
+</div>

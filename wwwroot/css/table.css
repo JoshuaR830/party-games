@@ -1,5 +1,5 @@
 body{
-    background-color: #d672db;
+    background-color: #55475c;
 }
 
 h1 {
@@ -9,7 +9,7 @@ h1 {
     color: #ffffff;
 }
 
-#table
+.table
 {
     margin-top: 8px;
     margin-left: auto;
@@ -36,7 +36,7 @@ h1 {
 {
     width: 33%;
     height: 100%;
-    border: 1px solid #eff0d3;
+    border: 1px solid #d672db;
     box-sizing: border-box;
     overflow: hidden;
     position: relative;
@@ -50,6 +50,7 @@ h1 {
 {
     text-align: center;
     font-size: 16px;
+    color: #ffffff;
 }
 
 .answer 
@@ -66,7 +67,7 @@ h1 {
 .answer:focus
 {
     outline: -webkit-focus-ring-color auto 1px;
-    outline-color: #a85aac;
+    outline-color: #55edbb;
 }
 
 .selected
@@ -128,7 +129,7 @@ h1 {
     user-select: none;
     /* background-color: #61c2b5; */
     /* border: 1px solid #eff0d3; */
-    color: #55edbb;
+    /* color: #55edbb; */
     font-size: 32px;
     justify-content: center;
     line-height: 50px;
@@ -169,19 +170,30 @@ h1 {
 
 .button
 {
-    border: 1px solid #55edbb;
+    border: 4px solid #55edbb;
     color: #eff0d3;
     padding: 8px;
     font-size: 16px;
-    border-radius: 20px;
+    border-radius: 8px;
     margin: 8px;
     box-sizing: border-box;
     user-select: none;
+    text-align: center;
+    max-width: 150px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .button:hover
 {
+    background-color: #55edba5b;
+    color: white;
     cursor: pointer;
+}
+
+.options
+{
+    margin-top: 32px;
 }
 
 .--round
@@ -219,6 +231,8 @@ h1 {
     color: #55edbb;
     vertical-align: middle;
     user-select: none;
+    background-color: #55475c;
+    z-index: 100;
 }
 
 .timer-fab
@@ -238,6 +252,8 @@ h1 {
     font-size: 32px;
     color: #55edbb;
     user-select: none;
+    z-index: 100;
+    background-color: #55475c;
 }
 
 .letter-fab
@@ -257,6 +273,8 @@ h1 {
     font-size: 32px;
     color: #55edbb;
     user-select: none;
+    z-index: 100;
+    background-color: #55475c;
 }
 
 .score-fab
@@ -276,6 +294,15 @@ h1 {
     font-size: 32px;
     color: #55edbb;
     user-select: none;
+    z-index: 100;
+    background-color: #55475c;
+}
+
+.fab:hover
+{
+    cursor: pointer;
+    background-color: #55edba5b;
+    color: white;
 }
 
 .close-button
@@ -287,4 +314,30 @@ h1 {
     position: absolute;
     right: 0;
     top: 0;
+}
+
+.close-button:hover
+{
+    cursor: pointer;
+}
+
+.top-nav
+{
+    height: 54px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+}
+
+.score-list
+{
+    overflow: auto;
+    height: 132px;
+}
+
+.hidden
+{
+    display: none;
 }

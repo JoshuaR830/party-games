@@ -3,57 +3,38 @@
 @{
     ViewData["Title"] = "Home page";
 }
-@* <button id="startButton">Start</button> *@
 <input type="hidden" id="userInput"/>
 <h1>Thoughts and Crosses</h1>
 <div id="container" class="container hidden">
     <input type="hidden" id="messageInput"/>
     <input type="hidden" id="sendButton" value="Calculate" />
 
+    <div id="startGame" class="start-fab fab"><span class="material-icons">play_arrow</span></div>
+    <div id="playAgain" class="start-fab fab hidden"><span class="material-icons">check</span></div>
 
 
-    @* <div class="game-context-container"> *@
-        @* Letter: <div id="letter" class="widget --with-color"></div> *@
-        @* Score: <div id="score" class="widget --with-color">0</div> *@
+    <div class="top-nav">
+        <div class="letter-fab"><span class="material-icons" style="line-height: 50px; margin-right: 4px; margin-left: 4px;">edit</span><span id="letter"></span></div>
+        <div class="timer-fab fab">
 
-        @* Timer:<div class="clock">
-            <div id="clock-minutes" class="widget"></div>:<div id="clock-seconds" class="widget"></div>
-        </div> *@
-    @* </div> *@
-
-    <div id="startGame" class="start-fab"><span class="icons">play_arrow</span></div>
-    <div style="background-color: red; height: 54px; position: fixed; top: 0; left: 0; width: 100%; z-index: 100;">
-        <div class="letter-fab"><span class="material-icons" style="line-height: 50px">edit</span><span id="letter"></span></div>
-        <div class="timer-fab">
-            <div class="clock">
-                <span class="icons">alarm</span>
-                <div id="clock-minutes" class="widget"></div>:<div id="clock-seconds" class="widget"></div>
-            </div>
+            <span class="material-icons" style="margin-right: 4px; margin-left: 4px;">alarm</span><span id="clock-minutes"></span>:<span id="clock-seconds"></span
         </div>
     </div>
-    <div class="score-fab"><span class="material-icons">emoji_events</span><span id="score"></span></div>
-
-    @* <div class="button-container">
-        <input type="text" id="my-name" placeholder="Enter your name" class="button" style="width: calc(100% - 152px)"/>
-        <div id="startTimerButton" class="button --round"><span class="material-icons">play_arrow</span></div>
-        <div id="stopTimerButton" class="button --round"><span class="material-icons">stop</span></div>
-        <div id="delete-button" class="button --round"><span class="material-icons">delete_forever</span></div>
-    </div> *@
+    <div class="score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
 
     <input type="hidden" id="letterButton" value="Select letter" class="button"/>
     <input type="hidden" id="categoryButton" value="Pick topic" class="button"/>
     <input type="hidden" id="topicsButton" value="Set topics" class="button"/>
     <input type="hidden" id="submitScoresButton" value="Submit score" class="button"/>
-    @* <input type="button" id="startGame" value="Start" class="button"/> *@
 
+    <div id="table" class="table"></div>
 
-    <div id="table"></div>
-
+    <div id="options" class="options hidden">
+        <div id="view-score-option" class="button">View scores</div>
+        <div id="play-again-option" class="button">Play again</div>
+    </div>
 
     <div id="category" class="category-button"></div>
-
-    <div id="messageList"></div>
-
 
     <audio src="alarm.m4a" id="alarm-sound" preload="auto" controls="none" style="display: none;"></audio>
 </div>
@@ -66,8 +47,17 @@
     @Html.Partial("TimerPopup")
 </div>
 
+<div class="popup-modal popup-hidden js-scores-modal">
+    @Html.Partial("ScoresPopup")
+</div>
 
+<div class="popup-modal popup-hidden js-scores-breakdown-modal">
+    @Html.Partial("ScoresBreakDownPopup")
+</div>
 
+<div class="popup-modal popup-hidden js-times-up">
+    @Html.Partial("GameOver");
+</div>
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/chat.js"></script>

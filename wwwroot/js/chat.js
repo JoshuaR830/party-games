@@ -3,42 +3,89 @@ var list = Array.from(Array(3), () => new Array(3));
 var randomNumbers = [];
 var lettersNumbers = [];
 var timer;
-
+var roundNumber = 0;
 // window.addEventListener("beforeunload", function(event) {
 //     event.returnValue = "Hello"
 // })
 
-var categories = ["Boys name", "Girls name", "Hobby", "Company", "Fictional character", "Something outside", "Book", "Electrical item", "Kitchen item", "Body part", "Song", "Something savoury", "Something sweet", "Colour", "Toy", "Movie", "Job/Occupation", "Sport/Game", "Place", "Food", "TV programme", "Transport", "Pet", "Actor/ Actress", "Family member", "Holiday destination", "Cooking implement", "Weather", "Animal/Bird", "Something you make", "Drink", "Ice cream", "Artist", "Brand", "Musical instrument", "Fundraising Activity"]
+window.addEventListener('load', function() {
+    document.getElementById("my-name").focus();
+});
+
+var connectionName = "GroupOfJoshua";
+
+var categories = ["Boys name", "Girls name", "Hobby", "Fictional character", "Something outside", "Book", "Electrical item", "Kitchen item", "Body part", "Song", "Something savoury", "Something sweet", "Colour", "Toy", "Movie", "Job / Occupation", "Sport / Game", "Place", "Food", "TV programme", "Transport", "Pet", "Actor / Actress", "Family member", "Holiday destination", "Weather", "Animal / Bird", "Something you make", "Drink", "Ice cream", "Artist", "Company / Brand", "Musical instrument", "Fundraising Activity"]
 var letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "XYZ"];
+
+var scores = {};
 
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 document.getElementById("sendButton").disabled = true;
 
 connection.on("ReceiveMessage", function (user, friendlyName, message) {
+    console.log(message);
     var msg = message.replace(/&/g, "&amp;").replace(/</g, "&lt").replace(/>/g, "&gt;");
     var li = document.createElement("div");
-    li.className = "message --right";
+    li.className = "score-list-item";
     li.textContent = msg;
+
+    var scoreData = message.split(": ");
+    console.log(scoreData[0]);
+    console.log(scoreData[1]);
+
+    if (scores[scoreData[0]]) {
+        scores[scoreData[0]] += parseInt(scoreData[1]);
+    } else {
+        scores[scoreData[0]] = parseInt(scoreData[1]);
+    }
+
+    console.log(scores);
 
     console.log(msg);
 
     document.getElementById("messageList").appendChild(li);
+
+    document.getElementById("scoresList").innerHTML = "";
+
+    for(var key in scores) {
+        console.log(key);
+        var scoreItem = document.createElement("div");
+        scoreItem.className = "score-list-item";
+        scoreItem.textContent = `${key}: ${scores[key]}`;
+        console.log(scoreItem);
+        document.getElementById("scoresList").appendChild(scoreItem);
+    }
 });
 
 connection.on("ReceiveTopics", function (user, friendlyName, topics) {
 
     topics = topics.split(',');
 
-    if(calculateScore() > 0) {
-        submitScores();
-    }
-
-    clearScore();
     topicSetter(topics);
 
     console.log(topics);
 });
+
+connection.on("CompletedScores", function() {
+    if(calculateScore() > 0) {
+        submitScores();
+    }
+    
+    clearScore();
+    document.getElementById('playAgain').classList.add('hidden');
+    document.getElementById('startGame').classList.remove('hidden');
+    document.getElementById("table").classList.add('hidden');
+    document.getElementById("options").classList.remove('hidden');
+})
+
+connection.on('StartNewRound', function() {
+    roundNumber ++;
+    document.getElementById('startGame').classList.add('hidden');
+    document.getElementById("table").classList.remove('hidden');
+    document.getElementById("options").classList.add('hidden');
+    clearScore();
+})
 
 connection.on("ReceiveDirectMessage", function (recipient, myName, message) {
     console.log("Received direct message");
@@ -58,6 +105,7 @@ connection.on("ReceiveTimeStart", function (time) {
 });
 
 connection.on("ReceiveStopTimer", function () {
+    document.getElementById('startGame').classList.remove('hidden');
     stopTimer();
 });
 
@@ -129,14 +177,14 @@ document.getElementById('topicsButton').addEventListener('click', function(event
     let topics = selectNineTopics();
     var message = topics.toString();
     
-    connection.invoke("SendTopics", "GroupOfJoshua", message).catch(function (err) {
+    connection.invoke("SendTopics", connectionName, message).catch(function (err) {
         return console.error(err.toString());
     });
 })
 
 document.getElementById('letterButton').addEventListener('click', function(event) {
     var letter = letterPicker();
-    connection.invoke("SendLetter", letter, "GroupOfJoshua");
+    connection.invoke("SendLetter", letter, connectionName);
 });
 
 document.getElementById("container").classList.remove("hidden");
@@ -144,7 +192,7 @@ connection.start().then(function () {
     document.getElementById("sendButton").disabled = false;
     // connection.invoke("AddToGroup", "my group");
     // var friendlyName = document.getElementById("userInput").value;
-    var friendlyName = "GroupOfJoshua";
+    var friendlyName = connectionName;
     // connection.invoke("AddUserToDashboard", friendlyName);
     connection.invoke("AddToGroup", friendlyName);
 }).catch(function (err) {
@@ -158,7 +206,7 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 
     calculateScore();
 
-    var user = "GroupOfJoshua";
+    var user = connectionName;
     connection.invoke("AddToGroup", user);
     connection.invoke("AddUserToDashboard", user);
 
@@ -178,14 +226,14 @@ function submitScores() {
 
     let score = calculateScore();
 
-    var user = "GroupOfJoshua";
+    var user = connectionName;
 
     connection.invoke("SendScore", user, name, score).catch(function (err) {
         return console.error(err.toString());
     });
 }
 
-document.getElementById('score').addEventListener('click', clearScore);
+// document.getElementById('score').addEventListener('click', clearScore);
 
 
 function clearScore(event) {
@@ -309,14 +357,22 @@ document.getElementById('startTimerButton').addEventListener('click', function()
     let timerMins = parseInt(document.getElementById('set-minutes').value);
     let timerSecs = parseInt(document.getElementById('set-seconds').value);
     
-    connection.invoke("SendTime", "GroupOfJoshua", [timerMins, timerSecs]);
+    connection.invoke("SendTime", connectionName, [timerMins, timerSecs]);
 });
 
-document.getElementById('startGame').addEventListener('click', function() {
+document.getElementById('startGame').addEventListener('click', launchGame);
+
+document.querySelector('#play-again-option').addEventListener('click', launchGame);
+
+document.getElementById('playAgain').addEventListener('click', function() {
+    connection.invoke("CollectScores", connectionName);
+});
+
+function launchGame() {
     let timerMins = parseInt(document.getElementById('set-minutes').value);
     let timerSecs = parseInt(document.getElementById('set-seconds').value);
 
-    let user = "GroupOfJoshua";
+    let user = connectionName;
     let letter = letterPicker();
     let time = [timerMins, timerSecs];
     let topics = selectNineTopics().toString();
@@ -324,7 +380,7 @@ document.getElementById('startGame').addEventListener('click', function() {
     console.log(">>>" + letter)
 
     connection.invoke("StartGame", user, letter, time, topics);
-});
+}
 
 function startTimer(timerMins, timerSecs) {
     timerSecs = (timerMins * 60) + timerSecs;
@@ -360,13 +416,29 @@ function updateClock(seconds) {
 
 function triggerAlarm()
 {
+    document.querySelector('.js-times-up').classList.remove("popup-hidden");
+    document.querySelector(".js-end-round-title").innerHTML = `Round ${roundNumber} complete`;
     var sound = document.getElementById('alarm-sound');
     sound.play();
 }
 
 document.getElementById("stopTimerButton").addEventListener('click', function (event) {
-    connection.invoke("StopTimer", "GroupOfJoshua");
+    connection.invoke("StopTimer", connectionName);
 });
+
+document.getElementById("completeRoundButton").addEventListener('click', function(event) {
+    connection.invoke("CompleteRound", connectionName);
+})
+
+connection.on("ReceiveCompleteRound", function() {
+    console.log("ReceiveCompletedRound");
+    var round = document.createElement('div');
+    round.textContent = `Round ${roundNumber}`;
+    round.className = "round-title";
+    document.getElementById("messageList").appendChild(round);
+    document.getElementById('playAgain').classList.remove('hidden');
+    stopTimer();
+})
 
 function stopTimer() {
     var sound = document.getElementById('alarm-sound');
@@ -377,10 +449,9 @@ function stopTimer() {
         document.getElementById('clock-seconds').textContent = pad(document.getElementById('set-seconds').value);
     }
     sound.pause();
+    document.querySelector('.js-times-up').classList.add("popup-hidden");
 }
 
-// document.getElementById("clock-minutes").addEventListener('click', incrementMinutes);
-// document.getElementById("clock-seconds").addEventListener('click', incrementSeconds);
 document.getElementById("delete-button").addEventListener('click', function() {
     if(timer != undefined) {
         clearInterval(timer);
@@ -417,8 +488,19 @@ function incrementSeconds() {
     document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
 }
 
+document.getElementById('my-name').addEventListener('keydown', function(event) {
+    if(event.keyCode === 13)
+    {
+        console.log("Hi");
+        event.currentTarget.style.outlineColor = "#ff0000";
+        userLogin();
+    }
+})
 
-document.querySelector('.login-button').addEventListener('click', function(event) {
+document.querySelector('.login-button').addEventListener('click', userLogin);
+
+function userLogin() {
+    console.log("Logged in");
     let nameInput = document.getElementById('my-name');
     var name = nameInput.value;
     if (name.length > 0) {
@@ -427,16 +509,44 @@ document.querySelector('.login-button').addEventListener('click', function(event
         nameInput.style.borderColor = "#ff0000";
     }
     console.log();
-});
+}
 
 document.querySelector('.timer-fab').addEventListener('click', function(event) {
     document.querySelector('.js-timer-modal').classList.remove('popup-hidden');
+})
+
+document.querySelector('.score-fab').addEventListener('click', function(event) {
+    document.querySelector('.js-scores-modal').classList.remove('popup-hidden');
+    document.querySelector('.js-scores-breakdown-modal').classList.add('popup-hidden');
+})
+
+document.querySelector('#view-score-option').addEventListener('click', function(event) {
+    document.querySelector('.js-scores-modal').classList.remove('popup-hidden');
+    document.querySelector('.js-scores-breakdown-modal').classList.add('popup-hidden');
+})
+
+document.querySelector('.js-close-scores-modal').addEventListener('click', function(event) {
+    document.querySelector('.js-scores-modal').classList.add('popup-hidden');
+})
+
+document.querySelector('.js-open-scores').addEventListener('click', function(event) {
+    document.querySelector('.js-scores-modal').classList.remove('popup-hidden');
+    document.querySelector('.js-scores-breakdown-modal').classList.add('popup-hidden');
+})
+
+document.querySelector('.js-open-scores-breakdown').addEventListener('click', function(event) {
+    document.querySelector('.js-scores-breakdown-modal').classList.remove('popup-hidden');
+    document.querySelector('.js-scores-modal').classList.add('popup-hidden');
 })
 
 document.querySelectorAll('.js-close-timer-modal').forEach(function(el){
     el.addEventListener('click', function(event) {
         document.querySelector('.js-timer-modal').classList.add('popup-hidden');
     })
+})
+
+document.querySelector('.js-close-scores-breakdown-modal').addEventListener('click', function() {
+        document.querySelector('.js-scores-breakdown-modal').classList.add('popup-hidden');
 })
 
 document.getElementById('decrement-minutes').addEventListener('click', function() {
@@ -491,33 +601,6 @@ document.getElementById('increment-seconds').addEventListener('click', function(
     }
     document.querySelector('#clock-seconds').textContent = pad(setSeconds.value);
 })
-
-
-function incrementMinutes() {
-    let minutes = parseInt(document.getElementById('set-minutes').value);
-    if (minutes < 59) {
-        document.getElementById('set-minutes').value = minutes += 1;
-    } else {
-        document.getElementById('set-minutes').value = 0;
-    }
-    document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
-}
-
-function incrementSeconds() {
-    let seconds = parseInt(document.getElementById('set-seconds').value);
-
-    if (seconds < 59) {
-        document.getElementById('set-seconds').value = seconds += 1;
-    } else {
-        document.getElementById('set-seconds').value = 0;
-        let minutes = parseInt(document.getElementById('set-minutes').value);
-        document.getElementById('set-minutes').value = minutes += 1;
-    }
-
-    document.getElementById('clock-seconds').textContent = pad(document.getElementById('set-seconds').value);
-    document.getElementById('clock-minutes').textContent = pad(document.getElementById('set-minutes').value);
-}
-
 
 function pad(time)
 {

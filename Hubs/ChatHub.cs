@@ -12,6 +12,7 @@ namespace Chat.Hubs
             await Clients.Group(user).SendAsync("ReceiveLetter", letter);
             await Clients.Group(user).SendAsync("ReceiveTopics", Context.ConnectionId, user, topics);
             await Clients.Group(user).SendAsync("ReceiveTimeStart", time);
+            await Clients.Group(user).SendAsync("StartNewRound");
         }
 
         public async Task SendMessage(string user, string message)
@@ -36,6 +37,11 @@ namespace Chat.Hubs
 
             await Clients.Group(user).SendAsync("ReceiveMessage", Context.ConnectionId, user, message);
         }
+        
+        public async Task CollectScores(string user)
+        {
+            await Clients.Group(user).SendAsync("CompletedScores");
+        }
 
         public async Task SendTopics(string user, string message)
         {
@@ -59,6 +65,11 @@ namespace Chat.Hubs
             Console.WriteLine("Indirect");
 
             await Clients.Group(user).SendAsync("ReceiveStopTimer");
+        }
+
+        public async Task CompleteRound(string user)
+        {
+            await Clients.Group(user).SendAsync("ReceiveCompleteRound");
         }
 
         public async Task AddToGroup(string groupName)

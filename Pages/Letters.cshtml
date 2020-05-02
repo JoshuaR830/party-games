@@ -4,7 +4,14 @@
     ViewData["Title"] = "Home page";
 }
 
-<div>
+<h1>Word game</h1>
+
+<div id="options" class="options hidden">
+    <div id="view-score-option" class="button">View scores</div>
+    <div id="play-again-option" class="button">Play again</div>
+</div>
+
+<div class="js-letter-game-container">
     <div class="letter-input-row js-letter-input-row"></div>
     <div class="button hidden js-confirm-word">Confirm word</div>
 
@@ -12,7 +19,39 @@
     <div class="button js-letters-start">Start</div>
 
     <div class="word-list-container js-word-list"></div>
+</div>
 
+    <div id="startGame" class="start-fab fab"><span class="material-icons">play_arrow</span></div>
+    <div id="playAgain" class="start-fab fab hidden"><span class="material-icons">check</span></div>
+
+
+    <div class="top-nav">
+        <div class="top-score-fab js-score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+        <div class="timer-fab fab">
+
+            <span class="material-icons" style="margin-right: 4px; margin-left: 4px;">alarm</span><span id="clock-minutes"></span>:<span id="clock-seconds"></span>
+        </div>
+    </div>
+
+
+<div class="popup-modal js-login-modal">
+    @Html.Partial("LoginPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-timer-modal">
+    @Html.Partial("TimerPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-modal">
+    @Html.Partial("ScoresPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-breakdown-modal">
+    @Html.Partial("ScoresBreakDownPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-times-up">
+    @Html.Partial("GameOver");
 </div>
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>

@@ -256,7 +256,8 @@ h1 {
     background-color: #55475c;
 }
 
-.letter-fab
+.letter-fab,
+.top-score-fab
 {
     width: 120px;
     height: 50px;

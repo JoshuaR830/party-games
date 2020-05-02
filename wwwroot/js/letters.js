@@ -1,4 +1,5 @@
-var connection = new signalR.HubConnectionBuilder().withUrl("/lettersHub").build();
+var lettersConnection = new signalR.HubConnectionBuilder().withUrl("/lettersHub").build();
+var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 var letterSpaces = [];
 var letterOrigins = [];
@@ -8,18 +9,51 @@ var confirmWord = document.querySelector('.js-confirm-word');
 var wordList = document.querySelector('.js-word-list');
 
 
-var groupName = "GroupOfJoshua";
+var connectionName = "GroupOfJoshua";
+
+
+lettersConnection.start().then(function () {
+    lettersConnection.invoke("AddToGroup", connectionName);
+});
 
 connection.start().then(function () {
-    connection.invoke("AddToGroup", groupName);
-});
+    connection.invoke("AddToGroup", connectionName);
+})
+
+connection.on("ReceiveCompleteRound", function() {
+    console.log("ReceiveCompletedRound");
+    var round = document.createElement('div');
+    round.textContent = `Round ${gameRoundNumber}`;
+    round.className = "round-title";
+    document.getElementById("messageList").appendChild(round);
+    document.getElementById('playAgain').classList.remove('hidden');
+    stopTimer();
+})
 
 document.querySelector('.js-letters-start').addEventListener('click', function(event) {
-    console.log("Hello");
-    connection.invoke("ChooseLetters", groupName);
+    lettersConnection.invoke("ChooseLetters", connectionName);
 });
 
-connection.on("LettersForGame", function(jsonLetters) {
+document.querySelector('#startGame').addEventListener('click', launchWordGame);
+document.querySelector('#play-again-option').addEventListener('click', launchWordGame);
+
+document.getElementById('playAgain').addEventListener('click', function() {
+    connection.invoke("CollectScores", connectionName);
+});
+
+function launchWordGame() {
+    let timerMins = parseInt(document.getElementById('set-minutes').value);
+    let timerSecs = parseInt(document.getElementById('set-seconds').value);
+    
+    let time = [timerMins, timerSecs];
+    connection.invoke("SendTime", connectionName, time)
+    lettersConnection.invoke("ChooseLetters", connectionName);
+}
+
+lettersConnection.on("LettersForGame", function(jsonLetters) {
+    document.querySelector('#options').classList.add('hidden');
+    document.querySelector('.js-letter-game-container').classList.remove('hidden');
+    document.querySelector('#startGame').classList.add('hidden');
     confirmWord.classList.remove('hidden');
     document.querySelector('.js-letters-start').classList.add('hidden');
     var chosenLetters = JSON.parse(jsonLetters);
@@ -89,6 +123,35 @@ connection.on("LettersForGame", function(jsonLetters) {
     })
 })
 
+connection.on("CompletedScores", function() {
+    if(calculateScore() > 0) {
+        submitScores();
+    }
+    
+    document.getElementById('playAgain').classList.add('hidden');
+    document.getElementById('startGame').classList.remove('hidden');
+    document.querySelector('.js-letter-game-container').classList.add('hidden');
+    document.getElementById("options").classList.remove('hidden');
+})
+
+function submitScores() {
+    let name = document.getElementById('my-name').value; 
+
+    console.log("Score sent");
+
+    let score = calculateScore();
+
+    var user = connectionName;
+
+    connection.invoke("SendScore", user, name, score).catch(function (err) {
+        return console.error(err.toString());
+    });
+}
+
+function calculateScore() {
+    return 10;
+}
+
 function placeNextLetter(letter, origin) {
     for (let i = 0; i < letterSpaces.length; i++) {
         if (letterSpaces[i] === '') {
@@ -114,10 +177,10 @@ confirmWord.addEventListener('click', function() {
     word.className = "word-list-item";
     wordList.appendChild(word);
 
-    connection.invoke("IsValidWord", currentWord, groupName);
+    lettersConnection.invoke("IsValidWord", currentWord, connectionName);
 });
 
-connection.on("WordStatusResponse", function(status) {
+lettersConnection.on("WordStatusResponse", function(status) {
     console.log(status);
 })
 

@@ -15,7 +15,6 @@ namespace Chat.Hubs
 
         public async Task ChooseLetters(string group)
         {
-            System.Console.WriteLine("Hi");
             var lettersHelper = new LettersHelper();
             var letters = lettersHelper.Letters;
             Console.WriteLine(letters);
@@ -23,7 +22,7 @@ namespace Chat.Hubs
         }
 
         public async Task IsValidWord(string word, string group)
-        {
+        {          
             var wordValidationHelper = new WordValidationHelper();
             var isValid = wordValidationHelper.ValidateWord(word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid);

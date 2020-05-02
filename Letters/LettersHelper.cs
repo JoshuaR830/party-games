@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Chat.Letters {
     public class LettersHelper
@@ -15,7 +17,6 @@ namespace Chat.Letters {
         public List<string> GetLetters()
         {
             System.Console.WriteLine("Get");
-            var difficultyLevel = 10;
             var alphabet = new Alphabet();
             var highFreq = alphabet.LettersList.Where(x => x.Frequency > 8).ToList();
             var randomFreq = alphabet.LettersList;
@@ -58,11 +59,100 @@ namespace Chat.Letters {
                 alphabetList.Add(temp[pos].Letter);
             }
 
-            // var letters = new List<LetterData>();
-            // return new List<string>{"A", "B", "C", "D", "E", "F", "G"};
             return alphabetList;
         }
+
+        public void SaveWordsToFile(List<WordAcceptability> words)
+        {
+            TextWriter writer = null;
+            try
+            {
+                var json = JsonConvert.SerializeObject(words);
+                writer = new StreamWriter("./word-list.json", false);
+                writer.Write(json);
+            }
+            finally
+            {
+                if (writer != null)
+                    writer.Close();
+            }
+        }
+
+        public List<WordAcceptability> ReadWordsFromFile()
+        {
+            TextReader reader = null;
+            try
+            {
+                reader = new StreamReader("./word-list.json");
+                var fileContent = reader.ReadToEnd();
+                return JsonConvert.DeserializeObject<List<WordAcceptability>>(fileContent);
+            }
+            finally
+            {
+                if (reader != null)        
+                    reader.Close();
+            }
+        }
     }
+
+    public class WordStatusHelper
+    {
+        public List<WordAcceptability> Words { get; private set; }
+
+        public WordStatusHelper()
+        {
+            this.Words = new List<WordAcceptability>();
+        }
+
+        public bool GetWordStatus(string word)
+        {
+            if (ContainsWord(word))
+            {
+                var selectedWord = this.Words.Where(x => x.Word == word).First();
+                return selectedWord.IsAcceptable;
+            }
+
+            return FindUnknownWordStatus(word);
+        }
+
+        public bool ContainsWord(string word)
+        {
+            var letters = new LettersHelper();
+            this.Words = letters.ReadWordsFromFile();
+            Console.WriteLine("Hello there");
+            System.Console.WriteLine(this.Words);
+            Console.WriteLine(this.Words.Any(x => x.Word == word));
+            return this.Words.Any(x => x.Word == word);
+        }
+
+        public bool FindUnknownWordStatus(string word)
+        {
+            if(ContainsWord(word))
+                return false;
+
+            var validationHelper = new WordValidationHelper();
+            var isValidWord = validationHelper.MakeWebRequest(word);
+            this.Words.Add(new WordAcceptability(word, isValidWord));
+
+            var letters = new LettersHelper();
+            letters.SaveWordsToFile(this.Words);
+
+            return isValidWord;
+        }
+    }
+
+    public class WordAcceptability
+    {
+        public bool IsAcceptable { get; private set; }
+        public string Word { get; private set; }
+
+        public WordAcceptability(string word, bool isAcceptable)
+        {
+            this.IsAcceptable = isAcceptable;
+            this.Word = word;
+        }
+    }
+
 
     public class Alphabet
     {

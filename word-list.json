@@ -1,0 +1,1 @@
+[{"IsAcceptable":true,"Word":"Hello"},{"IsAcceptable":true,"Word":"AT"},{"IsAcceptable":true,"Word":"ROT"},{"IsAcceptable":true,"Word":"ROTA"},{"IsAcceptable":false,"Word":"ROTAC"},{"IsAcceptable":true,"Word":"HEAD"}]

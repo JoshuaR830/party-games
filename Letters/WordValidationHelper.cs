@@ -5,10 +5,11 @@ namespace Chat.Letters {
     {
         public bool ValidateWord(string word)
         {
-            return MakeWebRequest(word);
+            var statusHelper = new WordStatusHelper();
+            return statusHelper.GetWordStatus(word);
         }
 
-        bool MakeWebRequest(string url)
+        public bool MakeWebRequest(string url)
         {
             try {
                 var request = (HttpWebRequest)WebRequest.Create($"https://www.dictionary.com/browse/{url}");

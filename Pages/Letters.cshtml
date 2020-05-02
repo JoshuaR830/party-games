@@ -1,0 +1,19 @@
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div>
+    <div class="letter-input-row js-letter-input-row"></div>
+    <div class="button hidden js-confirm-word">Confirm word</div>
+
+    <div class="letter-selection-container js-random-letters-container"></div>
+    <div class="button js-letters-start">Start</div>
+
+    <div class="word-list-container js-word-list"></div>
+
+</div>
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/letters.js"></script>

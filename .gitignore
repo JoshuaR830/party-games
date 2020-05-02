@@ -5,6 +5,8 @@ project.lock.json
 *.pyc
 nupkg/
 
+**word-list.json
+
 # Visual Studio Code
 .vscode
 

@@ -1,49 +1,155 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using static Chat.Letters.FileHelper;
 
 namespace Chat.Letters
 {
     public class WordStatusHelper
     {
-        public List<WordAcceptability> Words { get; private set; }
+        public List<WordStuff> Words { get; private set; }
 
         public WordStatusHelper()
         {
-            this.Words = new List<WordAcceptability>();
+            var fileHelper = new FileHelper();
+            this.Words = fileHelper.ReadWordsFromFile();
+        }
+
+        public void UpdateDictionary(string newWord, string newDefinition)
+        {
+            var fileHelper = new FileHelper();
+            fileHelper.SaveNewWordToFile(this.Words, newWord, newDefinition);
         }
 
         public bool GetWordStatus(string word)
         {
+            System.Console.WriteLine(word);
+            word = word.ToLower();
             if (ContainsWord(word))
             {
-                var selectedWord = this.Words.Where(x => x.Word == word).First();
-                return selectedWord.IsAcceptable;
+                var wordData = this.Words.First(x => x.Word.ToLower() == word.ToLower());
+                var definitionParts = wordData.Definition.Split(new Char[] {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\n'}).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                // var definitionParts = wordData.Definition.Split(new Char[] {';'});
+
+                foreach(var part in definitionParts)
+                {
+                    System.Console.WriteLine(part);
+
+                    if(part.ToLower() == "see")
+                    {
+                        continue;
+                    }
+
+                    if(part.ToLower().Contains("obs."))
+                    {
+                        System.Console.WriteLine("obs");
+                    }
+
+                    if(part.ToLower().Contains("scot."))
+                    {
+                        System.Console.WriteLine("Scot");
+                    }
+
+                    if(part.ToLower().Contains("archaic"))
+                    {
+                        System.Console.WriteLine("Archaic");
+                    }
+
+                    if(!part.Contains("Obs.") && !part.Contains("Scot.") && !part.Contains("Archaic"))
+                    {
+                        System.Console.WriteLine("Yeah looks good");
+                        return true;
+                    }
+
+                    // if(!part.Contains("Scot."))
+                    // {
+                    //     System.Console.WriteLine("Scottish - so no");
+                    //     return true;
+                    // }
+
+                    // if(!part.Contains("Archaic"))
+                    // {
+                    //     System.Console.WriteLine("Scottish - so no");
+                    //     return true;
+                    // }
+                }
+                // if(definitionParts[0].Contains("Obs."))
+                // {
+                //     System.Console.WriteLine("Obsolete");
+                //     return false;
+                // }
+                // else if(wordData.Definition.Contains("Obs.")){
+                //     System.Console.WriteLine("Would have been obsolete");
+                // }
+
+                // if(definitionParts[0].Contains("Scot."))
+                // {
+                //     System.Console.WriteLine("Scottish - so no");
+                //     return false;
+                // }
+                // else if(wordData.Definition.Contains("Scot.")){
+                //     System.Console.WriteLine("Would have been Scottish");
+                // }
+
+
+                // if(definitionParts[0].Contains("Archaic"))
+                // {
+                //     System.Console.WriteLine("Scottish - so no");
+                //     return false;
+                // }
+                // else if(wordData.Definition.Contains("Archaic")){
+                //     System.Console.WriteLine("Would have been archaic");
+                // }
+
+                // var selectedWord = this.Words.Where(x => x.Word == word).First();
+                // return false;
             }
 
-            return FindUnknownWordStatus(word);
+            System.Console.WriteLine("Does it end in S");
+            if(word.EndsWith('s')) {
+                System.Console.WriteLine("Ends with S");
+                if(ContainsWord(word.Remove(word.Length - 1))){
+                    var requestHelper = new DictionaryRequestHelper();
+                    return requestHelper.MakeWebRequest(word);
+                }
+            }
+
+            return false;
+            // return FindUnknownWordStatus(word);
+        }
+
+        public string GetDefinition(string word)
+        {
+            if(GetWordStatus(word))
+            {
+                var wordData = this.Words.First(x => x.Word.ToLower() == word.ToLower());
+
+                return wordData.Definition;
+            }
+
+            return "";
         }
 
         public bool ContainsWord(string word)
         {
-            var fileHelper = new FileHelper();
-            this.Words = fileHelper.ReadWordsFromFile();
             System.Console.WriteLine(this.Words);
-            return this.Words.Any(x => x.Word == word);
+            
+            return this.Words.Any(x => x.Word.ToLower() == word.ToLower());
         }
 
-        public bool FindUnknownWordStatus(string word)
-        {
-            if(ContainsWord(word))
-                return false;
+        // public bool FindUnknownWordStatus(string word)
+        // {
+        //     if(ContainsWord(word))
+        //         return false;
 
-            var validationHelper = new WordValidationHelper();
-            var isValidWord = validationHelper.MakeWebRequest(word);
-            this.Words.Add(new WordAcceptability(word, isValidWord));
+        //     var validationHelper = new WordValidationHelper();
+        //     var isValidWord = validationHelper.MakeWebRequest(word);
+        //     this.Words.Add(new WordAcceptability(word, isValidWord));
 
-            var fileHelper = new FileHelper();
-            fileHelper.SaveWordsToFile(this.Words);
+        //     var fileHelper = new FileHelper();
+        //     fileHelper.SaveWordsToFile(this.Words);
 
-            return isValidWord;
-        }
+        //     return isValidWord;
+        // }
     }
 }

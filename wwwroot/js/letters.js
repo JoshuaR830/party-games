@@ -5,9 +5,14 @@ var letterSpaces = [];
 var letterOrigins = [];
 var wordsCreated = [];
 
+var score = 0;
+
 var confirmWord = document.querySelector('.js-confirm-word');
 var wordList = document.querySelector('.js-word-list');
-
+var definitionContainer = document.querySelector('.js-definition-container');
+var wordToDefine = document.querySelector('.js-word-to-define');
+var letterInputRow = document.querySelector('.js-letter-input-row');
+var definitionSubmitButton = document.querySelector('.js-submit-new-definition');
 
 var connectionName = "GroupOfJoshua";
 
@@ -28,6 +33,8 @@ connection.on("ReceiveCompleteRound", function() {
     document.getElementById("messageList").appendChild(round);
     document.getElementById('playAgain').classList.remove('hidden');
     stopTimer();
+    letterInputRow.classList.add('hidden');
+    confirmWord.classList.add('hidden');
 })
 
 document.querySelector('.js-letters-start').addEventListener('click', launchWordGame);
@@ -49,6 +56,8 @@ function launchWordGame() {
 }
 
 lettersConnection.on("LettersForGame", function(jsonLetters) {
+    wordToDefine.classList.add("hidden");
+    definitionContainer.classList.add("hidden");
     document.querySelector('#options').classList.add('hidden');
     document.querySelector('.js-letter-game-container').classList.remove('hidden');
     document.querySelector('#startGame').classList.add('hidden');
@@ -57,7 +66,7 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
     var chosenLetters = JSON.parse(jsonLetters);
     console.log(chosenLetters);
     let container = document.querySelector('.js-random-letters-container');
-    let letterInputRow = document.querySelector('.js-letter-input-row');
+    letterInputRow.classList.remove('hidden');
     container.innerHTML = "";
     letterInputRow.innerHTML = "";
     letterSpaces = [];
@@ -65,7 +74,7 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
     wordsCreated = [];
     wordList.innerHTML = "";
     for (let i = 0; i < chosenLetters.length; i ++) {
-        chosenLetters[i];
+        chosenLetters[i].Letter;
         // <div class="letter-container letter-choice populated js-letter random-letter-0" data-origin="0">A</div>
         
         let letterContainer = document.createElement('div');
@@ -75,7 +84,7 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
         console.log(myName);
         if (myName.toLowerCase() === "andrew") {
             document.querySelector(`.js-random-letters-container`).style = "height: 260px; width: 260px; border-radius: 50%; border: 2px solid #55edba5b; box-sizing: content-box; box-shadow: 0 0 10px #55edba5b;"
-            console.log(chosenLetters[i]);
+            console.log(chosenLetters[i].Letter);
             let angle = (2*Math.PI)/chosenLetters.length;
             let xPos = (260/2) - 30;
             let yPos = (260/2) - 30;
@@ -88,7 +97,8 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
             // }
         }
         letterContainer.setAttribute('data-origin', `${i}`);
-        letterContainer.textContent = chosenLetters[i];
+        letterContainer.setAttribute('data-score', `${chosenLetters[i].Score}`);
+        letterContainer.textContent = chosenLetters[i].Letter;
         container.appendChild(letterContainer);
 
         let letterSelectionContainer = document.createElement('div');
@@ -111,8 +121,9 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
                 $el.classList.remove("populated");
                 let origin = $el.dataset.origin;
                 let letter = $el.textContent;
+                let score = $el.dataset.origin;
                 console.log(letter);
-                placeNextLetter(letter, origin)
+                placeNextLetter(letter, origin, score)
                 $el.textContent = '';
             }
         })
@@ -139,9 +150,8 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
 })
 
 connection.on("CompletedScores", function() {
-    if(calculateScore() > 0) {
-        submitScores();
-    }
+    submitScores();
+
     
     document.getElementById('playAgain').classList.add('hidden');
     document.getElementById('startGame').classList.remove('hidden');
@@ -154,26 +164,36 @@ function submitScores() {
 
     console.log("Score sent");
 
-    let score = calculateScore();
+    let userScore = calculateScore();
 
     var user = connectionName;
 
-    connection.invoke("SendScore", user, name, score).catch(function (err) {
+    connection.invoke("SendScore", user, name, userScore).catch(function (err) {
         return console.error(err.toString());
     });
 }
 
 function calculateScore() {
-    return 10;
+    var myScore = 0;
+    document.querySelectorAll('.word-list-item').forEach(function($el){
+        if(!$el.classList.contains("word-error")) {
+            console.log($el.dataset.score);
+            myScore += parseInt($el.dataset.score);
+        } else {
+            console.log("Word error");
+        }
+    })
+    return myScore;
 }
 
-function placeNextLetter(letter, origin) {
+function placeNextLetter(letter, origin, score) {
     for (let i = 0; i < letterSpaces.length; i++) {
         if (letterSpaces[i] === '') {
             console.log(`.letter-${i}`);
             letterOrigins[i] = origin;
             let currentLetter = document.querySelector(`.letter-${i}`);
             currentLetter.classList.add('populated');
+            currentLetter.setAttribute('data-score', score);
             currentLetter.textContent = letter;
             letterSpaces[i] = letter;
             break;
@@ -207,8 +227,11 @@ confirmWord.addEventListener('click', function() {
         return;
     }
 
+    let wordScore = 0;
     document.querySelectorAll('.js-selected-letter.populated').forEach(function($el) {
         $el.classList.add("confirmed");
+        console.log($el.dataset.score);
+        wordScore += parseInt($el.dataset.score);
     })
 
     setTimeout(removeConfirmed, 150);
@@ -218,6 +241,7 @@ confirmWord.addEventListener('click', function() {
     var word = document.createElement('div');
     word.textContent = currentWord;
     word.className = `word-list-item word-${num}`;
+    word.setAttribute('data-score', wordScore);
 
     word.addEventListener('click', function() {
         lettersConnection.invoke("WordTicked", currentWord, connectionName);
@@ -250,13 +274,60 @@ lettersConnection.on("WordStatusResponse", function(status, word) {
 })
 
 lettersConnection.on("TickWord", function(word) {
+
+    wordToDefine.classList.remove("hidden");
+    wordToDefine.textContent = word;
+
     let wordPos = getWordPosition(word)
     if(wordPos < 0) {
         return;
     }
     console.log("Word ticked");
-    document.querySelector(`.word-${wordPos}`).classList.add("word-ticked");
+
+    let wordListItem = document.querySelector(`.word-${wordPos}`);
+    
+    if(wordListItem.classList.contains('word-ticked')) {
+        console.log("Add word error")
+        wordListItem.classList.add("word-error");
+        wordListItem.classList.remove("word-ticked");
+    }else {
+        console.log("Remove error");
+        wordListItem.classList.add("word-ticked");
+        wordListItem.classList.remove("word-error");
+    }
+    
 })
+
+wordToDefine.addEventListener('click', function(event) {
+    console.log(event.currentTarget.textContent)
+    let word = event.currentTarget.textContent;
+    
+    lettersConnection.invoke("GetDefinition", connectionName, word);
+})
+
+definitionSubmitButton.addEventListener('click', function() {
+    let word = definitionSubmitButton.dataset.word;
+    let definition = document.querySelector('.js-definition-update').value;
+    document.querySelector('.js-no-definition-container').classList.add('hidden');
+    lettersConnection.invoke("AddWordToDictionary", connectionName, word, definition);
+})
+
+lettersConnection.on("ReceiveDefinition", function(definition, word) {
+
+    if (definition === "" )
+    {
+        document.querySelector('.js-definition-container').classList.add('hidden');
+        document.querySelector('.js-no-definition-container').classList.remove('hidden');
+        definitionSubmitButton.setAttribute("data-word", word);
+        definitionSubmitButton.textContent = `Submit ${word}`;
+    } else {
+        
+        var definitionContainer = document.querySelector('.js-definition-container');
+        definitionContainer.classList.remove('hidden');
+        definitionContainer.textContent = `${word}: ${definition}`;
+    }
+})
+
 
 function getWordPosition(word) {
     let wordPos = wordsCreated.indexOf(word)

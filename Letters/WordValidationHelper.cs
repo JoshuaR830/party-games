@@ -3,26 +3,23 @@ using System.Net;
 namespace Chat.Letters {
     public class WordValidationHelper
     {
+        public WordStatusHelper wordStatusHelper { get; }
+        public WordValidationHelper() {
+            this.wordStatusHelper = new WordStatusHelper();
+        }
+        // ToDo: Need to be singleton so that it doesn't keep building this up
         public bool ValidateWord(string word)
         {
-            var statusHelper = new WordStatusHelper();
-            return statusHelper.GetWordStatus(word);
+            return this.wordStatusHelper.GetWordStatus(word);
         }
 
-        public bool MakeWebRequest(string url)
+        public string GetDefinition(string word)
         {
-            try {
-                var request = (HttpWebRequest)WebRequest.Create($"https://www.dictionary.com/browse/{url}");
-                request.Method = "HEAD";
-                var response = (HttpWebResponse)request.GetResponse();
-                return true;
-            } catch (WebException e) {
-                System.Console.WriteLine(e);
-                return false;
-            } catch
-            {
-                return false;
-            }
+            return this.wordStatusHelper.GetDefinition(word);
+        }
+
+        public void UpdateDictionary(string newWord, string newDefinition){
+            this.wordStatusHelper.UpdateDictionary(newWord, newDefinition);
         }
     }
 }

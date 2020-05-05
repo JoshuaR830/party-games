@@ -109,3 +109,20 @@
     transition: ease-in;
     box-shadow: 0 0 20px #e7dc72;
 }
+
+.definition-container
+{
+    height: fit-content;
+    width: 100%;
+    box-shadow: inset 0 0 10px #55edbb;
+    border-radius: 8px;
+    padding: 16px;
+    color: #55edbb;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hidden
+{
+    display: none;
+}

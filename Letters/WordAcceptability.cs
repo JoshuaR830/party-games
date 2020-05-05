@@ -11,4 +11,9 @@ namespace Chat.Letters
             this.Word = word;
         }
     }
+
+    public class Dictionary
+    {
+        
+    }
 }

@@ -1,14 +1,13 @@
-using System;
 using Chat.Letters;
 using Xunit;
 using FluentAssertions;
 
 namespace PartyGamesTests
 {
-    public class UnitTest1
+    public class LettersTests
     {
         [Fact]
-        public void Test1()
+        public void WhenAlphabetIsCreatedLettersListShouldContain26Letters()
         {
             var alphabet = new Alphabet();
             alphabet.LettersList.Should().HaveCount(26);

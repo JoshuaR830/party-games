@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using Newtonsoft.Json;
 
 namespace Chat.Letters
 {
@@ -27,7 +26,7 @@ namespace Chat.Letters
         public string MakeDefinitionRequest(string url)
         {
             try {
-                var request = (HttpWebRequest)WebRequest.Create($"https://www.dictionary.com/browse/{url}");
+                var request = (HttpWebRequest)WebRequest.Create($"https://www.collinsdictionary.com/dictionary/english/{url}");
 
                 var responseText = "";
 
@@ -49,6 +48,12 @@ namespace Chat.Letters
                 System.Console.WriteLine(e);
                 return "";
             }
+        }
+
+        public bool IsPluralReal(string word)
+        {
+            var textContent = this.MakeDefinitionRequest(word);
+            return textContent.Contains(word);
         }
     }
 }

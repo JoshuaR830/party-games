@@ -110,7 +110,44 @@ namespace Chat.Letters
                 System.Console.WriteLine("Ends with S");
                 if(ContainsWord(word.Remove(word.Length - 1))){
                     var requestHelper = new DictionaryRequestHelper();
-                    return requestHelper.MakeWebRequest(word);
+                    // return requestHelper.MakeWebRequest(word);
+                    return requestHelper.IsPluralReal(word);
+                }
+            }
+            
+            if(word.Substring(word.Length - 2) == "es") {
+                System.Console.WriteLine("Ends with es");
+                if(ContainsWord(word.Remove(word.Length - 2))){
+                    var requestHelper = new DictionaryRequestHelper();
+                    // return requestHelper.MakeWebRequest(word);
+                    return requestHelper.IsPluralReal(word);
+                }
+            }
+            
+            if(word.Substring(word.Length - 2) == "er") {
+                System.Console.WriteLine("Ends with er");
+                if(ContainsWord(word.Remove(word.Length - 2))){
+                    var requestHelper = new DictionaryRequestHelper();
+                    // return requestHelper.MakeWebRequest(word);
+                    return requestHelper.IsPluralReal(word);
+                }
+            }
+            
+            if(word.Substring(word.Length - 2) == "ed") {
+                System.Console.WriteLine("Ends with ed");
+                if(ContainsWord(word.Remove(word.Length - 2))){
+                    var requestHelper = new DictionaryRequestHelper();
+                    // return requestHelper.MakeWebRequest(word);
+                    return requestHelper.IsPluralReal(word);
+                }
+            }
+            
+            if(word.Substring(word.Length - 3) == "ing") {
+                System.Console.WriteLine("Ends with ing");
+                if(ContainsWord(word.Remove(word.Length - 3))){
+                    var requestHelper = new DictionaryRequestHelper();
+                    // return requestHelper.MakeWebRequest(word);
+                    return requestHelper.IsPluralReal(word);
                 }
             }
 

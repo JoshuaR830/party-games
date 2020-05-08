@@ -35,6 +35,26 @@ connection.on("ReceiveCompleteRound", function() {
     stopTimer();
     letterInputRow.classList.add('hidden');
     confirmWord.classList.add('hidden');
+
+    let selectedLetters = document.querySelectorAll('.js-selected-letter');
+    var letters = document.querySelectorAll('.js-letter');
+
+    selectedLetters.forEach(function($el) {
+        
+        if ($el.classList.contains('populated')) {
+            let letter = $el.dataset.letter; // This is the wrong thing - this could be up to 5
+            console.log($el.dataset.letter);
+            console.log(letterSpaces[$el.dataset.letter]);
+            console.log(letterOrigins[$el.dataset.letter]);
+            $el.classList.remove('populated');
+            let origin = letterOrigins[letter];
+            letters[origin].textContent = letterSpaces[letter];
+            letterOrigins[letter] = '';
+            letterSpaces[letter] = '';
+            letters[origin].classList.add('populated');
+            $el.textContent = '';
+        }
+    })
 })
 
 document.querySelector('.js-letters-start').addEventListener('click', launchWordGame);
@@ -144,14 +164,12 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
                 letters[origin].classList.add('populated');
                 $el.textContent = '';
             }
-    
         })
     })
 })
 
 connection.on("CompletedScores", function() {
     submitScores();
-
     
     document.getElementById('playAgain').classList.add('hidden');
     document.getElementById('startGame').classList.remove('hidden');
@@ -211,11 +229,7 @@ function removeConfirmed()
     })
 }
 
-
 confirmWord.addEventListener('click', function() {
-
-    
-
     let currentWord = letterSpaces.join('');
 
     if (wordsCreated.includes(currentWord)){

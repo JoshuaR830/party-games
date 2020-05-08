@@ -53,8 +53,8 @@ namespace Chat.Hubs
 
         public async Task AddWordToDictionary(string group, string newWord, string newDefinition)
         {
-            var definition = _requestHelper.MakeDefinitionRequest(newWord);
-            // _wordValidationHelper.UpdateDictionary(newWord, definition);
+            // var definition = _requestHelper.MakeDefinitionRequest(newWord);
+            _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
     }

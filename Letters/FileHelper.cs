@@ -127,6 +127,8 @@ namespace Chat.Letters
                 words.Add(new WordStuff(newWord.ToLower(), newDefinition));
             }
 
+            Console.WriteLine("Hello --> Hello");
+
             TextWriter writer = null;
             try
             {

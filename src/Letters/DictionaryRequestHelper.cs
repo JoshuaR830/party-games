@@ -7,7 +7,6 @@ namespace Chat.Letters
 {
     public class DictionaryRequestHelper
     {
-        
         public bool MakeWebRequest(string url)
         {
             try {

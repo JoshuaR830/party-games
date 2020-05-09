@@ -67,15 +67,15 @@ namespace Chat.Letters {
                 alphabetList.Add(new LetterScore(temp[pos].Letter, temp[pos].Score));
             }
 
-            alphabetList = new List<LetterScore>();
-            alphabetList.Add(new LetterScore("T", 1));
-            alphabetList.Add(new LetterScore("A", 1));
-            alphabetList.Add(new LetterScore("X", 1));
-            alphabetList.Add(new LetterScore("I", 1));
-            alphabetList.Add(new LetterScore("S", 1));
-            alphabetList.Add(new LetterScore("E", 1));
-            alphabetList.Add(new LetterScore("G", 1));
-            alphabetList.Add(new LetterScore("W", 1));
+            // alphabetList = new List<LetterScore>();
+            // alphabetList.Add(new LetterScore("T", 1));
+            // alphabetList.Add(new LetterScore("A", 1));
+            // alphabetList.Add(new LetterScore("X", 1));
+            // alphabetList.Add(new LetterScore("I", 1));
+            // alphabetList.Add(new LetterScore("S", 1));
+            // alphabetList.Add(new LetterScore("E", 1));
+            // alphabetList.Add(new LetterScore("G", 1));
+            // alphabetList.Add(new LetterScore("W", 1));
 
 
             return alphabetList;

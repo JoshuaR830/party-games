@@ -1,4 +1,6 @@
-﻿namespace Chat.WordGame.WebHelpers
+﻿using Chat.WordGame.WebHelpers;
+
+namespace Chat.WordGame.WordHelpers
 {
     public class WordHelper : IWordHelper
     {

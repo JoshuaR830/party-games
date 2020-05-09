@@ -4,6 +4,6 @@ namespace Chat.WordGame.LocalDictionaryHelpers
 {
     public interface IFileHelper
     {
-        Dictionary ReadDictionary();
+        Dictionary ReadDictionary(string filename);
     }
 }

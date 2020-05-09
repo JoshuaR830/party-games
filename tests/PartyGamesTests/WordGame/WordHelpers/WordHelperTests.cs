@@ -1,4 +1,5 @@
-﻿using Chat.WordGame.WebHelpers;
+﻿using Chat.WordGame.LocalDictionaryHelpers;
+using Chat.WordGame.WebHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using NSubstitute;
@@ -9,10 +10,16 @@ namespace PartyGamesTests.WordGame.WordHelpers
     public class WordHelperTests
     {
         private readonly IWebDictionaryRequestHelper _webDictionaryRequestHelper;
+        private readonly IWordExistenceHelper _wordExistenceHelper;
 
         public WordHelperTests()
         {
             _webDictionaryRequestHelper = Substitute.For<IWebDictionaryRequestHelper>();
+            _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
+
+            _wordExistenceHelper
+                .DoesWordExist(Arg.Any<string>())
+                .Returns(true);
         }
 
         [Fact]
@@ -25,11 +32,11 @@ namespace PartyGamesTests.WordGame.WordHelpers
                 .MakeContentRequest(word)
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             var response = wordHelper.CheckWordEndingExists(word);
             response.Should().BeTrue();
         }
-
+        
         [Fact]
         public void WhenWordDoesNotExistResponseShouldBeFalse()
         {
@@ -41,7 +48,7 @@ namespace PartyGamesTests.WordGame.WordHelpers
                 .MakeContentRequest(nonExistentWord)
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             var response = wordHelper.CheckWordEndingExists(nonExistentWord);
             response.Should().BeFalse();
         }
@@ -52,29 +59,60 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var word = "cheeses";
             var ending = "s";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
-            wordHelper
-                .CheckWordEndingExists(word)
-                .Returns(true);
+            
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("There are some cheeses over there");
+
+            var wordHelperUnderTest = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(word);
+            response.Should().BeTrue();
+        }
+        
+        [Fact]
+        public void WhenNotAWordButEndingInOneLetter()
+        {
+            var word = "reallynotawords";
+            
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("This really isn't a word");
+
+            var response = wordHelper.StrippedSuffixDictionaryCheck(word);
+            response.Should().BeFalse();
+        }
+        
+        [Fact]
+        public void WhenWordHasTwoLetterEnding()
+        {
+            var word = "boxes";
+            var ending = "es";
+            
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("There are some boxes over there");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
             response.Should().BeTrue();
         }
         
         [Fact]
-        public void WhenWordHasTwoLetterEnding()
+        public void WhenNotAWordButEndingInTwoLetters()
         {
-            var word = "fishes";
-            var ending = "es";
+            var word = "reallynotawordes";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
-            wordHelper
-                .CheckWordEndingExists(word)
-                .Returns(true);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("This really isn't a word");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
-            response.Should().BeTrue();
-
+            response.Should().BeFalse();
         }
         
         [Fact]
@@ -83,14 +121,29 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var word = "kicking";
             var ending = "ing";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
-            wordHelper
-                .CheckWordEndingExists(word)
-                .Returns(true);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("This is really kicking it");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
             response.Should().BeTrue();
+        }
+        
+        [Fact]
+        public void WhenNotAWordButEndingInThreeLetters()
+        {
+            var word = "reallynotawording";
+            
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("This really isn't a word");
 
+            var response = wordHelper.StrippedSuffixDictionaryCheck(word);
+            response.Should().BeFalse();
         }
         
         [Fact]
@@ -99,13 +152,29 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var word = "running";
             var ending = "ning";
 
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
-            wordHelper
-                .CheckWordEndingExists(word)
-                .Returns(true);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("Got to love running in the park");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
             response.Should().BeTrue();
+        }
+
+        [Fact]
+        public void WhenNotAWordButEndingInfourLetters()
+        {
+            var word = "reallynotawordning";
+
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+
+            _webDictionaryRequestHelper
+                .MakeContentRequest(word)
+                .Returns("This really isn't a word");
+
+            var response = wordHelper.StrippedSuffixDictionaryCheck(word);
+            response.Should().BeFalse();
         }
     }
 }

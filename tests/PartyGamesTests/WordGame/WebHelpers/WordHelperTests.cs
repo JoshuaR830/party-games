@@ -24,8 +24,8 @@ namespace PartyGamesTests.WordGame.WebHelpers
                 .MakeContentRequest(word)
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper();
-            var response = wordHelper.CheckDifferentWordEnding(word);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
+            var response = wordHelper.CheckWordEndingExists(word);
             response.Should().BeTrue();
         }
 
@@ -40,8 +40,8 @@ namespace PartyGamesTests.WordGame.WebHelpers
                 .MakeContentRequest(nonExistentWord)
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper();
-            var response = wordHelper.CheckDifferentWordEnding(nonExistentWord);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper);
+            var response = wordHelper.CheckWordEndingExists(nonExistentWord);
             response.Should().BeFalse();
         }
     }

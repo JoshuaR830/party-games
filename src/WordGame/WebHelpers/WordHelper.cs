@@ -2,9 +2,17 @@
 {
     public class WordHelper : IWordHelper
     {
-        public bool CheckDifferentWordEnding(string word)
+        private readonly IWebDictionaryRequestHelper _webDictionaryRequestHelper;
+
+        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper)
         {
-            throw new System.NotImplementedException();
+            _webDictionaryRequestHelper = webDictionaryRequestHelper;
+        }
+
+        public bool CheckWordEndingExists(string word)
+        {
+            var responseText = _webDictionaryRequestHelper.MakeContentRequest(word);
+            return responseText.Contains(word);
         }
     }
 }

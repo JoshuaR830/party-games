@@ -2,6 +2,6 @@
 {
     public interface IWordHelper
     {
-        bool CheckDifferentWordEnding(string word);
+        bool CheckWordEndingExists(string word);
     }
 }

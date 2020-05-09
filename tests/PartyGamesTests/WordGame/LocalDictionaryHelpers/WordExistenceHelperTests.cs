@@ -37,12 +37,13 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                 }
             };
             
-            var fileHelper = new FileHelper();
+            var fileHelper = Substitute.For<IFileHelper>();
+
             fileHelper
                 .ReadDictionary(Arg.Any<string>())
                 .Returns(dictionary);
             
-            var wordExistenceHelper = new WordExistenceHelper();
+            var wordExistenceHelper = new WordExistenceHelper(fileHelper);
             var response = wordExistenceHelper.DoesWordExist(word);
             response.Should().BeTrue();
         }
@@ -76,12 +77,12 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                 }
             };
             
-            var fileHelper = new FileHelper();
+            var fileHelper = Substitute.For<IFileHelper>();
             fileHelper
                 .ReadDictionary(Arg.Any<string>())
                 .Returns(dictionary);
             
-            var wordExistenceHelper = new WordExistenceHelper();
+            var wordExistenceHelper = new WordExistenceHelper(fileHelper);
             var response = wordExistenceHelper.DoesWordExist(word);
             response.Should().BeFalse();
         }

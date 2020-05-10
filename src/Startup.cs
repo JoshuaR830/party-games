@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Chat.Hubs;
+using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WebHelpers;
+using Chat.WordGame.WordHelpers;
 
 namespace Chat
 {
@@ -29,8 +31,13 @@ namespace Chat
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
+            services.AddSingleton<IFileHelper, FileHelper>();
             services.AddSingleton<IWebDictionaryRequestHelper, WebDictionaryRequestHelper>();
             services.AddSingleton<IWebRequestHelper, WebRequestHelper>();
+            services.AddSingleton<IWordDefinitionHelper, WordDefinitionHelper>();
+            services.AddSingleton<IWordExistenceHelper, WordExistenceHelper>();
+            services.AddSingleton<IWordHelper, WordHelper>();
+            services.AddSingleton<IWordService, WordService>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

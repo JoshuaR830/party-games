@@ -6,11 +6,13 @@ namespace Chat.WordGame.WordHelpers
     {
         private readonly IWordHelper _wordHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
+        private readonly IWordDefinitionHelper _wordDefinitionHelper;
 
-        public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper)
+        public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper)
         {
             _wordExistenceHelper = wordExistenceHelper;
             _wordHelper = wordHelper;
+            _wordDefinitionHelper = wordDefinitionHelper;
         }
 
         public bool GetWordStatus(string word)
@@ -23,6 +25,14 @@ namespace Chat.WordGame.WordHelpers
             wordExists = _wordHelper.StrippedSuffixDictionaryCheck(word);
 
             return wordExists;
+        }
+
+        public string GetDefinition(string word)
+        {
+            if (GetWordStatus(word))
+                return _wordDefinitionHelper.GetDefinitionForWord(word);
+
+            return null;
         }
     }
 }

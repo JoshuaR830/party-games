@@ -6,7 +6,7 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     public class WordExistenceHelper : IWordExistenceHelper
     {
         private readonly IFileHelper _fileHelper;
-        private const string Filename = "./word-list.json";
+        private const string Filename = "./new-word-list.json";
 
         public WordExistenceHelper(IFileHelper fileHelper)
         {

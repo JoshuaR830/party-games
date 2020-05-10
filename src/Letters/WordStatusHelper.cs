@@ -114,43 +114,58 @@ namespace Chat.Letters
                 if(ContainsWord(word.Remove(word.Length - 1))){
                     var requestHelper = new DictionaryRequestHelper();
                     // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 1));
+                    return requestHelper.IsPluralReal(word, word.Remove(word.Length - 1));
                 }
             }
-            
-            if(word.Substring(word.Length - 2) == "es") {
-                System.Console.WriteLine("Ends with es");
-                if(ContainsWord(word.Remove(word.Length - 2))){
-                    var requestHelper = new DictionaryRequestHelper();
-                    // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 2));
+
+            if (word.Length > 2)
+            {
+
+                if (word.Substring(word.Length - 2) == "es")
+                {
+                    System.Console.WriteLine("Ends with es");
+                    if (ContainsWord(word.Remove(word.Length - 2)))
+                    {
+                        var requestHelper = new DictionaryRequestHelper();
+                        // return requestHelper.MakeWebRequest(word);
+                        return requestHelper.IsPluralReal(word, word.Remove(word.Length - 2));
+                    }
+                }
+
+                if (word.Substring(word.Length - 2) == "er")
+                {
+                    System.Console.WriteLine("Ends with er");
+                    if (ContainsWord(word.Remove(word.Length - 2)))
+                    {
+                        var requestHelper = new DictionaryRequestHelper();
+                        // return requestHelper.MakeWebRequest(word);
+                        return requestHelper.IsPluralReal(word, word.Remove(word.Length - 2));
+                    }
+                }
+
+                if (word.Substring(word.Length - 2) == "ed")
+                {
+                    System.Console.WriteLine("Ends with ed");
+                    if (ContainsWord(word.Remove(word.Length - 2)))
+                    {
+                        var requestHelper = new DictionaryRequestHelper();
+                        // return requestHelper.MakeWebRequest(word);
+                        return requestHelper.IsPluralReal(word, word.Remove(word.Length - 2));
+                    }
                 }
             }
-            
-            if(word.Substring(word.Length - 2) == "er") {
-                System.Console.WriteLine("Ends with er");
-                if(ContainsWord(word.Remove(word.Length - 2))){
-                    var requestHelper = new DictionaryRequestHelper();
-                    // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 2));
-                }
-            }
-            
-            if(word.Substring(word.Length - 2) == "ed") {
-                System.Console.WriteLine("Ends with ed");
-                if(ContainsWord(word.Remove(word.Length - 2))){
-                    var requestHelper = new DictionaryRequestHelper();
-                    // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 2));
-                }
-            }
-            
-            if(word.Substring(word.Length - 3) == "ing") {
-                System.Console.WriteLine("Ends with ing");
-                if(ContainsWord(word.Remove(word.Length - 3))){
-                    var requestHelper = new DictionaryRequestHelper();
-                    // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 3));
+
+            if (word.Length > 3)
+            {
+                if (word.Substring(word.Length - 3) == "ing")
+                {
+                    System.Console.WriteLine("Ends with ing");
+                    if (ContainsWord(word.Remove(word.Length - 3)))
+                    {
+                        var requestHelper = new DictionaryRequestHelper();
+                        // return requestHelper.MakeWebRequest(word);
+                        return requestHelper.IsPluralReal(word, word.Remove(word.Length - 3));
+                    }
                 }
             }
 

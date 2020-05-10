@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using static Chat.Letters.FileHelper;
 
 namespace Chat.Letters
@@ -30,6 +31,8 @@ namespace Chat.Letters
                 var wordData = this.Words.First(x => x.Word.ToLower() == word.ToLower());
                 var definitionParts = wordData.Definition.Split(new Char[] {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\n'}).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
                 // var definitionParts = wordData.Definition.Split(new Char[] {';'});
+
+                Console.WriteLine(JsonConvert.SerializeObject(definitionParts));
 
                 foreach(var part in definitionParts)
                 {
@@ -111,7 +114,7 @@ namespace Chat.Letters
                 if(ContainsWord(word.Remove(word.Length - 1))){
                     var requestHelper = new DictionaryRequestHelper();
                     // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word);
+                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 1));
                 }
             }
             
@@ -120,7 +123,7 @@ namespace Chat.Letters
                 if(ContainsWord(word.Remove(word.Length - 2))){
                     var requestHelper = new DictionaryRequestHelper();
                     // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word);
+                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 2));
                 }
             }
             
@@ -129,7 +132,7 @@ namespace Chat.Letters
                 if(ContainsWord(word.Remove(word.Length - 2))){
                     var requestHelper = new DictionaryRequestHelper();
                     // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word);
+                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 2));
                 }
             }
             
@@ -138,7 +141,7 @@ namespace Chat.Letters
                 if(ContainsWord(word.Remove(word.Length - 2))){
                     var requestHelper = new DictionaryRequestHelper();
                     // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word);
+                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 2));
                 }
             }
             
@@ -147,7 +150,7 @@ namespace Chat.Letters
                 if(ContainsWord(word.Remove(word.Length - 3))){
                     var requestHelper = new DictionaryRequestHelper();
                     // return requestHelper.MakeWebRequest(word);
-                    return requestHelper.IsPluralReal(word);
+                    return requestHelper.IsPluralReal(word, word.Substring(word.Length - 3));
                 }
             }
 

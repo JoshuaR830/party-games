@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Chat.Letters;
+using Chat.WordGame.WordHelpers;
 
 namespace Chat.Hubs
 {
@@ -10,13 +11,19 @@ namespace Chat.Hubs
     {
         readonly WordValidationHelper _wordValidationHelper = new WordValidationHelper();
         readonly DictionaryRequestHelper _requestHelper = new DictionaryRequestHelper();
+        private readonly IWordService _wordService;
+
+        public LettersHub(IWordService wordService)
+        {
+            _wordService = wordService;
+        }
 
         public async Task AddToGroup(string groupName)
         {
             // var fileHelper = new FileHelper();
             // var dictionaryContent = fileHelper.ReadDictionary();
             // fileHelper.WriteToDictionary(dictionaryContent);
-            var definition = _requestHelper.MakeDefinitionRequest("fish");
+            // var definition = _requestHelper.MakeDefinitionRequest("fish");
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
@@ -47,6 +54,9 @@ namespace Chat.Hubs
         {
             System.Console.WriteLine("Hello");
             var definition = _wordValidationHelper.GetDefinition(word);
+            // var definition2 = _wordService.GetDefinition(word);
+            Console.WriteLine(definition);
+            // Console.WriteLine(definition2);
             System.Console.WriteLine("Hi");
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
         }

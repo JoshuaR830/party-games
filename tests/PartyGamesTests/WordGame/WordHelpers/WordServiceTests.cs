@@ -1,6 +1,8 @@
 ﻿using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
+using FluentAssertions;
 using NSubstitute;
+using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers
 {
@@ -14,38 +16,103 @@ namespace PartyGamesTests.WordGame.WordHelpers
             _wordHelper = Substitute.For<IWordHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
         }
-
-        // Test what happens when the word exists in the dictionary
+        
+        [Fact]
         public void WhenWordExistsInTheDictionaryThenTheWordServiceShouldReturnTrue()
         {
+            var word = "sheep";
             
+            _wordExistenceHelper
+                .DoesWordExist(word)
+                .Returns(true);
+            
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper);
+            var response = wordService.GetWordStatus(word);
+            response.Should().BeTrue();
         }
-
-        // Test what happens when it is a plural
-        // Test what happens when not in the dictionary when plural removed
+        
+        [Fact]
         public void WhenWordIsPluralThenWordServiceShouldReturnTrue()
         {
+            var word = "ducks";
             
+            _wordExistenceHelper
+                .DoesWordExist(word)
+                .Returns(false);
+
+            _wordHelper
+                .StrippedSuffixDictionaryCheck(word)
+                .Returns(true);
+
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper);
+            var response = wordService.GetWordStatus(word);
+            response.Should().BeTrue();
         }
         
-        // Test what happens if not in dictionary
+        [Fact]
         public void WhenNotInLocalDictionaryThenWordServiceShouldReturnFalse()
         {
+            var word = "sheeps";
             
+            _wordExistenceHelper
+                .DoesWordExist(word)
+                .Returns(false);
+
+            _wordHelper
+                .StrippedSuffixDictionaryCheck(word)
+                .Returns(false);
+
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper);
+            var response = wordService.GetWordStatus(word);
+            response.Should().BeFalse();
         }
         
-        
-        // Test what happens when in the dictionary without plural
+        [Fact]
         public void WhenWordIsNotAPluralButExistsInSingularThenWordServiceShouldReturnFalse()
         {
+            var word = "sheeps";
             
+            _wordExistenceHelper
+                .DoesWordExist(word)
+                .Returns(false);
+            
+            _wordExistenceHelper
+                .DoesWordExist("sheep")
+                .Returns(true);
+
+            _wordHelper
+                .StrippedSuffixDictionaryCheck(word)
+                .Returns(false);
+
+            _wordHelper
+                .CheckWordEndingExists(word)
+                .Returns(false);
+
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper);
+            var response = wordService.GetWordStatus(word);
+            response.Should().BeFalse();
         }
         
-        // Check what happens if plural, not in dictionary
-        // Check what happens if plural, in dictionary after and on website.
+        [Fact]
         public void WhenAWordFormattedAsPluralDoesNotExistInTheSingularThenWordServiceShouldReturnFalse()
         {
+            var word = "notawords";
             
+            _wordExistenceHelper
+                .DoesWordExist(word)
+                .Returns(false);
+            
+            _wordExistenceHelper
+                .DoesWordExist(Arg.Any<string>())
+                .Returns(false);
+
+            _wordHelper
+                .StrippedSuffixDictionaryCheck(word)
+                .Returns(false);
+
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper);
+            var response = wordService.GetWordStatus(word);
+            response.Should().BeFalse();
         }
     }
 }

@@ -16,16 +16,19 @@ namespace Chat.WordGame.LocalDictionaryHelpers
         public bool DoesWordExist(string word)
         {
             var dictionary = _fileHelper.ReadDictionary(Filename);
-            dictionary
+            var matchingWords = dictionary
                 .Words
                 .Where(x => x.Word.ToLower() == word.ToLower())
-                .ToList()
-                .Any();
+                .ToList();
+
+            if (!matchingWords.Any())
+                return false;
             
-            var definitionParts = dictionary
-                .Words[0]
+            var selectedWord = matchingWords.First();
+
+            var definitionParts = selectedWord
                 .PermanentDefinition
-                .Split(new Char[] {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\n'})
+                .Split(new Char[] {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\n', ';'})
                 .Where(y => !string.IsNullOrWhiteSpace(y))
                 .ToList();
 
@@ -33,7 +36,6 @@ namespace Chat.WordGame.LocalDictionaryHelpers
                 .Where(x => (!x.ToLower().Contains("obs.") && !x.ToLower().Contains("archaic") && !x.ToLower().Contains("scot.") && !x.ToLower().Contains("[irish]")))
                 .ToList()
                 .Any();
-            // Make sure to include ;
         }
     }
 }

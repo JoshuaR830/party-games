@@ -140,12 +140,6 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                         Word = "Sheep",
                         PermanentDefinition = "Something something [Obs.]",
                         TemporaryDefinition = "Something something [Obs.]"
-                    },
-                    new WordData
-                    {
-                        Word = "Pig",
-                        PermanentDefinition = "A mud loving farm animal",
-                        TemporaryDefinition = "Pink animals that definitely fly"
                     }
                 }
             };
@@ -174,12 +168,6 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                         Word = "Sheep",
                         PermanentDefinition = "Something [Archaic]",
                         TemporaryDefinition = "Something [Archaic]"
-                    },
-                    new WordData
-                    {
-                        Word = "Pig",
-                        PermanentDefinition = "A mud loving farm animal",
-                        TemporaryDefinition = "Pink animals that definitely fly"
                     }
                 }
             };
@@ -208,12 +196,6 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                         Word = "Sheep",
                         PermanentDefinition = "Something else [Scot.]",
                         TemporaryDefinition = "Something else [Scot.]"
-                    },
-                    new WordData
-                    {
-                        Word = "Pig",
-                        PermanentDefinition = "A mud loving farm animal",
-                        TemporaryDefinition = "Pink animals that definitely fly"
                     }
                 }
             };
@@ -242,12 +224,6 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                         Word = "Sheep",
                         PermanentDefinition = "Something else [Irish]",
                         TemporaryDefinition = "Something else [Irish]"
-                    },
-                    new WordData
-                    {
-                        Word = "Pig",
-                        PermanentDefinition = "A mud loving farm animal",
-                        TemporaryDefinition = "Pink animals that definitely fly"
                     }
                 }
             };
@@ -276,12 +252,6 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                         Word = "Sheep",
                         PermanentDefinition = "Something something [Obs.]\n A woolly farm animal;",
                         TemporaryDefinition = "Something something [Obs.]\n A woolly farm animal;"
-                    },
-                    new WordData
-                    {
-                        Word = "Pig",
-                        PermanentDefinition = "A mud loving farm animal",
-                        TemporaryDefinition = "Pink animals that definitely fly"
                     }
                 }
             };
@@ -310,12 +280,6 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                         Word = "Sheep",
                         PermanentDefinition = "1. Something something [Obs.] 2. A woolly farm animal;",
                         TemporaryDefinition = "1. Something something [Obs.] 2. A woolly farm animal;"
-                    },
-                    new WordData
-                    {
-                        Word = "Pig",
-                        PermanentDefinition = "A mud loving farm animal",
-                        TemporaryDefinition = "Pink animals that definitely fly"
                     }
                 }
             };
@@ -344,12 +308,6 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
                         Word = "Sheep",
                         PermanentDefinition = "Something something [Obs.]; A woolly farm animal;",
                         TemporaryDefinition = "Something something [Obs.]; A woolly farm animal;"
-                    },
-                    new WordData
-                    {
-                        Word = "Pig",
-                        PermanentDefinition = "A mud loving farm animal",
-                        TemporaryDefinition = "Pink animals that definitely fly"
                     }
                 }
             };

@@ -52,11 +52,10 @@ namespace Chat.Letters
 
         public bool IsPluralReal(string word, string shortenedWord)
         {
-            var textContent = this.MakeDefinitionRequest(shortenedWord);
-            if (textContent.ToLower().Contains("word forms"))
+            var textContent = MakeDefinitionRequest(shortenedWord).ToLower();
+            if (textContent.Contains("word forms"))
             {
-                Console.WriteLine("Contains word forms");
-                return textContent.Contains(word);
+                return textContent.Contains(word.ToLower());
             }
 
             return false;

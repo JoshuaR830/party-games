@@ -15,7 +15,14 @@ namespace Chat.WordGame.WordHelpers
 
         public bool GetWordStatus(string word)
         {
-            throw new System.NotImplementedException();
+            var wordExists = _wordExistenceHelper.DoesWordExist(word);
+            
+            if (wordExists)
+                return true;
+            
+            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(word);
+
+            return wordExists;
         }
     }
 }

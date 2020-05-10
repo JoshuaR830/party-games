@@ -29,7 +29,10 @@ namespace Chat.WordGame.WordHelpers
 
         public string GetDefinition(string word)
         {
-            throw new System.NotImplementedException();
+            if (GetWordStatus(word))
+                return _wordDefinitionHelper.GetDefinitionForWord(word);
+
+            return null;
         }
     }
 }

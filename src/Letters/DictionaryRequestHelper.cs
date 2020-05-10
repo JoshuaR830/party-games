@@ -50,10 +50,16 @@ namespace Chat.Letters
             }
         }
 
-        public bool IsPluralReal(string word)
+        public bool IsPluralReal(string word, string shortenedWord)
         {
-            var textContent = this.MakeDefinitionRequest(word);
-            return textContent.Contains(word);
+            var textContent = this.MakeDefinitionRequest(shortenedWord);
+            if (textContent.ToLower().Contains("word forms"))
+            {
+                Console.WriteLine("Contains word forms");
+                return textContent.Contains(word);
+            }
+
+            return false;
         }
     }
 }

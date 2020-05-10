@@ -254,7 +254,7 @@ confirmWord.addEventListener('click', function() {
     let num = wordsCreated.length - 1;
     var word = document.createElement('div');
     word.textContent = currentWord;
-    word.className = `word-list-item word-${num}`;
+    word.className = `word-list-item word-${num} word-pending`;
     word.setAttribute('data-score', wordScore);
 
     word.addEventListener('click', function() {
@@ -282,8 +282,15 @@ lettersConnection.on("WordStatusResponse", function(status, word) {
         if(wordPos < 0) {
             return;
         }
-        
+        document.querySelector(`.word-${wordPos}`).classList.remove("word-pending");
         document.querySelector(`.word-${wordPos}`).classList.add("word-error");
+    } else {
+        let wordPos = getWordPosition(word);
+        if(wordPos < 0) {
+            return;
+        }
+
+        document.querySelector(`.word-${wordPos}`).classList.remove("word-pending");
     }
 })
 

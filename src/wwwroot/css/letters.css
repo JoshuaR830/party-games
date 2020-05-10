@@ -87,6 +87,7 @@
     text-align: center;
     padding: 8px 0 4px 0;
     user-select: none;
+    border-radius: 8px;
 }
 
 .word-ticked
@@ -102,6 +103,14 @@
     box-shadow: inset 0 0 10px #ff00005b;
     border-bottom: 2px solid #ff00005b;
     color:  #ff0000;
+    border-radius: 8px;
+}
+
+.word-pending
+{
+    /*box-shadow: inset 0 0 10px #e7dc725b;*/
+    border-bottom: 2px solid #e7dc725b;
+    color:  #e7dc725b;
     border-radius: 8px;
 }
 

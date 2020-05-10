@@ -8,13 +8,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
+namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelperTests
 {
-    public class FileHelperTests : IDisposable
+    public class ReadFileTests : IDisposable
     {
         private readonly string _filename;
 
-        public FileHelperTests()
+        public ReadFileTests()
         {
             _filename = "test-dictionary.json";
 

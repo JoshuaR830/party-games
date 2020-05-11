@@ -18,7 +18,7 @@
     <div class="letter-selection-container js-random-letters-container"></div>
     <div class="button js-letters-start">Start</div>
 
-    <div class="word-list-container js-word-list"></div>
+    <div class="word-list-container js-word-list hidden"></div>
     <div class="button js-word-to-define hidden"></div>
 
     <div class="definition-container js-definition-container hidden"></div>
@@ -28,17 +28,43 @@
     </div>
 </div>
 
-    <div id="startGame" class="start-fab fab"><span class="material-icons">play_arrow</span></div>
-    <div id="playAgain" class="start-fab fab hidden"><span class="material-icons">check</span></div>
-
-
-    <div class="top-nav">
-        <div class="top-score-fab js-score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
-        <div class="timer-fab fab">
-
-            <span class="material-icons" style="margin-right: 4px; margin-left: 4px;">alarm</span><span id="clock-minutes"></span>:<span id="clock-seconds"></span>
-        </div>
+<div class="home-screen-container js-home-screen-container">
+    <div class="image-1">
+        <div class="pretty-image">T</div>
+        <div class="pretty-image">A</div>
+        <div class="pretty-image">P</div>
     </div>
+    <div class="image-2">
+        <div class="pretty-image">S</div>
+        <div class="pretty-image">T</div>
+        <div class="pretty-image">A</div>
+        <div class="pretty-image">R</div>
+        <div class="pretty-image">T</div>
+    </div>
+    <div class="image-3">
+        <div class="pretty-image">T</div>
+        <div class="pretty-image">O</div>
+    </div>
+    <div class="image-4">
+        <div class="pretty-image">B</div>
+        <div class="pretty-image">E</div>
+        <div class="pretty-image">G</div>
+        <div class="pretty-image">I</div>
+        <div class="pretty-image">N</div>
+    </div>
+</div>
+
+<div id="startGame" class="start-fab fab"><span class="material-icons">play_arrow</span></div>
+<div id="playAgain" class="start-fab fab hidden"><span class="material-icons">check</span></div>
+
+
+<div class="top-nav">
+    <div class="top-score-fab js-score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+    <div class="timer-fab fab">
+
+        <span class="material-icons" style="margin-right: 4px; margin-left: 4px;">alarm</span><span id="clock-minutes"></span>:<span id="clock-seconds"></span>
+    </div>
+</div>
 
 <div class="popup-modal js-login-modal">
     @Html.Partial("LoginPopup")

@@ -25,6 +25,10 @@ connection.start().then(function () {
     connection.invoke("AddToGroup", connectionName);
 })
 
+window.addEventListener('load', function() {
+    document.querySelector('#my-name').focus();
+})
+
 connection.on("ReceiveCompleteRound", function() {
     console.log("ReceiveCompletedRound");
     var round = document.createElement('div');
@@ -76,6 +80,8 @@ function launchWordGame() {
 }
 
 lettersConnection.on("LettersForGame", function(jsonLetters) {
+    document.querySelector('.js-word-list').classList.remove('hidden');
+    document.querySelector('.js-home-screen-container').classList.add('hidden');
     wordToDefine.classList.add("hidden");
     definitionContainer.classList.add("hidden");
     document.querySelector('#options').classList.add('hidden');
@@ -175,6 +181,7 @@ connection.on("CompletedScores", function() {
     document.getElementById('startGame').classList.remove('hidden');
     document.querySelector('.js-letter-game-container').classList.add('hidden');
     document.getElementById("options").classList.remove('hidden');
+    document.querySelector('.js-home-screen-container').classList.remove('hidden');
 })
 
 function submitScores() {

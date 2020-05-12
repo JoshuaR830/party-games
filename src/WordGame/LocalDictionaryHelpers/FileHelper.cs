@@ -19,5 +19,10 @@ namespace Chat.WordGame.LocalDictionaryHelpers
                 reader?.Close();
             }
         }
+
+        public void WriteDictionary(string filename, Dictionary dictionary)
+        {
+	        throw new System.NotImplementedException();
+        }
     }
 }

@@ -179,9 +179,10 @@ h1 {
     box-sizing: border-box;
     user-select: none;
     text-align: center;
-    max-width: 150px;
+    max-width: 200px;
     margin-left: auto;
     margin-right: auto;
+    display: block;
 }
 
 .button:hover
@@ -189,6 +190,7 @@ h1 {
     background-color: #55edba5b;
     color: white;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .options

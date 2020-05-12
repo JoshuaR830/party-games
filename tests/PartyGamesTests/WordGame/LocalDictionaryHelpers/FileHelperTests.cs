@@ -68,7 +68,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         {
 	        var fileHelper = new FileHelper();
 	        File.Exists(_filenameToCreate).Should().BeFalse();
-			fileHelper.WriteDictionary(_filename, new Dictionary());
+			fileHelper.WriteDictionary(_filenameToCreate, new Dictionary());
 			File.Exists(_filenameToCreate).Should().BeTrue();
         }
 

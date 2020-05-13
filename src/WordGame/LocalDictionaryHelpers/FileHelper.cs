@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -25,14 +26,21 @@ namespace Chat.WordGame.LocalDictionaryHelpers
         {
 			if (File.Exists(filename))
 				File.Delete(filename);
+            
+            var json = JsonConvert.SerializeObject(dictionary);
 
-			var json = JsonConvert.SerializeObject(dictionary);
-
-			using (FileStream fs = File.Create(filename))
-			{
-				var content = new UTF8Encoding(true).GetBytes(json);
-				fs.Write(content, 0, content.Length);
-			}
-		}
+            try
+            {
+                using (FileStream fs = File.Create(filename))
+                {
+                    var content = new UTF8Encoding(true).GetBytes(json);
+                    fs.Write(content, 0, content.Length);
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error occurred {e}");
+            }
+        }
     }
 }

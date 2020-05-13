@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Chat.Letters;
+using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 
 namespace Chat.Hubs
@@ -12,14 +13,18 @@ namespace Chat.Hubs
         readonly WordValidationHelper _wordValidationHelper = new WordValidationHelper();
         readonly DictionaryRequestHelper _requestHelper = new DictionaryRequestHelper();
         private readonly IWordService _wordService;
+        private readonly IFileHelper _fileHelper;
 
-        public LettersHub(IWordService wordService)
+        public LettersHub(IWordService wordService, IFileHelper fileHelper)
         {
             _wordService = wordService;
+            _fileHelper = fileHelper;
         }
 
         public async Task AddToGroup(string groupName)
         {
+            var fileHelper =  new Letters.FileHelper();
+            fileHelper.CopyFileContent();
             // var fileHelper = new FileHelper();
             // var dictionaryContent = fileHelper.ReadDictionary();
             // fileHelper.WriteToDictionary(dictionaryContent);

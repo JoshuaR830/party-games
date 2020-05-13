@@ -59,8 +59,12 @@ namespace Chat.Hubs
         {
             System.Console.WriteLine("Hello");
             var definition = _wordValidationHelper.GetDefinition(word);
+            var definition2 = _wordService.GetDefinition(word);
             // var definition2 = _wordService.GetDefinition(word);
+            Console.WriteLine("\n\nDefinition old");
             Console.WriteLine(definition);
+            Console.WriteLine("\n\nDefinition new");
+            Console.WriteLine(definition2);
             // Console.WriteLine(definition2);
             System.Console.WriteLine("Hi");
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);

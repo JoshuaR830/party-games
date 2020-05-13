@@ -6,7 +6,7 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     public class WordExistenceHelper : IWordExistenceHelper
     {
         private readonly IFileHelper _fileHelper;
-        private const string Filename = "./new-word-list.json";
+        private const string Filename = "./word-dictionary.json";
 
         public WordExistenceHelper(IFileHelper fileHelper)
         {
@@ -26,13 +26,13 @@ namespace Chat.WordGame.LocalDictionaryHelpers
             
             var selectedWord = matchingWords.First();
 
-            var definitionParts = selectedWord
-                .PermanentDefinition
-                .Split(new Char[] {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\n', ';'})
+            var definitionParts = selectedWord.PermanentDefinition ?? selectedWord.TemporaryDefinition ?? "";
+            
+            var definitionList = definitionParts.Split(new Char[] {'1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\n', ';'})
                 .Where(y => !string.IsNullOrWhiteSpace(y))
                 .ToList();
 
-            return definitionParts
+            return definitionList
                 .Where(x => (!x.ToLower().Contains("obs.") && !x.ToLower().Contains("archaic") && !x.ToLower().Contains("scot.") && !x.ToLower().Contains("[irish]")))
                 .ToList()
                 .Any();

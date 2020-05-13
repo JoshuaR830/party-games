@@ -4,6 +4,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Linq;
 using System;
+using Chat.WordGame.LocalDictionaryHelpers;
 
 namespace Chat.Letters
 {
@@ -139,6 +140,29 @@ namespace Chat.Letters
                 if (writer != null)
                     writer.Close();
             }
+        }
+        
+        public void CopyFileContent()
+        {
+            Console.WriteLine("Started");
+            var helper = new WordGame.LocalDictionaryHelpers.FileHelper();
+            var list = ReadWordsFromFile();
+
+            var dictionary = new WordGame.LocalDictionaryHelpers.Dictionary();
+            
+            foreach (var item in list)
+            {
+                dictionary.Words.Add(new WordData
+                {
+                    Word = item.Word,
+                    TemporaryDefinition = item.Definition,
+                    PermanentDefinition = null
+                });
+            }
+
+            Console.WriteLine("Done");
+            
+            helper.WriteDictionary("./word-dictionary.json", dictionary);
         }
     }
 }

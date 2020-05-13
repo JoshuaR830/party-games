@@ -12,5 +12,10 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     public class Dictionary
     {
         public List<WordData> Words { get; set; }
+
+        public Dictionary()
+        {
+            this.Words = new List<WordData>();
+        }
     }
 }

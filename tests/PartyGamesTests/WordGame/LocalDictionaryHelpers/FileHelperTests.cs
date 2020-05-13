@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Chat.WordGame.LocalDictionaryHelpers;
@@ -13,10 +14,12 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
     public class FileHelperTests : IDisposable
     {
         private readonly string _filename;
+        private readonly string _filenameToCreate;
 
         public FileHelperTests()
         {
             _filename = "test-dictionary.json";
+            _filenameToCreate = "created-new-file.json";
 
             using (FileStream fs = File.Create(_filename))
             {
@@ -60,10 +63,71 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
             }}");
         }
 
+        [Fact]
+        public void WhenWritingToAFileIfItDoesNotExistItShouldBeCreated()
+        {
+	        var fileHelper = new FileHelper();
+	        File.Exists(_filenameToCreate).Should().BeFalse();
+			fileHelper.WriteDictionary(_filenameToCreate, new Dictionary());
+			File.Exists(_filenameToCreate).Should().BeTrue();
+        }
+
+		[Fact]
+        public void WhenWritingContentTheContentShouldActuallyBeDeserializableToDictionary()
+        {
+			var fileHelper = new FileHelper();
+
+			var dictionary = new Dictionary
+			{
+				Words = new List<WordData>
+				{
+					new WordData
+					{
+						Word = "Sheep",
+						PermanentDefinition = "An animal with a wool laden coat",
+						TemporaryDefinition = "A fluffy animal that sits"
+					},
+					new WordData
+					{
+						Word = "Sloth",
+						PermanentDefinition = "An animal that likes sleeping",
+						TemporaryDefinition = "A sleepy animal that sleeps"
+					}
+				}
+			};
+
+			fileHelper.WriteDictionary(_filename, dictionary);
+
+			using (StreamReader r = new StreamReader(_filename))
+			{
+				string json = r.ReadToEnd();
+				var dictionaryContent = JsonConvert.DeserializeObject<Dictionary>(json);
+				dictionaryContent.Should().BeOfType<Dictionary>();
+				JToken.Parse(JsonConvert.SerializeObject(dictionaryContent)).Should().BeEquivalentTo(@"
+				{
+					""Words"": [
+						{
+							""Word"": ""Sheep"",
+							""PermanentDefinition"": ""An animal with a wool laden coat"",
+							""TemporaryDefinition"": ""A fluffy animal that sits""
+						},
+						{
+							""Word"": ""Sloth"",
+							""PermanentDefinition"": ""An animal that likes sleeping"",
+							""TemporaryDefinition"": ""A sleepy animal that sleeps""
+						}
+					]
+				}");
+			}
+        }
+
         public void Dispose()
         {
             if(File.Exists(_filename))
                 File.Delete(_filename);
+
+            if (File.Exists(_filenameToCreate))
+	            File.Delete(_filenameToCreate);
         }
     }
 }

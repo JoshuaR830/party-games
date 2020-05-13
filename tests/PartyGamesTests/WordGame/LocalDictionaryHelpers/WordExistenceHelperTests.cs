@@ -322,5 +322,61 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
             var response = wordExistenceHelper.DoesWordExist(word);
             response.Should().BeTrue();
         }
+        
+        [Fact]
+        public void WhenWordExistsButPermanentDefinitionHasNotBeenSetTheResponseShouldBeTrue()
+        {
+            var word = "Sheep";
+            var dictionary = new Dictionary
+            {
+                Words = new List<WordData>
+                {
+                    new WordData
+                    {
+                        Word = "Sheep",
+                        PermanentDefinition = null,
+                        TemporaryDefinition = "A woolly farm animal;"
+                    }
+                }
+            };
+            
+            var fileHelper = Substitute.For<IFileHelper>();
+
+            fileHelper
+                .ReadDictionary(Arg.Any<string>())
+                .Returns(dictionary);
+            
+            var wordExistenceHelper = new WordExistenceHelper(fileHelper);
+            var response = wordExistenceHelper.DoesWordExist(word);
+            response.Should().BeTrue();
+        }
+        
+        [Fact]
+        public void WhenBothPermanentDefinitionAndTemporaryDefinitionHaveNotBeenSetTheResponseShouldBeFalse()
+        {
+            var word = "Sheep";
+            var dictionary = new Dictionary
+            {
+                Words = new List<WordData>
+                {
+                    new WordData
+                    {
+                        Word = "Sheep",
+                        PermanentDefinition = null,
+                        TemporaryDefinition = null
+                    }
+                }
+            };
+            
+            var fileHelper = Substitute.For<IFileHelper>();
+
+            fileHelper
+                .ReadDictionary(Arg.Any<string>())
+                .Returns(dictionary);
+            
+            var wordExistenceHelper = new WordExistenceHelper(fileHelper);
+            var response = wordExistenceHelper.DoesWordExist(word);
+            response.Should().BeFalse();
+        }
     }
 }

@@ -5,14 +5,14 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace PartyGamesTests.WordGame.WordHelpers
+namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
 {
-    public class WordHelperTests
+    public class StrippedSuffixTests
     {
         private readonly IWebDictionaryRequestHelper _webDictionaryRequestHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
 
-        public WordHelperTests()
+        public StrippedSuffixTests()
         {
             _webDictionaryRequestHelper = Substitute.For<IWebDictionaryRequestHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
@@ -21,38 +21,7 @@ namespace PartyGamesTests.WordGame.WordHelpers
                 .DoesWordExist(Arg.Any<string>())
                 .Returns(true);
         }
-
-        [Fact]
-        public void WhenWordExistsResponseShouldBeTrue()
-        {
-            var word = "sheep";
-            var responseString = "There once was a sheep called Ollie, who jumped through the hedge by a lorry, the man hit the brakes, the sheep made mistakes, but all ended well and is jolly";
-            
-            _webDictionaryRequestHelper
-                .MakeContentRequest(word)
-                .Returns(responseString);
-            
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
-            var response = wordHelper.CheckWordEndingExists(word);
-            response.Should().BeTrue();
-        }
         
-        [Fact]
-        public void WhenWordDoesNotExistResponseShouldBeFalse()
-        {
-            var nonExistentWord = "sheeps";
-
-            var responseString = "There once was a sheep called simon, whose fleece was as shiny as diamond, he ate grass all day, through the night he did play, and now he just sleeps through the day";
-
-            _webDictionaryRequestHelper
-                .MakeContentRequest(nonExistentWord)
-                .Returns(responseString);
-            
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
-            var response = wordHelper.CheckWordEndingExists(nonExistentWord);
-            response.Should().BeFalse();
-        }
-
         [Fact]
         public void WhenWordHasOneLetterEnding()
         {
@@ -61,8 +30,8 @@ namespace PartyGamesTests.WordGame.WordHelpers
             
             
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
-                .Returns("There are some cheeses over there");
+                .MakeContentRequest("cheese")
+                .Returns("Word forms: there are some cheeses over there");
 
             var wordHelperUnderTest = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(word);
@@ -77,7 +46,7 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
+                .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
@@ -93,8 +62,8 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
-                .Returns("There are some boxes over there");
+                .MakeContentRequest("box")
+                .Returns("Word forms: there are some boxes over there");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
             response.Should().BeTrue();
@@ -108,7 +77,7 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
+                .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
@@ -124,8 +93,8 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
-                .Returns("This is really kicking it");
+                .MakeContentRequest("kick")
+                .Returns("Word forms: This is really kicking it");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
             response.Should().BeTrue();
@@ -139,7 +108,7 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
+                .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
@@ -155,8 +124,8 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
-                .Returns("Got to love running in the park");
+                .MakeContentRequest("run")
+                .Returns("Word forms: got to love running in the park");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);
             response.Should().BeTrue();
@@ -170,7 +139,7 @@ namespace PartyGamesTests.WordGame.WordHelpers
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
 
             _webDictionaryRequestHelper
-                .MakeContentRequest(word)
+                .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
             var response = wordHelper.StrippedSuffixDictionaryCheck(word);

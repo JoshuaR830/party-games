@@ -18,7 +18,7 @@ namespace Chat.WordGame.WordHelpers
 
         public bool StrippedSuffixDictionaryCheck(string word)
         {
-            var endings = new List<string> {"ning", "ing", "er", "es", "s"};
+            var endings = new List<string> {"ning", "ing", "ed", "er", "es", "s"};
             endings = endings
                 .Where(x => x.Length < word.Length)
                 .OrderByDescending(s => s.Length)
@@ -32,7 +32,7 @@ namespace Chat.WordGame.WordHelpers
                 if (!_wordExistenceHelper.DoesWordExist(word.Remove(word.Length - endings.Count))) 
                     continue;
 
-                if (CheckWordWithEndingExists(word, word.Remove(word.Length - endings.Count)))
+                if (CheckWordWithEndingExists(word, word.Remove(word.Length - ending.Length)))
                     return true;
             }
 
@@ -41,7 +41,9 @@ namespace Chat.WordGame.WordHelpers
 
         public bool CheckWordWithEndingExists(string word, string shortWord)
         {
-            var responseText = _webDictionaryRequestHelper.MakeContentRequest(word);
+            var responseText = _webDictionaryRequestHelper.MakeContentRequest(shortWord).ToLower();
+            if (!responseText.Contains("word forms"))
+                return false;
             return responseText.Contains(word);
         }
     }

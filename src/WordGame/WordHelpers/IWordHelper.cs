@@ -3,6 +3,6 @@
     public interface IWordHelper
     {
         bool StrippedSuffixDictionaryCheck(string word);
-        bool CheckWordEndingExists(string word);
+        bool CheckWordWithEndingExists(string word, string shortWord);
     }
 }

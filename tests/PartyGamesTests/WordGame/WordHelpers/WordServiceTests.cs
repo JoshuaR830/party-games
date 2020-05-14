@@ -87,7 +87,7 @@ namespace PartyGamesTests.WordGame.WordHelpers
                 .Returns(false);
 
             _wordHelper
-                .CheckWordEndingExists(word)
+                .CheckWordWithEndingExists(word, "sheep")
                 .Returns(false);
 
             var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper);

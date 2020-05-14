@@ -50,7 +50,7 @@ namespace Chat.WordGame.WebHelpers
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine("Failed to retrieve");
+                        Console.WriteLine($"Failed to retrieve {e}");
                     }
                     
                     using (var responseStream = response.GetResponseStream())

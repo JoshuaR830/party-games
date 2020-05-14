@@ -4,7 +4,7 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace PartyGamesTests.WordGame.WordHelpers
+namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 {
     public class WordServiceTests
     {

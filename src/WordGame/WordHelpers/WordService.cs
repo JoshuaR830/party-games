@@ -34,5 +34,10 @@ namespace Chat.WordGame.WordHelpers
 
             return null;
         }
+
+        public void AddNewWordToDictionary(string word, string definition)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

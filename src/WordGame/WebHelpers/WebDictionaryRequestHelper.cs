@@ -33,7 +33,6 @@ namespace Chat.WordGame.WebHelpers
 
         public string MakeContentRequest(string word)
         {
-
             var url = $"{ContentRequestUrlBase}/{word}";
             try
             {

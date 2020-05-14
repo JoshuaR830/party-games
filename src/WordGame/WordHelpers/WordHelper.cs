@@ -32,14 +32,14 @@ namespace Chat.WordGame.WordHelpers
                 if (!_wordExistenceHelper.DoesWordExist(word.Remove(word.Length - endings.Count))) 
                     continue;
 
-                if (CheckWordEndingExists(word))
+                if (CheckWordWithEndingExists(word, word.Remove(word.Length - endings.Count)))
                     return true;
             }
 
             return false;
         }
 
-        public bool CheckWordEndingExists(string word)
+        public bool CheckWordWithEndingExists(string word, string shortWord)
         {
             var responseText = _webDictionaryRequestHelper.MakeContentRequest(word);
             return responseText.Contains(word);

@@ -29,7 +29,7 @@ namespace Chat.WordGame.WordHelpers
                 if (word.Substring(word.Length - ending.Length) != ending)
                     continue;
 
-                if (!_wordExistenceHelper.DoesWordExist(word.Remove(word.Length - endings.Count))) 
+                if (!_wordExistenceHelper.DoesWordExist(word.Remove(word.Length - ending.Length))) 
                     continue;
 
                 if (CheckWordWithEndingExists(word, word.Remove(word.Length - ending.Length)))

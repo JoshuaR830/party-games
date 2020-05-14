@@ -26,8 +26,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordHasOneLetterEnding()
         {
             var word = "cheeses";
-            var ending = "s";
-            
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("cheese")
@@ -37,7 +35,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(word);
             response.Should().BeTrue();
         }
-        
+
         [Fact]
         public void WhenNotAWordButEndingInOneLetter()
         {
@@ -57,7 +55,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordHasTwoLetterEnding()
         {
             var word = "boxes";
-            var ending = "es";
             
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
@@ -88,7 +85,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordHasThreeLetterEnding()
         {
             var word = "kicking";
-            var ending = "ing";
             
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
@@ -119,8 +115,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordHasFourLetterEnding()
         {
             var word = "running";
-            var ending = "ning";
-
+            
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
             
             _webDictionaryRequestHelper
@@ -135,7 +130,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenNotAWordButEndingInfourLetters()
         {
             var word = "reallynotawordning";
-
+            
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
 
             _webDictionaryRequestHelper

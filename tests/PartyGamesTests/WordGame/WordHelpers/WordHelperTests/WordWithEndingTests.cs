@@ -20,7 +20,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             _wordExistenceHelper
                 .DoesWordExist(Arg.Any<string>())
                 .Returns(true);
-            
         }
         
         [Fact]
@@ -42,7 +41,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordHasWordFormsButIsNotARealWordResponseShouldBeFalse()
         {
             var nonExistentWord = "sheeps";
-
             var responseString = "word forms: There once was a sheep called simon, whose fleece was as shiny as diamond, he ate grass all day, word forms through the night he did play, and now he just sleeps through the day";
 
             _webDictionaryRequestHelper
@@ -58,7 +56,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordIsRealButTheSiteDoesNotContainWordFormsThenResponseShouldBeFalse()
         {
             var word = "diamond";
-
             var responseString = "There once was a sheep called simon, whose fleece was as shiny as diamond, he ate grass all day, through the night he did play, and now he just sleeps through the day";
 
             _webDictionaryRequestHelper
@@ -74,7 +71,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordDoesNotExistAndDoesNotReturnWordFormsThenResponseShouldBeFalse()
         {
             var nonExistentWord = "sheeps";
-
             var responseString = "There once was a sheep called simon, whose fleece was as shiny as diamond, he ate grass all day, through the night he did play, and now he just sleeps through the day";
 
             _webDictionaryRequestHelper
@@ -90,7 +86,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenSiteContainsWordFormsAndWordExistsThenResponseShouldBeTrue()
         {
             var word = "diamond";
-
             var responseString = "Word forms: There once was a sheep called simon, whose fleece was as shiny as diamonds, he ate grass all day, through the night he did play, and now he just sleeps through the day";
 
             _webDictionaryRequestHelper
@@ -106,7 +101,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         public void WhenWordDoesNotExistResponseShouldBeFalse()
         {
             var nonExistentWord = "sheeps";
-
             var responseString = "There once was a sheep called simon, whose fleece was as shiny as diamond, he ate grass all day, through the night he did play, and now he just sleeps through the day";
 
             _webDictionaryRequestHelper

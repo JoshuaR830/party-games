@@ -7,12 +7,14 @@ namespace Chat.WordGame.WordHelpers
         private readonly IWordHelper _wordHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
-
-        public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper)
+        private readonly IFileHelper _fileHelper;
+        
+        public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper)
         {
             _wordExistenceHelper = wordExistenceHelper;
             _wordHelper = wordHelper;
             _wordDefinitionHelper = wordDefinitionHelper;
+            _fileHelper = fileHelper;
         }
 
         public bool GetWordStatus(string word)
@@ -35,9 +37,15 @@ namespace Chat.WordGame.WordHelpers
             return null;
         }
 
-        public void AddNewWordToDictionary(string word, string definition)
+        public void AddNewWordToDictionary(string filename, string word, string definition)
         {
-            throw new System.NotImplementedException();
+            // This is mocked out so that's a lot of fun
+            // I want to test the real one
+            // I want to read fake dictionary - well I want to actually do it
+            // I want to add to write real data to the file
+            // Not really sure how to fix this
+            var dictionary = _fileHelper.ReadDictionary(filename);
+            _fileHelper.WriteDictionary(filename, dictionary);
         }
     }
 }

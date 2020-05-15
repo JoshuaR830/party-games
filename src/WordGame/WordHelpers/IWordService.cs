@@ -6,6 +6,6 @@ namespace Chat.WordGame.WordHelpers
     {
         bool GetWordStatus(string word);
         string GetDefinition(string word);
-        void AddNewWordToDictionary(string word, string definition);
+        void AddNewWordToDictionary(string filename, string word, string definition);
     }
 }

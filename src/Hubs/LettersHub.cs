@@ -80,6 +80,4 @@ namespace Chat.Hubs
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
     }
-
-   
 }

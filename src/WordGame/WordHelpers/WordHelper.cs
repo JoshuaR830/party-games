@@ -24,16 +24,28 @@ namespace Chat.WordGame.WordHelpers
                 .OrderByDescending(s => s.Length)
                 .ToList();
 
+
             foreach (var ending in endings)
             {
+                var shortenedWord = word.Remove(word.Length - ending.Length);
+
                 if (word.Substring(word.Length - ending.Length) != ending)
                     continue;
 
-                if (!_wordExistenceHelper.DoesWordExist(word.Remove(word.Length - ending.Length))) 
+                if (!_wordExistenceHelper.DoesWordExist(shortenedWord)) 
                     continue;
 
-                if (CheckWordWithEndingExists(word, word.Remove(word.Length - ending.Length)))
+                if (CheckWordWithEndingExists(word, shortenedWord))
+                {
+                    // Need to do whatever I do here
+                    // Need to get the definition of the short word
+                    // Need to set that as temporary definition
+                    // Need to set the full word as the word
+
+                    // Need to write a test that will check that plural is added
+                    // Need to substitute everything except the stripped suffix stuff
                     return true;
+                }
             }
 
             return false;

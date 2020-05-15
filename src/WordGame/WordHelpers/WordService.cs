@@ -60,7 +60,6 @@ namespace Chat.WordGame.WordHelpers
             
             var dictionary = _fileHelper.ReadDictionary(filename);
 
-            // var wordList = dictionary.Words.Where(x => string.Equals(x.Word, word, StringComparison.CurrentCultureIgnoreCase)).ToList();
             var wordList = dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
 
             if (!wordList.Any())
@@ -70,6 +69,11 @@ namespace Chat.WordGame.WordHelpers
             dictionary.Words[item].PermanentDefinition = definition;
             
             _fileHelper.WriteDictionary(filename, dictionary);
+        }
+
+        public void AutomaticallySetTemporaryDefinitionForWord(string filename, string word, string temporaryDefinition)
+        {
+            throw new NotImplementedException();
         }
     }
 }

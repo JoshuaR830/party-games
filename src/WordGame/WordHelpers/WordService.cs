@@ -39,12 +39,15 @@ namespace Chat.WordGame.WordHelpers
 
         public void AddNewWordToDictionary(string filename, string word, string definition)
         {
-            // This is mocked out so that's a lot of fun
-            // I want to test the real one
-            // I want to read fake dictionary - well I want to actually do it
-            // I want to add to write real data to the file
-            // Not really sure how to fix this
             var dictionary = _fileHelper.ReadDictionary(filename);
+            
+            dictionary.Words.Add(new WordData
+            {
+                Word = word,
+                PermanentDefinition = definition,
+                TemporaryDefinition = null
+            });
+            
             _fileHelper.WriteDictionary(filename, dictionary);
         }
     }

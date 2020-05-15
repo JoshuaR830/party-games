@@ -18,14 +18,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordHelper _wordHelper;
-        private readonly IFileHelper _fileHelper;
+        private readonly FileHelper _fileHelper;
         
         public AddNewWordToDictionaryTests()
         {
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordHelper = Substitute.For<IWordHelper>();
-            _fileHelper = Substitute.For<IFileHelper>();
+            _fileHelper = new FileHelper();
             
             if (File.Exists(Filename))
                 File.Delete(Filename);

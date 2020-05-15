@@ -7,12 +7,14 @@ namespace Chat.WordGame.WordHelpers
         private readonly IWordHelper _wordHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
-
-        public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper)
+        private readonly IFileHelper _fileHelper;
+        
+        public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper)
         {
             _wordExistenceHelper = wordExistenceHelper;
             _wordHelper = wordHelper;
             _wordDefinitionHelper = wordDefinitionHelper;
+            _fileHelper = fileHelper;
         }
 
         public bool GetWordStatus(string word)
@@ -33,6 +35,20 @@ namespace Chat.WordGame.WordHelpers
                 return _wordDefinitionHelper.GetDefinitionForWord(word);
 
             return null;
+        }
+
+        public void AddNewWordToDictionary(string filename, string word, string definition)
+        {
+            var dictionary = _fileHelper.ReadDictionary(filename);
+            
+            dictionary.Words.Add(new WordData
+            {
+                Word = word,
+                PermanentDefinition = definition,
+                TemporaryDefinition = null
+            });
+            
+            _fileHelper.WriteDictionary(filename, dictionary);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         public void WhenWordExistsUpdateDefinitionThePermanentDefinitionShouldBeUpdated()
         {
             var newDefinition = "A cloud like fluffy animal";
-            var word = "Sheep";
+            var word = "sheep";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             
@@ -66,16 +66,16 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Should()
                 .Be(3);
 
-            dictionary.Words.Should().Contain(x => x.Word == "Sheep");
-            dictionary.Words.Should().Contain(x => x.Word == "Sloth");
-            dictionary.Words.Should().Contain(x => x.Word == "Pelican");
+            dictionary.Words.Should().Contain(x => x.Word == "sheep");
+            dictionary.Words.Should().Contain(x => x.Word == "sloth");
+            dictionary.Words.Should().Contain(x => x.Word == "pelican");
         }
 
         [Fact]
         public void WhenUpdateHappensAndDefinitionIsEmptyDefinitionShouldNotBeChanged()
         {
             var newDefinition = "";
-            var word = "Sheep";
+            var word = "sheep";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             
@@ -110,9 +110,9 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Should()
                 .Be(3);
 
-            dictionary.Words.Should().Contain(x => x.Word == "Sheep");
-            dictionary.Words.Should().Contain(x => x.Word == "Sloth");
-            dictionary.Words.Should().Contain(x => x.Word == "Pelican");
+            dictionary.Words.Should().Contain(x => x.Word == "sheep");
+            dictionary.Words.Should().Contain(x => x.Word == "sloth");
+            dictionary.Words.Should().Contain(x => x.Word == "pelican");
         }
 
         [Fact]
@@ -122,7 +122,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
-            
+
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
 
@@ -132,9 +132,75 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Should()
                 .Be(3);
 
-            dictionary.Words.Should().Contain(x => x.Word == "Sheep");
-            dictionary.Words.Should().Contain(x => x.Word == "Sloth");
-            dictionary.Words.Should().Contain(x => x.Word == "Pelican");
+            dictionary.Words.Should().Contain(x => x.Word == "sheep");
+            dictionary.Words.Should().Contain(x => x.Word == "sloth");
+            dictionary.Words.Should().Contain(x => x.Word == "pelican");
+        }
+
+        [Fact]
+        public void WhenCapitalisationIsBlockCapitalTheDefinitionShouldStillBeUpdated()
+        {
+            var newDefinition = "A cloud like fluffy animal";
+            var word = "SHEEP";
+
+            _wordService.UpdateExistingWord(Filename, word, newDefinition);
+            
+            var json = TestFileHelper.Read(Filename);
+            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+
+            dictionary
+                .Words
+                .Should()
+                .ContainEquivalentOf(new WordData
+                {
+                    Word = "sheep",
+                    PermanentDefinition = newDefinition,
+                    TemporaryDefinition = TempDefinition
+                });
+        }
+        
+        [Fact]
+        public void WhenCapitalisationIsLowerTheDefinitionShouldBeUpdated()
+        {
+            var newDefinition = "A cloud like fluffy animal";
+            var word = "sheep";
+
+            _wordService.UpdateExistingWord(Filename, word, newDefinition);
+            
+            var json = TestFileHelper.Read(Filename);
+            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+
+            dictionary
+                .Words
+                .Should()
+                .ContainEquivalentOf(new WordData
+                {
+                    Word = "sheep",
+                    PermanentDefinition = newDefinition,
+                    TemporaryDefinition = TempDefinition
+                });
+        }
+        
+        [Fact]
+        public void WhenCapitalisationIsSentenceTheDefinitionShouldBeUpdated()
+        {
+            var newDefinition = "A cloud like fluffy animal";
+            var word = "Sheep";
+
+            _wordService.UpdateExistingWord(Filename, word, newDefinition);
+            
+            var json = TestFileHelper.Read(Filename);
+            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+
+            dictionary
+                .Words
+                .Should()
+                .ContainEquivalentOf(new WordData
+                {
+                    Word = "sheep",
+                    PermanentDefinition = newDefinition,
+                    TemporaryDefinition = TempDefinition
+                });
         }
     }
 }

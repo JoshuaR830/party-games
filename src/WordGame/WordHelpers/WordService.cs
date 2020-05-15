@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Chat.WordGame.LocalDictionaryHelpers;
 
 namespace Chat.WordGame.WordHelpers
@@ -59,7 +60,8 @@ namespace Chat.WordGame.WordHelpers
             
             var dictionary = _fileHelper.ReadDictionary(filename);
 
-            var wordList = dictionary.Words.Where(x => x.Word == word).ToList();
+            // var wordList = dictionary.Words.Where(x => string.Equals(x.Word, word, StringComparison.CurrentCultureIgnoreCase)).ToList();
+            var wordList = dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
 
             if (!wordList.Any())
                 return;

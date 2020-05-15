@@ -15,6 +15,8 @@ namespace Chat.Hubs
         private readonly IWordService _wordService;
         private readonly IFileHelper _fileHelper;
 
+        private const string Filename = "./word-dictionary.json";
+
         public LettersHub(IWordService wordService, IFileHelper fileHelper)
         {
             _wordService = wordService;
@@ -74,6 +76,7 @@ namespace Chat.Hubs
         {
             // var definition = _requestHelper.MakeDefinitionRequest(newWord);
             _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
+            _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
     }

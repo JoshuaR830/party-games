@@ -61,7 +61,7 @@ namespace Chat.Hubs
         {
             System.Console.WriteLine("Hello");
             var definition = _wordValidationHelper.GetDefinition(word);
-            var definition2 = _wordService.GetDefinition(word);
+            var definition2 = _wordService.GetDefinition(Filename, word);
             // var definition2 = _wordService.GetDefinition(word);
             Console.WriteLine("\n\nDefinition old");
             Console.WriteLine(definition);

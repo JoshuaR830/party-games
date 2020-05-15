@@ -2,6 +2,7 @@
 using System.Linq;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WebHelpers;
+using Microsoft.CodeAnalysis;
 
 namespace Chat.WordGame.WordHelpers
 {
@@ -9,14 +10,20 @@ namespace Chat.WordGame.WordHelpers
     {
         private readonly IWebDictionaryRequestHelper _webDictionaryRequestHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
+        private readonly IWordDefinitionHelper _wordDefinitionHelper;
+        private readonly IFileHelper _fileHelper;
+        private readonly IWordService _wordService;
 
-        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper)
+        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, IWordService wordService)
         {
             _webDictionaryRequestHelper = webDictionaryRequestHelper;
             _wordExistenceHelper = wordExistenceHelper;
+            _wordDefinitionHelper = wordDefinitionHelper;
+            _fileHelper = fileHelper;
+            _wordService = wordService;
         }
 
-        public bool StrippedSuffixDictionaryCheck(string word)
+        public bool StrippedSuffixDictionaryCheck(string filename, string word)
         {
             var endings = new List<string> {"ning", "ing", "ed", "er", "es", "s"};
             endings = endings
@@ -37,13 +44,8 @@ namespace Chat.WordGame.WordHelpers
 
                 if (CheckWordWithEndingExists(word, shortenedWord))
                 {
-                    // Need to do whatever I do here
-                    // Need to get the definition of the short word
-                    // Need to set that as temporary definition
-                    // Need to set the full word as the word
-
-                    // Need to write a test that will check that plural is added
-                    // Need to substitute everything except the stripped suffix stuff
+                    var temporaryDefinition = _wordDefinitionHelper.GetDefinitionForWord(shortenedWord);
+                    _wordService.AutomaticallySetTemporaryDefinitionForWord(filename, word, temporaryDefinition);
                     return true;
                 }
             }

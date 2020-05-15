@@ -13,7 +13,7 @@ namespace PartyGamesTests.WordGame
                 var content = new UTF8Encoding(true).GetBytes($@"{{ 
                     ""Words"" : [
                         {{""Word"":""sheep"",""TemporaryDefinition"":""A fluffy animal that sits, eats grass, sits, eats grass and is commonly counted by children who can't sleep (they love the attention)."", ""PermanentDefinition"": ""An animal with a wool laden coat that lives on a farm""}},
-                        {{""Word"":""sloth"",""TemporaryDefinition"":""{SlothTemporaryDefinition}"": ""An animal that likes sleeping""}},
+                        {{""Word"":""sloth"",""TemporaryDefinition"":""{SlothTemporaryDefinition}"", ""PermanentDefinition"":""An animal that likes sleeping""}},
                         {{""Word"":""pelican"",""TemporaryDefinition"":""A large bird with one heck of a bill, I wonder if such a big bill causes problems? Adults find this relatable because they have entered the real world and also have big bills."", ""PermanentDefinition"": ""A bird with a big beak""}}
                     ]
                 }}");

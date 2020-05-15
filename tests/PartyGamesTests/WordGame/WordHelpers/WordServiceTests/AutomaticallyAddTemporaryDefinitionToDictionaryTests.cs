@@ -11,7 +11,7 @@ using Xunit;
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 {
     [Collection("Files")]
-    public class AddNewWordToDictionaryTests : IDisposable
+    public class AutomaticallyAddNewWordToDictionaryTests : IDisposable
     {
         private const string Filename = "./add-new-word-to-file.json";
         private WordService _wordService;
@@ -21,7 +21,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly IWordHelper _wordHelper;
         private readonly FileHelper _fileHelper;
         
-        public AddNewWordToDictionaryTests()
+        public AutomaticallyAddNewWordToDictionaryTests()
         {
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
@@ -35,14 +35,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         }
 
         [Fact]
-        public void WhenADefinitionIsSetThenItShouldBeWrittenToTheDictionary()
+        public void Something()
         {
-            var newWord = "new";
-            var newDefinition = "Something that has only just come into existence";
+            var newWord = "news";
+            var temporaryDefinition = "Something that has only just come into existence";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
 
-            _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
+            _wordService.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
 
             var response = TestFileHelper.Read(Filename);
 
@@ -51,20 +51,20 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
                 Word = newWord,
-                PermanentDefinition = newDefinition,
-                TemporaryDefinition = null
+                PermanentDefinition = null,
+                TemporaryDefinition = temporaryDefinition
             });
         }
 
         [Fact]
         public void WhenNoDefinitionIsEnteredTheWordShouldStillBeWritten()
         {
-            var newWord = "new";
-            var newDefinition = "";
+            var newWord = "news";
+            var temporaryDefinition = "";
 
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
 
-            _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
+            _wordService.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
 
             var response = TestFileHelper.Read(Filename);
 
@@ -73,8 +73,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
                 Word = newWord,
-                PermanentDefinition = newDefinition,
-                TemporaryDefinition = null
+                PermanentDefinition = null,
+                TemporaryDefinition = temporaryDefinition
             });
         }
 

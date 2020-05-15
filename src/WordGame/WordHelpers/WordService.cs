@@ -19,21 +19,21 @@ namespace Chat.WordGame.WordHelpers
             _fileHelper = fileHelper;
         }
 
-        public bool GetWordStatus(string word)
+        public bool GetWordStatus(string filename, string word)
         {
             var wordExists = _wordExistenceHelper.DoesWordExist(word);
             
             if (wordExists)
                 return true;
             
-            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(word);
+            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(filename, word);
 
             return wordExists;
         }
 
-        public string GetDefinition(string word)
+        public string GetDefinition(string filename, string word)
         {
-            if (GetWordStatus(word))
+            if (GetWordStatus(filename, word))
                 return _wordDefinitionHelper.GetDefinitionForWord(word);
 
             return null;
@@ -73,7 +73,16 @@ namespace Chat.WordGame.WordHelpers
 
         public void AutomaticallySetTemporaryDefinitionForWord(string filename, string word, string temporaryDefinition)
         {
-            throw new NotImplementedException();
+            var dictionary = _fileHelper.ReadDictionary(filename);
+            
+            dictionary.Words.Add(new WordData
+            {
+                Word = word,
+                PermanentDefinition = null,
+                TemporaryDefinition = temporaryDefinition
+            });
+            
+            _fileHelper.WriteDictionary(filename, dictionary);
         }
     }
 }

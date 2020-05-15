@@ -2,6 +2,7 @@
 using System.Linq;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WebHelpers;
+using Microsoft.CodeAnalysis;
 
 namespace Chat.WordGame.WordHelpers
 {
@@ -9,14 +10,20 @@ namespace Chat.WordGame.WordHelpers
     {
         private readonly IWebDictionaryRequestHelper _webDictionaryRequestHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
+        private readonly IWordDefinitionHelper _wordDefinitionHelper;
+        private readonly IFileHelper _fileHelper;
+        private readonly IWordService _wordService;
 
-        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper)
+        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, IWordService wordService)
         {
             _webDictionaryRequestHelper = webDictionaryRequestHelper;
             _wordExistenceHelper = wordExistenceHelper;
+            _wordDefinitionHelper = wordDefinitionHelper;
+            _fileHelper = fileHelper;
+            _wordService = wordService;
         }
 
-        public bool StrippedSuffixDictionaryCheck(string word)
+        public bool StrippedSuffixDictionaryCheck(string filename, string word)
         {
             var endings = new List<string> {"ning", "ing", "ed", "er", "es", "s"};
             endings = endings
@@ -24,16 +31,23 @@ namespace Chat.WordGame.WordHelpers
                 .OrderByDescending(s => s.Length)
                 .ToList();
 
+
             foreach (var ending in endings)
             {
+                var shortenedWord = word.Remove(word.Length - ending.Length);
+
                 if (word.Substring(word.Length - ending.Length) != ending)
                     continue;
 
-                if (!_wordExistenceHelper.DoesWordExist(word.Remove(word.Length - ending.Length))) 
+                if (!_wordExistenceHelper.DoesWordExist(shortenedWord)) 
                     continue;
 
-                if (CheckWordWithEndingExists(word, word.Remove(word.Length - ending.Length)))
+                if (CheckWordWithEndingExists(word, shortenedWord))
+                {
+                    var temporaryDefinition = _wordDefinitionHelper.GetDefinitionForWord(shortenedWord);
+                    _wordService.AutomaticallySetTemporaryDefinitionForWord(filename, word, temporaryDefinition);
                     return true;
+                }
             }
 
             return false;

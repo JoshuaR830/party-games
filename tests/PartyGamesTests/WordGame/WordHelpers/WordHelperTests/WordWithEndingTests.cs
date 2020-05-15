@@ -11,11 +11,17 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
     {
         private readonly IWebDictionaryRequestHelper _webDictionaryRequestHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
+        private readonly IWordDefinitionHelper _wordDefinitionHelper;
+        private readonly IFileHelper _fileHelper;
+        private readonly IWordService _wordService;
 
         public WordWithEndingTests()
         {
             _webDictionaryRequestHelper = Substitute.For<IWebDictionaryRequestHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
+            _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
+            _fileHelper = Substitute.For<IFileHelper>();
+            _wordService = Substitute.For<IWordService>();
 
             _wordExistenceHelper
                 .DoesWordExist(Arg.Any<string>())
@@ -32,7 +38,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("end")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
             var response = wordHelper.CheckWordWithEndingExists(word, "end");
             response.Should().BeTrue();
         }
@@ -47,7 +53,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("sheeps")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
             var response = wordHelper.CheckWordWithEndingExists(nonExistentWord, "sheeps");
             response.Should().BeFalse();
         }
@@ -62,7 +68,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("diamond")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
             var response = wordHelper.CheckWordWithEndingExists(word, "diamond");
             response.Should().BeFalse();
         }
@@ -77,7 +83,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("sheeps")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
             var response = wordHelper.CheckWordWithEndingExists(nonExistentWord, "sheeps");
             response.Should().BeFalse();
         }
@@ -92,7 +98,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("diamond")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
             var response = wordHelper.CheckWordWithEndingExists(word, "diamond");
             response.Should().BeTrue();
         }
@@ -107,7 +113,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("sheeps")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
             var response = wordHelper.CheckWordWithEndingExists(nonExistentWord, "sheeps");
             response.Should().BeFalse();
         }

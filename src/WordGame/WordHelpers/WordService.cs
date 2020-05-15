@@ -50,5 +50,10 @@ namespace Chat.WordGame.WordHelpers
             
             _fileHelper.WriteDictionary(filename, dictionary);
         }
+
+        public void UpdateExistingWord(string filename, string word, string definition)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

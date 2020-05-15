@@ -1,4 +1,5 @@
-﻿using Chat.WordGame.LocalDictionaryHelpers;
+﻿using System.Linq;
+using Chat.WordGame.LocalDictionaryHelpers;
 
 namespace Chat.WordGame.WordHelpers
 {
@@ -53,7 +54,20 @@ namespace Chat.WordGame.WordHelpers
 
         public void UpdateExistingWord(string filename, string word, string definition)
         {
-            throw new System.NotImplementedException();
+            if (word == "" || definition == "")
+                return;
+            
+            var dictionary = _fileHelper.ReadDictionary(filename);
+
+            var wordList = dictionary.Words.Where(x => x.Word == word).ToList();
+
+            if (!wordList.Any())
+                return;
+
+            var item = dictionary.Words.IndexOf(wordList.First());
+            dictionary.Words[item].PermanentDefinition = definition;
+            
+            _fileHelper.WriteDictionary(filename, dictionary);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         public void WhenWordExistsUpdateDefinitionThePermanentDefinitionShouldBeUpdated()
         {
             var newDefinition = "A cloud like fluffy animal";
-            var word = "sheep";
+            var word = "Sheep";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             
@@ -75,7 +75,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         public void WhenUpdateHappensAndDefinitionIsEmptyDefinitionShouldNotBeChanged()
         {
             var newDefinition = "";
-            var word = "sheep";
+            var word = "Sheep";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             

@@ -38,6 +38,7 @@ namespace Chat
             services.AddSingleton<IWordExistenceHelper, WordExistenceHelper>();
             services.AddSingleton<IWordHelper, WordHelper>();
             services.AddSingleton<IWordService, WordService>();
+            services.AddSingleton<ITemporaryDefinitionHelper, TemporaryDefinitionHelper>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

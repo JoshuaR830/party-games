@@ -12,15 +12,15 @@ namespace Chat.WordGame.WordHelpers
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IFileHelper _fileHelper;
-        private readonly IWordService _wordService;
+        private readonly ITemporaryDefinitionHelper _temporaryDefinitionHelper;
 
-        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, IWordService wordService)
+        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, ITemporaryDefinitionHelper temporaryDefinitionHelper)
         {
             _webDictionaryRequestHelper = webDictionaryRequestHelper;
             _wordExistenceHelper = wordExistenceHelper;
             _wordDefinitionHelper = wordDefinitionHelper;
             _fileHelper = fileHelper;
-            _wordService = wordService;
+            _temporaryDefinitionHelper = temporaryDefinitionHelper;
         }
 
         public bool StrippedSuffixDictionaryCheck(string filename, string word)
@@ -45,7 +45,7 @@ namespace Chat.WordGame.WordHelpers
                 if (CheckWordWithEndingExists(word, shortenedWord))
                 {
                     var temporaryDefinition = _wordDefinitionHelper.GetDefinitionForWord(shortenedWord);
-                    _wordService.AutomaticallySetTemporaryDefinitionForWord(filename, word, temporaryDefinition);
+                    _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(filename, word, temporaryDefinition);
                     return true;
                 }
             }

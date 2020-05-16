@@ -16,6 +16,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IWordHelper _wordHelper;
+        private ITemporaryDefinitionHelper _temporaryDefinitionHelper;
         private readonly FileHelper _fileHelper;
         private readonly WordService _wordService;
         private const string Filename = "./automatically-set-temporary-definitions";
@@ -27,7 +28,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _fileHelper = new FileHelper();
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
         }
 
         [Fact]
@@ -40,7 +40,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             _webDictionaryRequestHelper.MakeContentRequest(shortenedWord).Returns("sloth word forms plural sloths");
             _wordExistenceHelper.DoesWordExist(shortenedWord).Returns(true);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
 
             var json = TestFileHelper.Read(Filename);
@@ -65,7 +66,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             _webDictionaryRequestHelper.MakeContentRequest(shortenedWord).Returns("sloth word forms doing slothning");
             _wordExistenceHelper.DoesWordExist(shortenedWord).Returns(true);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
 
             var json = TestFileHelper.Read(Filename);

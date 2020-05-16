@@ -9,5 +9,6 @@ namespace Chat.WordGame.WordHelpers
         void AddNewWordToDictionary(string filename, string word, string definition);
         void UpdateExistingWord(string filename, string word, string definition);
         void AutomaticallySetTemporaryDefinitionForWord(string filename, string word, string temporaryDefinition);
+        void ToggleIsWordInDictionary(string filename, string word);
     }
 }

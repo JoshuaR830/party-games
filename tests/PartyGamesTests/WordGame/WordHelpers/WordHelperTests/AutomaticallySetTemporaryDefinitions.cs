@@ -50,7 +50,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             {
                 Word = "sloths",
                 PermanentDefinition = null,
-                TemporaryDefinition = TestFileHelper.SlothTemporaryDefinition
+                TemporaryDefinition = TestFileHelper.SlothTemporaryDefinition,
+                Status = WordStatus.Suffix
             });
         }
         
@@ -74,7 +75,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             {
                 Word = "slothning",
                 PermanentDefinition = null,
-                TemporaryDefinition = TestFileHelper.SlothTemporaryDefinition
+                TemporaryDefinition = TestFileHelper.SlothTemporaryDefinition,
+                Status = WordStatus.Suffix
             });
         }
 

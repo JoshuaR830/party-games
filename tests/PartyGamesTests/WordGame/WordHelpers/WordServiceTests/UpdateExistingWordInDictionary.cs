@@ -45,7 +45,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 {
                     Word = word,
                     PermanentDefinition = newDefinition,
-                    TemporaryDefinition = TempDefinition
+                    TemporaryDefinition = TempDefinition,
+                    Status = WordStatus.Permanent
                 });
         }
 
@@ -64,11 +65,16 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Words
                 .Count
                 .Should()
-                .Be(3);
+                .Be(8);
 
             dictionary.Words.Should().Contain(x => x.Word == "sheep");
             dictionary.Words.Should().Contain(x => x.Word == "sloth");
             dictionary.Words.Should().Contain(x => x.Word == "pelican");
+            dictionary.Words.Should().Contain(x => x.Word == "lion");
+            dictionary.Words.Should().Contain(x => x.Word == "boxing");
+            dictionary.Words.Should().Contain(x => x.Word == "dodo");
+            dictionary.Words.Should().Contain(x => x.Word == "unicorn");
+            dictionary.Words.Should().Contain(x => x.Word == "dinosaur");
         }
 
         [Fact]
@@ -89,7 +95,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 {
                     Word = word,
                     PermanentDefinition = PermDefinition,
-                    TemporaryDefinition = TempDefinition
+                    TemporaryDefinition = TempDefinition,
+                    Status = WordStatus.Permanent
                 });
         }
 
@@ -108,11 +115,16 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Words
                 .Count
                 .Should()
-                .Be(3);
+                .Be(8);
 
             dictionary.Words.Should().Contain(x => x.Word == "sheep");
             dictionary.Words.Should().Contain(x => x.Word == "sloth");
             dictionary.Words.Should().Contain(x => x.Word == "pelican");
+            dictionary.Words.Should().Contain(x => x.Word == "lion");
+            dictionary.Words.Should().Contain(x => x.Word == "boxing");
+            dictionary.Words.Should().Contain(x => x.Word == "dodo");
+            dictionary.Words.Should().Contain(x => x.Word == "unicorn");
+            dictionary.Words.Should().Contain(x => x.Word == "dinosaur");
         }
 
         [Fact]
@@ -130,11 +142,16 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Words
                 .Count
                 .Should()
-                .Be(3);
+                .Be(8);
 
             dictionary.Words.Should().Contain(x => x.Word == "sheep");
             dictionary.Words.Should().Contain(x => x.Word == "sloth");
             dictionary.Words.Should().Contain(x => x.Word == "pelican");
+            dictionary.Words.Should().Contain(x => x.Word == "lion");
+            dictionary.Words.Should().Contain(x => x.Word == "boxing");
+            dictionary.Words.Should().Contain(x => x.Word == "dodo");
+            dictionary.Words.Should().Contain(x => x.Word == "unicorn");
+            dictionary.Words.Should().Contain(x => x.Word == "dinosaur");
         }
 
         [Fact]
@@ -155,7 +172,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 {
                     Word = "sheep",
                     PermanentDefinition = newDefinition,
-                    TemporaryDefinition = TempDefinition
+                    TemporaryDefinition = TempDefinition,
+                    Status = WordStatus.Permanent
                 });
         }
         
@@ -177,7 +195,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 {
                     Word = "sheep",
                     PermanentDefinition = newDefinition,
-                    TemporaryDefinition = TempDefinition
+                    TemporaryDefinition = TempDefinition,
+                    Status = WordStatus.Permanent
                 });
         }
         
@@ -199,7 +218,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 {
                     Word = "sheep",
                     PermanentDefinition = newDefinition,
-                    TemporaryDefinition = TempDefinition
+                    TemporaryDefinition = TempDefinition,
+                    Status = WordStatus.Permanent
                 });
         }
     }

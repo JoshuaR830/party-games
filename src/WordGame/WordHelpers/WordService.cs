@@ -79,10 +79,16 @@ namespace Chat.WordGame.WordHelpers
             {
                 Word = word,
                 PermanentDefinition = null,
-                TemporaryDefinition = temporaryDefinition
+                TemporaryDefinition = temporaryDefinition,
+                Status = WordStatus.Suffix
             });
             
             _fileHelper.WriteDictionary(filename, dictionary);
+        }
+
+        public void ToggleIsWordInDictionary(string filename, string word)
+        {
+            throw new NotImplementedException();
         }
     }
 }

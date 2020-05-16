@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using Chat.WordGame.WordHelpers;
+using Newtonsoft.Json;
 
 namespace PartyGamesTests.WordGame
 {
@@ -35,6 +36,17 @@ namespace PartyGamesTests.WordGame
                     ]
                 }}");
 
+                fs.Write(content, 0, content.Length);
+            }
+        }
+        
+        public static void CreateCustomFile(string filename, object data)
+        {
+            var json = JsonConvert.SerializeObject(data);
+            
+            using (FileStream fs = File.Create(filename))
+            {
+                var content = new UTF8Encoding(true).GetBytes(json);
                 fs.Write(content, 0, content.Length);
             }
         }

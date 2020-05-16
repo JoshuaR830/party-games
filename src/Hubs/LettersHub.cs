@@ -25,12 +25,8 @@ namespace Chat.Hubs
 
         public async Task AddToGroup(string groupName)
         {
-            var fileHelper =  new Letters.FileHelper();
-            fileHelper.CopyFileContent();
-            // var fileHelper = new FileHelper();
-            // var dictionaryContent = fileHelper.ReadDictionary();
-            // fileHelper.WriteToDictionary(dictionaryContent);
-            // var definition = _requestHelper.MakeDefinitionRequest("fish");
+            // var fileHelper =  new Letters.FileHelper();
+            // fileHelper.CopyFileContent();
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
@@ -45,30 +41,26 @@ namespace Chat.Hubs
 
         public async Task IsValidWord(string word, string group)
         {          
-            var isValid = _wordValidationHelper.ValidateWord(word);
+            var isValid2 = _wordValidationHelper.ValidateWord(word);
+            var isValid = _wordService.GetWordStatus(Filename, word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
-            // oat
-            // taxi
         }
 
         public async Task WordTicked(string word, string group)
         {
             Console.WriteLine(word);
+            
+            // ToDo: Problem with toggle is that it will be unclear which way to toggle it - need some smart stuff to happen to avoid accidentally deleting
+            // _wordService.ToggleIsWordInDictionary();
             await Clients.Group(group).SendAsync("TickWord", word);
         }
 
         public async Task GetDefinition(string group, string word)
         {
-            System.Console.WriteLine("Hello");
-            var definition = _wordValidationHelper.GetDefinition(word);
-            var definition2 = _wordService.GetDefinition(Filename, word);
-            // var definition2 = _wordService.GetDefinition(word);
-            Console.WriteLine("\n\nDefinition old");
-            Console.WriteLine(definition);
-            Console.WriteLine("\n\nDefinition new");
-            Console.WriteLine(definition2);
-            // Console.WriteLine(definition2);
-            System.Console.WriteLine("Hi");
+            var definition2 = _wordValidationHelper.GetDefinition(word);
+            var definition = _wordService.GetDefinition(Filename, word);
+            Console.WriteLine($"Old: {definition2}");
+            Console.WriteLine($"New: {definition}");
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
         }
 
@@ -76,6 +68,11 @@ namespace Chat.Hubs
         {
             // var definition = _requestHelper.MakeDefinitionRequest(newWord);
             _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
+            
+            // ToDo: Should only add word if it doesn't exist
+            // ToDo: Should update word if it does exist
+            // ToDo: New method to choose appropriate option
+            
             _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }

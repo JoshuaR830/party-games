@@ -1,4 +1,6 @@
-﻿using Chat.WordGame.LocalDictionaryHelpers;
+﻿using System;
+using System.IO;
+using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using Newtonsoft.Json;
@@ -7,7 +9,7 @@ using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 {
-    public class WordStatusTests
+    public class WordStatusTests : IDisposable
     {
         private WordService _wordService;
         private IWordDefinitionHelper _wordDefinitionHelper;
@@ -123,8 +125,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
                 Word = word,
-                TemporaryDefinition = TestFileHelper.SheepTemporaryDefinition,
-                PermanentDefinition = TestFileHelper.SheepPermanentDefinition,
+                TemporaryDefinition = TestFileHelper.LionTemporaryDefinition,
+                PermanentDefinition = TestFileHelper.LionPermanentDefinition,
                 Status = WordStatus.DoesNotExist
             });
         }
@@ -143,8 +145,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
                 Word = word,
-                TemporaryDefinition = TestFileHelper.SheepTemporaryDefinition,
-                PermanentDefinition = TestFileHelper.SheepPermanentDefinition,
+                TemporaryDefinition = TestFileHelper.BoxingTemporaryDefinition,
+                PermanentDefinition = null,
                 Status = WordStatus.DoesNotExist
             });
         }
@@ -163,9 +165,9 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
                 Word = word,
-                TemporaryDefinition = TestFileHelper.SheepTemporaryDefinition,
-                PermanentDefinition = TestFileHelper.SheepPermanentDefinition,
-                Status = WordStatus.DoesNotExist
+                TemporaryDefinition = null,
+                PermanentDefinition = TestFileHelper.DodoPermanentDefinition,
+                Status = WordStatus.Permanent
             });
         }
         
@@ -183,9 +185,9 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
                 Word = word,
-                TemporaryDefinition = TestFileHelper.SheepTemporaryDefinition,
-                PermanentDefinition = TestFileHelper.SheepPermanentDefinition,
-                Status = WordStatus.DoesNotExist
+                TemporaryDefinition = TestFileHelper.UnicornTemporaryDefinition,
+                PermanentDefinition = null,
+                Status = WordStatus.Temporary
             });
         }
         
@@ -203,10 +205,16 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
                 Word = word,
-                TemporaryDefinition = TestFileHelper.SheepTemporaryDefinition,
-                PermanentDefinition = TestFileHelper.SheepPermanentDefinition,
+                TemporaryDefinition = null,
+                PermanentDefinition = null,
                 Status = WordStatus.Temporary
             });
+        }
+
+        public void Dispose()
+        {
+            if(File.Exists(filename))
+                File.Delete(filename);
         }
     }
 }

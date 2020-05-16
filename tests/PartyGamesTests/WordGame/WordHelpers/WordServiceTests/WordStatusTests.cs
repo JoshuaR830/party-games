@@ -15,6 +15,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private IWordDefinitionHelper _wordDefinitionHelper;
         private IWordExistenceHelper _wordExistenceHelper;
         private IWordHelper _wordHelper;
+        private ITemporaryDefinitionHelper _temporaryDefinitionHelper;
         private FileHelper _fileHelper;
         private const string filename = "./word-status-tests.json";
         
@@ -33,9 +34,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "pelicans";
             var temporaryDefinition = TestFileHelper.PelicanTemporaryDefinition;
-            
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            _wordService.AutomaticallySetTemporaryDefinitionForWord(filename, word, temporaryDefinition);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(filename, word, temporaryDefinition);
 
             var json = TestFileHelper.Read(filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);

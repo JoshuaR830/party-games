@@ -58,7 +58,7 @@ namespace Chat.WordGame.WordHelpers
         {
             if (word == "" || definition == "")
                 return;
-            
+
             var dictionary = _fileHelper.ReadDictionary(filename);
 
             var wordList = dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
@@ -69,22 +69,7 @@ namespace Chat.WordGame.WordHelpers
             var item = dictionary.Words.IndexOf(wordList.First());
             dictionary.Words[item].PermanentDefinition = definition;
             dictionary.Words[item].Status = WordStatus.Permanent;
-            
-            _fileHelper.WriteDictionary(filename, dictionary);
-        }
 
-        public void AutomaticallySetTemporaryDefinitionForWord(string filename, string word, string temporaryDefinition)
-        {
-            var dictionary = _fileHelper.ReadDictionary(filename);
-            
-            dictionary.Words.Add(new WordData
-            {
-                Word = word,
-                PermanentDefinition = null,
-                TemporaryDefinition = temporaryDefinition,
-                Status = WordStatus.Suffix
-            });
-            
             _fileHelper.WriteDictionary(filename, dictionary);
         }
 

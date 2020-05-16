@@ -15,6 +15,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
     {
         private const string Filename = "./add-new-word-to-file.json";
         private WordService _wordService;
+        private TemporaryDefinitionHelper _temporaryDefinitionHelper;
 
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
@@ -40,9 +41,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var newWord = "news";
             var temporaryDefinition = "Something that has only just come into existence";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-
-            _wordService.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
 
             var response = TestFileHelper.Read(Filename);
 
@@ -63,9 +63,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var newWord = "news";
             var temporaryDefinition = "";
 
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-
-            _wordService.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
 
             var response = TestFileHelper.Read(Filename);
 

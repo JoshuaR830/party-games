@@ -13,7 +13,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IFileHelper _fileHelper;
-        private readonly IWordService _wordService;
+        private readonly ITemporaryDefinitionHelper _temporaryDefinitionHelper;
 
         private readonly string Filename = "";
 
@@ -23,7 +23,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _fileHelper = Substitute.For<IFileHelper>();
-            _wordService = Substitute.For<IWordService>();
+            _temporaryDefinitionHelper = Substitute.For<ITemporaryDefinitionHelper>();
 
             _wordExistenceHelper
                 .DoesWordExist(Arg.Any<string>())
@@ -39,7 +39,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("cheese")
                 .Returns("Word forms: there are some cheeses over there");
 
-            var wordHelperUnderTest = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelperUnderTest = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(Filename, word);
             response.Should().BeTrue();
         }
@@ -49,7 +49,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "reallynotawords";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")
@@ -64,7 +64,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "boxes";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("box")
@@ -79,7 +79,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "reallynotawordes";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")
@@ -94,7 +94,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "kicking";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("kick")
@@ -109,7 +109,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "reallynotawording";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")
@@ -124,7 +124,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "running";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("run")
@@ -139,7 +139,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "reallynotawordning";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _wordService);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
 
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")

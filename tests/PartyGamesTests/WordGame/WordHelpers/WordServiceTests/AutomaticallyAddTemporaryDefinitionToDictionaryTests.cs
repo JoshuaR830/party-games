@@ -35,7 +35,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         }
 
         [Fact]
-        public void Something()
+        public void WhenAWordAndDefinitionAreSetTheWordShouldBeAddedToTheDictionary()
         {
             var newWord = "news";
             var temporaryDefinition = "Something that has only just come into existence";
@@ -52,7 +52,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             {
                 Word = newWord,
                 PermanentDefinition = null,
-                TemporaryDefinition = temporaryDefinition
+                TemporaryDefinition = temporaryDefinition,
+                Status = WordStatus.Suffix
             });
         }
 
@@ -74,7 +75,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             {
                 Word = newWord,
                 PermanentDefinition = null,
-                TemporaryDefinition = temporaryDefinition
+                TemporaryDefinition = temporaryDefinition,
+                Status = WordStatus.Suffix
             });
         }
 

@@ -52,7 +52,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             {
                 Word = newWord,
                 PermanentDefinition = newDefinition,
-                TemporaryDefinition = null
+                TemporaryDefinition = null,
+                Status = WordStatus.Permanent
             });
         }
 
@@ -74,7 +75,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             {
                 Word = newWord,
                 PermanentDefinition = newDefinition,
-                TemporaryDefinition = null
+                TemporaryDefinition = null,
+                Status = WordStatus.Permanent
             });
         }
 

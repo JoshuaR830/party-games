@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System;
 using Chat.WordGame.LocalDictionaryHelpers;
+using Chat.WordGame.WordHelpers;
 
 namespace Chat.Letters
 {
@@ -156,7 +157,8 @@ namespace Chat.Letters
                 {
                     Word = item.Word,
                     TemporaryDefinition = item.Definition,
-                    PermanentDefinition = null
+                    PermanentDefinition = null,
+                    Status = WordStatus.Temporary
                 });
             }
 

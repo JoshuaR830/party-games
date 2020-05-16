@@ -47,7 +47,8 @@ namespace Chat.WordGame.WordHelpers
             {
                 Word = word,
                 PermanentDefinition = definition,
-                TemporaryDefinition = null
+                TemporaryDefinition = null,
+                Status = WordStatus.Permanent
             });
             
             _fileHelper.WriteDictionary(filename, dictionary);
@@ -67,6 +68,7 @@ namespace Chat.WordGame.WordHelpers
 
             var item = dictionary.Words.IndexOf(wordList.First());
             dictionary.Words[item].PermanentDefinition = definition;
+            dictionary.Words[item].Status = WordStatus.Permanent;
             
             _fileHelper.WriteDictionary(filename, dictionary);
         }
@@ -79,8 +81,34 @@ namespace Chat.WordGame.WordHelpers
             {
                 Word = word,
                 PermanentDefinition = null,
-                TemporaryDefinition = temporaryDefinition
+                TemporaryDefinition = temporaryDefinition,
+                Status = WordStatus.Suffix
             });
+            
+            _fileHelper.WriteDictionary(filename, dictionary);
+        }
+
+        public void ToggleIsWordInDictionary(string filename, string word)
+        {
+            var dictionary = _fileHelper.ReadDictionary(filename);
+
+            var items = dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+
+            if (!items.Any())
+                return;
+
+            var item = items.First();
+
+            var index = dictionary.Words.IndexOf(item);
+
+            if (item.Status != WordStatus.DoesNotExist)
+            {
+                dictionary.Words[index].Status = WordStatus.DoesNotExist;
+                _fileHelper.WriteDictionary(filename, dictionary);
+                return;
+            }
+            
+            dictionary.Words[index].Status = item.PermanentDefinition != null ? WordStatus.Permanent : WordStatus.Temporary;
             
             _fileHelper.WriteDictionary(filename, dictionary);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Chat.WordGame.LocalDictionaryHelpers;
+using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using FluentAssertions.Json;
 using Newtonsoft.Json;
@@ -21,18 +22,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
             _filename = "test-dictionary.json";
             _filenameToCreate = "created-new-file.json";
 
-            using (FileStream fs = File.Create(_filename))
-            {
-                var content = new UTF8Encoding(true).GetBytes($@"{{ 
-                    ""Words"" : [
-                        {{""Word"":""Sheep"",""TemporaryDefinition"":""A fluffy animal that sits, eats grass, sits, eats grass and is commonly counted by children who can't sleep (they love the attention)."", ""PermanentDefinition"": ""An animal with a wool laden coat that lives on a farm""}},
-                        {{""Word"":""Sloth"",""TemporaryDefinition"":""A sleepy animal that sleeps, sleeps and sleeps some more and is a common role model for teenagers who spend all their days sleeping. No sheep are counted anymore because there wouldn't be enough for all the sleeping that is done and given the environmental crisis, sloths are a more environmental choice."", ""PermanentDefinition"": ""An animal that likes sleeping""}},
-                        {{""Word"":""Pelican"",""TemporaryDefinition"":""A large bird with one heck of a bill, I wonder if such a big bill causes problems? Adults find this relatable because they have entered the real world and also have big bills."", ""PermanentDefinition"": ""A bird with a big beak""}}
-                    ]
-                }}");
-                
-                fs.Write(content, 0, content.Length);
-            }
+            TestFileHelper.Create(_filename);
         }
         
         [Fact]
@@ -49,16 +39,20 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void ReadingAFileShouldReturnTheFileContent()
         {
             var fileHelper = new FileHelper();
-            
-            var response = fileHelper.ReadDictionary(_filename);
-            var json = JsonConvert.SerializeObject(response);
+
+            var json = TestFileHelper.Read(_filename);
             
             JToken.Parse(json).Should().BeEquivalentTo($@"
             {{
                 ""Words"": [
-                    {{""Word"":""Sheep"",""TemporaryDefinition"":""A fluffy animal that sits, eats grass, sits, eats grass and is commonly counted by children who can't sleep (they love the attention)."", ""PermanentDefinition"": ""An animal with a wool laden coat that lives on a farm""}},
-                    {{""Word"":""Sloth"",""TemporaryDefinition"":""A sleepy animal that sleeps, sleeps and sleeps some more and is a common role model for teenagers who spend all their days sleeping. No sheep are counted anymore because there wouldn't be enough for all the sleeping that is done and given the environmental crisis, sloths are a more environmental choice."", ""PermanentDefinition"": ""An animal that likes sleeping""}},
-                    {{""Word"":""Pelican"",""TemporaryDefinition"":""A large bird with one heck of a bill, I wonder if such a big bill causes problems? Adults find this relatable because they have entered the real world and also have big bills."", ""PermanentDefinition"": ""A bird with a big beak""}}
+                    {{""Word"":""sheep"",""TemporaryDefinition"":""A fluffy animal that sits, eats grass, sits, eats grass and is commonly counted by children who can't sleep (they love the attention)."", ""PermanentDefinition"": ""An animal with a wool laden coat that lives on a farm"", ""Status"": {(int)WordStatus.Permanent}}},
+                    {{""Word"":""sloth"",""TemporaryDefinition"":""A sleepy animal that sleeps, sleeps and sleeps some more and is a common role model for teenagers who spend all their days sleeping. No sheep are counted anymore because there wouldn't be enough for all the sleeping that is done and given the environmental crisis, sloths are a more environmental choice."", ""PermanentDefinition"": ""An animal that likes sleeping"",  ""Status"": {(int)WordStatus.Permanent}}},
+                    {{""Word"":""pelican"",""TemporaryDefinition"":""A large bird with one heck of a bill, I wonder if such a big bill causes problems? Adults find this relatable because they have entered the real world and also have big bills."", ""PermanentDefinition"": ""A bird with a big beak"", ""Status"": {(int)WordStatus.Permanent}}},
+                    {{""Word"":""lion"",""TemporaryDefinition"":""{TestFileHelper.LionTemporaryDefinition}"", ""PermanentDefinition"": ""{TestFileHelper.LionPermanentDefinition}"", ""Status"": {(int)WordStatus.Temporary}}},
+                    {{""Word"":""boxing"",""TemporaryDefinition"":""{TestFileHelper.BoxingTemporaryDefinition}"", ""PermanentDefinition"": null, ""Status"": {(int)WordStatus.Suffix}}},
+                    {{""Word"":""dodo"",""TemporaryDefinition"": null, ""PermanentDefinition"": ""{TestFileHelper.DodoPermanentDefinition}"", ""Status"": {(int)WordStatus.DoesNotExist}}},
+                    {{""Word"":""unicorn"",""TemporaryDefinition"":""{TestFileHelper.UnicornTemporaryDefinition}"", ""PermanentDefinition"": null, ""Status"": {(int)WordStatus.DoesNotExist}}},
+                    {{""Word"":""dinosaur"",""TemporaryDefinition"": null, ""PermanentDefinition"": null, ""Status"": {(int)WordStatus.DoesNotExist}}}
                 ]
             }}");
         }
@@ -83,15 +77,17 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
 				{
 					new WordData
 					{
-						Word = "Sheep",
+						Word = "sheep",
 						PermanentDefinition = "An animal with a wool laden coat",
-						TemporaryDefinition = "A fluffy animal that sits"
+						TemporaryDefinition = "A fluffy animal that sits",
+						Status = WordStatus.Permanent
 					},
 					new WordData
 					{
-						Word = "Sloth",
+						Word = "sloth",
 						PermanentDefinition = "An animal that likes sleeping",
-						TemporaryDefinition = "A sleepy animal that sleeps"
+						TemporaryDefinition = "A sleepy animal that sleeps",
+						Status = WordStatus.DoesNotExist
 					}
 				}
 			};
@@ -103,21 +99,23 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
 				string json = r.ReadToEnd();
 				var dictionaryContent = JsonConvert.DeserializeObject<Dictionary>(json);
 				dictionaryContent.Should().BeOfType<Dictionary>();
-				JToken.Parse(JsonConvert.SerializeObject(dictionaryContent)).Should().BeEquivalentTo(@"
-				{
+				JToken.Parse(JsonConvert.SerializeObject(dictionaryContent)).Should().BeEquivalentTo($@"
+				{{
 					""Words"": [
-						{
-							""Word"": ""Sheep"",
+						{{
+							""Word"": ""sheep"",
 							""PermanentDefinition"": ""An animal with a wool laden coat"",
-							""TemporaryDefinition"": ""A fluffy animal that sits""
-						},
-						{
-							""Word"": ""Sloth"",
+							""TemporaryDefinition"": ""A fluffy animal that sits"",
+							""Status"": {(int)WordStatus.Permanent}
+						}},
+						{{
+							""Word"": ""sloth"",
 							""PermanentDefinition"": ""An animal that likes sleeping"",
-							""TemporaryDefinition"": ""A sleepy animal that sleeps""
-						}
+							""TemporaryDefinition"": ""A sleepy animal that sleeps"",
+							""Status"": {(int)WordStatus.DoesNotExist}
+						}}
 					]
-				}");
+				}}");
 			}
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Chat.WordGame.WordHelpers;
 
 namespace Chat.WordGame.LocalDictionaryHelpers
 {
@@ -25,6 +26,9 @@ namespace Chat.WordGame.LocalDictionaryHelpers
                 return false;
             
             var selectedWord = matchingWords.First();
+
+            if (selectedWord.Status == WordStatus.DoesNotExist)
+                return false;
 
             var definitionParts = selectedWord.PermanentDefinition ?? selectedWord.TemporaryDefinition ?? "";
             

@@ -41,6 +41,11 @@ namespace Chat.WordGame.WordHelpers
             return null;
         }
 
+        public void AmendDictionary(string filename, string word, string definition)
+        {
+           throw new NotImplementedException();
+        }
+
         public void AddNewWordToDictionary(string filename, string word, string definition)
         {
             var dictionary = _fileHelper.ReadDictionary(filename);

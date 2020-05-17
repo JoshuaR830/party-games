@@ -47,7 +47,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         [Fact]
         public void WhenNotAWordButEndingInOneLetter()
         {
-            var word = "reallynotawords";
+            var word = "REALLYNOTAWORDS";
             
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
@@ -62,7 +62,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         [Fact]
         public void WhenWordHasTwoLetterEnding()
         {
-            var word = "boxes";
+            var word = "BOXES";
             
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
@@ -77,7 +77,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         [Fact]
         public void WhenNotAWordButEndingInTwoLetters()
         {
-            var word = "reallynotawordes";
+            var word = "REALLYNOTAWORDES";
             
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
@@ -92,7 +92,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         [Fact]
         public void WhenWordHasThreeLetterEnding()
         {
-            var word = "kicking";
+            var word = "KICKING";
             
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             
@@ -122,7 +122,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         [Fact]
         public void WhenWordHasFourLetterEnding()
         {
-            var word = "running";
+            var word = "RUNNING";
             
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
             

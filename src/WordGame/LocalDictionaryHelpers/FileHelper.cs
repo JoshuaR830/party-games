@@ -24,10 +24,30 @@ namespace Chat.WordGame.LocalDictionaryHelpers
 
         public void WriteDictionary(string filename, Dictionary dictionary)
         {
-			if (File.Exists(filename))
-				File.Delete(filename);
+            WriteFile(filename, dictionary);
+        }
+
+        public string ReadFile(string filename)
+        {
+            TextReader reader = null;
+            try
+            {
+                reader = new StreamReader(filename);
+                var fileContent = reader.ReadToEnd();
+                return fileContent;
+            }
+            finally
+            {
+                reader?.Close();
+            }
+        }
+
+        public void WriteFile(string filename, object data)
+        {
+            if (File.Exists(filename))
+                File.Delete(filename);
             
-            var json = JsonConvert.SerializeObject(dictionary);
+            var json = JsonConvert.SerializeObject(data);
 
             try
             {
@@ -41,16 +61,6 @@ namespace Chat.WordGame.LocalDictionaryHelpers
             {
                 Console.WriteLine($"Error occurred {e}");
             }
-        }
-
-        public string ReadFile(string filename)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void WriteFile(string filename, object data)
-        {
-            throw new NotImplementedException();
         }
     }
 }

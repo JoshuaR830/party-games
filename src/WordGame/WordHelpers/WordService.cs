@@ -103,29 +103,23 @@ namespace Chat.WordGame.WordHelpers
         public void AddWordToGuessedWords(string dictionaryFilename, string guessedWordsFilename, string word)
         {
             var dictionary = _fileHelper.ReadDictionary(dictionaryFilename);
-
-            // var guessedWordsJson = _fileHelper.ReadFile();
-            // var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(guessedWordsJson);
-
             var items = dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
 
-            // var guessed = guessedWords.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+            var guessedWordsJson = _fileHelper.ReadFile(guessedWordsFilename);
+            var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(guessedWordsJson) ?? new GuessedWords();
+            var guessed = guessedWords.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
             
-            // if (guessed.Any())
-            //     guessed.GetIndex()
-            
-            // if (items.Any())   
-            //     guessedWords.AddWord(word, WordStatus.DoesNotExist);
-            
-            // ToDo: Need to only write a guessed word to the list once
-            // ToDo: need to make sure that it does not already exist
-            // ToDo: need to update status if it does already exist
-            
-            // ToDO: if doesn't exist in dictionary needs to add it as not exists
+            if (guessed.Any())
+            {
+                var index = guessedWords.Words.IndexOf(guessed.First());
+                guessedWords.Words[index] = new GuessedWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
+            }
+            else
+            {
+                guessedWords.AddWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
+            }
 
-            
-
-                // _fileHelper.WriteFile(filename, guessedWords);
+            _fileHelper.WriteFile(guessedWordsFilename, guessedWords);
         }
     }
 }

@@ -26,6 +26,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 
         public AddWordToGuessedWordsTest()
         {
+            TestFileHelper.CreateCustomFile(GuessedWordsFilename, null);
+
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
 
             _dictionary = new Dictionary
@@ -64,7 +66,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             };
             
             TestFileHelper.CreateCustomFile(DictionaryFilename, _dictionary);
-
         }
         
         [Fact]
@@ -79,60 +80,36 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);
             
             guessedWords
+                .Words
                 .Should()
-                .BeEquivalentTo(new List<WordData>
+                .BeEquivalentTo(new List<GuessedWord>
                 {
-                    new WordData
-                    {
-                        Word = _words[0],
-                        Status = WordStatus.Permanent
-                    },
-                    new WordData
-                    {
-                        Word = _words[1],
-                        Status = WordStatus.Temporary
-                    },
-                    new WordData()
-                    {
-                        Word = _words[2],
-                        Status = WordStatus.Suffix
-                    },
-                    new WordData()
-                    {
-                        Word = _words[3],
-                        Status = WordStatus.DoesNotExist
-                    }
+                    new GuessedWord(_words[0], WordStatus.Permanent),
+                    new GuessedWord(_words[1], WordStatus.Temporary),
+                    new GuessedWord(_words[2], WordStatus.Suffix),
+                    new GuessedWord(_words[3], WordStatus.DoesNotExist)
                 });
         }
         
         [Fact]
         public void WhenWordExistsInGuessedWordsButHasADifferentStatusThenTheStatusShouldBeUpdated()
         {
-            var word = _words[0];
-            
-            
             var originalGuessedWords = new GuessedWords();
             originalGuessedWords.AddWord(_words[0], WordStatus.Temporary);
             
             TestFileHelper.CreateCustomFile(GuessedWordsFilename, originalGuessedWords);
             
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[0]);
-            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[1]);
-            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[2]);
-            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[3]);
 
             var json = TestFileHelper.Read(GuessedWordsFilename);
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);
             
             guessedWords
+                .Words
                 .Should()
-                .BeEquivalentTo(new List<WordData>
+                .BeEquivalentTo(new List<GuessedWord>
                 {
-                    new WordData
-                    {
-                        Word = _words[0],
-                        Status = WordStatus.Permanent
-                    }
+                    new GuessedWord(_words[0], WordStatus.Permanent)
                 });
         }
         
@@ -147,14 +124,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);
             
             guessedWords
+                .Words
                 .Should()
-                .BeEquivalentTo(new List<WordData>
+                .BeEquivalentTo(new List<GuessedWord>
                 {
-                    new WordData
-                    {
-                        Word = _words[0],
-                        Status = WordStatus.Permanent
-                    }
+                    new GuessedWord(_words[0], WordStatus.Permanent)
                 });
 
             guessedWords.Words.Should().HaveCount(1);
@@ -169,14 +143,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);
             
             guessedWords
+                .Words
                 .Should()
-                .BeEquivalentTo(new List<WordData>
+                .BeEquivalentTo(new List<GuessedWord>
                 {
-                    new WordData
-                    {
-                        Word = "telescope",
-                        Status = WordStatus.DoesNotExist
-                    }
+                    new GuessedWord("telescope", WordStatus.DoesNotExist)
                 });
         }
 

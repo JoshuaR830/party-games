@@ -1,6 +1,8 @@
 ﻿using System;
+using System.IO.Enumeration;
 using System.Linq;
 using Chat.WordGame.LocalDictionaryHelpers;
+using Newtonsoft.Json;
 
 namespace Chat.WordGame.WordHelpers
 {
@@ -10,7 +12,7 @@ namespace Chat.WordGame.WordHelpers
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IFileHelper _fileHelper;
-        
+
         public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper)
         {
             _wordExistenceHelper = wordExistenceHelper;
@@ -96,6 +98,28 @@ namespace Chat.WordGame.WordHelpers
             dictionary.Words[index].Status = item.PermanentDefinition != null ? WordStatus.Permanent : WordStatus.Temporary;
             
             _fileHelper.WriteDictionary(filename, dictionary);
+        }
+
+        public void AddWordToGuessedWords(string dictionaryFilename, string guessedWordsFilename, string word)
+        {
+            var dictionary = _fileHelper.ReadDictionary(dictionaryFilename);
+            var items = dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+
+            var guessedWordsJson = _fileHelper.ReadFile(guessedWordsFilename);
+            var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(guessedWordsJson) ?? new GuessedWords();
+            var guessed = guessedWords.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+            
+            if (guessed.Any())
+            {
+                var index = guessedWords.Words.IndexOf(guessed.First());
+                guessedWords.Words[index] = new GuessedWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
+            }
+            else
+            {
+                guessedWords.AddWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
+            }
+
+            _fileHelper.WriteFile(guessedWordsFilename, guessedWords);
         }
     }
 }

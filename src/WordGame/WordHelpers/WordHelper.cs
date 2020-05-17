@@ -25,6 +25,7 @@ namespace Chat.WordGame.WordHelpers
 
         public bool StrippedSuffixDictionaryCheck(string filename, string word)
         {
+            word = word.ToLower();
             var endings = new List<string> {"ning", "ing", "ed", "er", "es", "s"};
             endings = endings
                 .Where(x => x.Length < word.Length)

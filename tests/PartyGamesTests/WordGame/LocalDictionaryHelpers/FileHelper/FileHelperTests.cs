@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
@@ -10,7 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
-namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
+namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
 {
     public class FileHelperTests : IDisposable
     {
@@ -28,7 +27,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         [Fact]
         public void ReadingAFileShouldReturnAnObject()
         {
-            var fileHelper = new FileHelper();
+            var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
             
             var response = fileHelper.ReadDictionary(_filename);
             
@@ -38,7 +37,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         [Fact]
         public void ReadingAFileShouldReturnTheFileContent()
         {
-            var fileHelper = new FileHelper();
+            var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
 
             var json = TestFileHelper.Read(_filename);
             
@@ -60,7 +59,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         [Fact]
         public void WhenWritingToAFileIfItDoesNotExistItShouldBeCreated()
         {
-	        var fileHelper = new FileHelper();
+	        var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
 	        File.Exists(_filenameToCreate).Should().BeFalse();
 			fileHelper.WriteDictionary(_filenameToCreate, new Dictionary());
 			File.Exists(_filenameToCreate).Should().BeTrue();
@@ -69,7 +68,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
 		[Fact]
         public void WhenWritingContentTheContentShouldActuallyBeDeserializableToDictionary()
         {
-			var fileHelper = new FileHelper();
+			var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
 
 			var dictionary = new Dictionary
 			{

@@ -6,5 +6,7 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     {
         Dictionary ReadDictionary(string filename);
         void WriteDictionary(string filename, Dictionary dictionary);
+        string ReadFile(string filename);
+        void WriteFile(string filename, object data);
     }
 }

@@ -42,5 +42,15 @@ namespace Chat.WordGame.LocalDictionaryHelpers
                 Console.WriteLine($"Error occurred {e}");
             }
         }
+
+        public string ReadFile(string filename)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void WriteFile(string filename, object data)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

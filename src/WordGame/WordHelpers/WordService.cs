@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO.Enumeration;
-using System.Linq;
+﻿using System.Linq;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Newtonsoft.Json;
 
@@ -43,7 +41,17 @@ namespace Chat.WordGame.WordHelpers
 
         public void AmendDictionary(string filename, string word, string definition)
         {
-           throw new NotImplementedException();
+            var dictionary = _fileHelper.ReadDictionary(filename);
+
+            if (dictionary.Words.Any(x => x.Word.ToLower() == word.ToLower()))
+            {
+                UpdateExistingWord(filename, word, definition);
+            }
+            else
+            {
+                AddNewWordToDictionary(filename, word, definition);
+            }
+            
         }
 
         public void AddNewWordToDictionary(string filename, string word, string definition)

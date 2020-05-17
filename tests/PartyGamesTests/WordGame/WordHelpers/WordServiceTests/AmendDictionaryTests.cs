@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
@@ -7,7 +9,7 @@ using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 {
-    public class AmendDictionaryTests
+    public class AmendDictionaryTests : IDisposable
     {
         private const string Filename = "./amend-dictionary-tests.json";
         private IWordExistenceHelper _wordExistenceHelper;
@@ -55,7 +57,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                     new WordData
                     {
                         Word = "pelican",
-                        Status = WordStatus.Temporary,
+                        Status = WordStatus.Permanent,
                         PermanentDefinition = definition,
                         TemporaryDefinition = null
                     }
@@ -86,13 +88,19 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                     },
                     new WordData
                     {
-                        Word = "pelican",
-                        Status = WordStatus.Temporary,
+                        Word = "sheep",
+                        Status = WordStatus.Permanent,
                         PermanentDefinition = definition,
                         TemporaryDefinition = null
                     }
                 }
             });
+        }
+
+        public void Dispose()
+        {
+            if (File.Exists(Filename))
+                File.Delete(Filename);
         }
     }
 }

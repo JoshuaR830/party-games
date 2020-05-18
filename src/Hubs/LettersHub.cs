@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -10,17 +11,24 @@ namespace Chat.Hubs
 {
     public class LettersHub : Hub
     {
-        readonly WordValidationHelper _wordValidationHelper = new WordValidationHelper();
-        readonly DictionaryRequestHelper _requestHelper = new DictionaryRequestHelper();
+        // readonly WordValidationHelper _wordValidationHelper = new WordValidationHelper();
+        // readonly DictionaryRequestHelper _requestHelper = new DictionaryRequestHelper();
         private readonly IWordService _wordService;
         private readonly IFileHelper _fileHelper;
 
-        private const string Filename = "./word-dictionary.json";
+        private const string DictionaryFilename = "./word-dictionary.json";
+        private const string GuessedWordsFilename = "./words-guessed.json";
 
         public LettersHub(IWordService wordService, IFileHelper fileHelper)
         {
             _wordService = wordService;
             _fileHelper = fileHelper;
+
+            if (!File.Exists(DictionaryFilename))
+                File.Create(DictionaryFilename);
+            
+            if (!File.Exists(GuessedWordsFilename))
+                File.Create(GuessedWordsFilename);
         }
 
         public async Task AddToGroup(string groupName)
@@ -41,25 +49,25 @@ namespace Chat.Hubs
 
         public async Task IsValidWord(string word, string group)
         {          
-            var isValid2 = _wordValidationHelper.ValidateWord(word);
-            var isValid = _wordService.GetWordStatus(Filename, word);
+            // var isValid2 = _wordValidationHelper.ValidateWord(word);
+            var isValid = _wordService.GetWordStatus(DictionaryFilename, word);
+            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
         }
 
         public async Task WordTicked(string word, string group)
         {
             Console.WriteLine(word);
-            
-            // ToDo: Problem with toggle is that it will be unclear which way to toggle it - need some smart stuff to happen to avoid accidentally deleting
-            // _wordService.ToggleIsWordInDictionary();
+            // _wordService.ToggleIsWordInDictionary(DictionaryFilename, word);
+            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, word);
             await Clients.Group(group).SendAsync("TickWord", word);
         }
 
         public async Task GetDefinition(string group, string word)
         {
-            var definition2 = _wordValidationHelper.GetDefinition(word);
-            var definition = _wordService.GetDefinition(Filename, word);
-            Console.WriteLine($"Old: {definition2}");
+            // var definition2 = _wordValidationHelper.GetDefinition(word);
+            var definition = _wordService.GetDefinition(DictionaryFilename, word);
+            // Console.WriteLine($"Old: {definition2}");
             Console.WriteLine($"New: {definition}");
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
         }
@@ -67,13 +75,8 @@ namespace Chat.Hubs
         public async Task AddWordToDictionary(string group, string newWord, string newDefinition)
         {
             // var definition = _requestHelper.MakeDefinitionRequest(newWord);
-            _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
-            
-            // ToDo: Should only add word if it doesn't exist
-            // ToDo: Should update word if it does exist
-            // ToDo: New method to choose appropriate option
-            
-            _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
+            // _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
+            _wordService.AmendDictionary(DictionaryFilename, newWord, newDefinition);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
     }

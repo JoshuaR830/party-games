@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Newtonsoft.Json;
 
@@ -108,7 +109,9 @@ namespace Chat.WordGame.WordHelpers
                 return;
             }
             
+            Console.WriteLine(JsonConvert.SerializeObject(dictionary.Words[index]));
             dictionary.Words[index].Status = item.PermanentDefinition != null ? WordStatus.Permanent : WordStatus.Temporary;
+            Console.WriteLine(JsonConvert.SerializeObject(dictionary.Words[index]));
             
             _fileHelper.WriteDictionary(filename, dictionary);
         }

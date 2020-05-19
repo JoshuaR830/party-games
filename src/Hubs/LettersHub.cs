@@ -75,5 +75,18 @@ namespace Chat.Hubs
             _wordService.AmendDictionary(DictionaryFilename, newWord, newDefinition);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
+
+        public void UpdateDictionary(string group, string word, string definition)
+        {
+            Console.WriteLine(word);
+            Console.WriteLine(definition);
+            _wordService.UpdateExistingWord(DictionaryFilename, word, definition);
+        }
+
+        public async Task GetGuessedWords(string group)
+        {
+            var wordData = _fileHelper.ReadFile(GuessedWordsFilename);
+            await Clients.Group(group).SendAsync("ReceiveGuessedWord", wordData);
+        }
     }
 }

@@ -346,7 +346,7 @@ definitionSubmitButton.addEventListener('click', function() {
 
 lettersConnection.on("ReceiveDefinition", function(definition, word) {
 
-    if (definition === "" )
+    if (definition === "" || definition === null)
     {
         document.querySelector('.js-definition-container').classList.add('hidden');
         document.querySelector('.js-no-definition-container').classList.remove('hidden');

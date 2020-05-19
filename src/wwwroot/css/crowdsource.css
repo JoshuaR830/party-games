@@ -1,0 +1,48 @@
+﻿.icon-button 
+{
+    font-family: 'Material Icons';
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 32px;
+    border-radius: 50%;
+    border: 2px solid purple;
+    color: purple;
+    box-sizing: content-box;
+}
+
+.icon-button:hover
+{
+    cursor: pointer;
+}
+
+.--tick:hover
+{
+    border-color: green;
+    color: green;
+}
+
+.--cross:hover
+{
+    border-color: red;
+    color: red;
+}
+
+.definition
+{
+    display: block;
+    width: calc(100% - 32px);
+    height: 260px;
+    margin: 16px auto;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px #55edba5b;
+}
+
+.definition:focus
+{
+    outline: -webkit-focus-ring-color auto 1px;
+    box-shadow: 0 0 15px #55edba;
+    outline: none;
+}

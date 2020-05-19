@@ -55,10 +55,10 @@ namespace Chat.Hubs
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
         }
 
-        public async Task WordTicked(string word, string group)
+        public async Task WordTicked(string word, string group, bool newStatus)
         {
             Console.WriteLine(word);
-            // _wordService.ToggleIsWordInDictionary(DictionaryFilename, word);
+            _wordService.ToggleIsWordInDictionary(DictionaryFilename, word, newStatus);
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, word);
             await Clients.Group(group).SendAsync("TickWord", word);
         }

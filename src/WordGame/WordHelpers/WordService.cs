@@ -89,7 +89,7 @@ namespace Chat.WordGame.WordHelpers
             _fileHelper.WriteDictionary(filename, dictionary);
         }
 
-        public void ToggleIsWordInDictionary(string filename, string word)
+        public void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus)
         {
             var dictionary = _fileHelper.ReadDictionary(filename);
 
@@ -102,7 +102,7 @@ namespace Chat.WordGame.WordHelpers
 
             var index = dictionary.Words.IndexOf(item);
 
-            if (item.Status != WordStatus.DoesNotExist)
+            if (expectedNewStatus == false)
             {
                 dictionary.Words[index].Status = WordStatus.DoesNotExist;
                 _fileHelper.WriteDictionary(filename, dictionary);

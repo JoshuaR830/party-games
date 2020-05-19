@@ -265,7 +265,11 @@ confirmWord.addEventListener('click', function() {
     word.setAttribute('data-score', wordScore);
 
     word.addEventListener('click', function() {
-        lettersConnection.invoke("WordTicked", currentWord, connectionName);
+        var statusToSet = true;
+        if(word.classList.contains('word-ticked')) {
+            statusToSet = false;
+        }
+        lettersConnection.invoke("WordTicked", currentWord, connectionName, statusToSet);
     })
 
     wordList.appendChild(word);

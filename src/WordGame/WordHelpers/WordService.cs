@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO.Enumeration;
 using System.Linq;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Newtonsoft.Json;
@@ -41,6 +40,21 @@ namespace Chat.WordGame.WordHelpers
             return null;
         }
 
+        public void AmendDictionary(string filename, string word, string definition)
+        {
+            var dictionary = _fileHelper.ReadDictionary(filename);
+
+            if (dictionary.Words.Any(x => x.Word.ToLower() == word.ToLower()))
+            {
+                UpdateExistingWord(filename, word, definition);
+            }
+            else
+            {
+                AddNewWordToDictionary(filename, word, definition);
+            }
+            
+        }
+
         public void AddNewWordToDictionary(string filename, string word, string definition)
         {
             var dictionary = _fileHelper.ReadDictionary(filename);
@@ -75,7 +89,7 @@ namespace Chat.WordGame.WordHelpers
             _fileHelper.WriteDictionary(filename, dictionary);
         }
 
-        public void ToggleIsWordInDictionary(string filename, string word)
+        public void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus)
         {
             var dictionary = _fileHelper.ReadDictionary(filename);
 
@@ -88,14 +102,16 @@ namespace Chat.WordGame.WordHelpers
 
             var index = dictionary.Words.IndexOf(item);
 
-            if (item.Status != WordStatus.DoesNotExist)
+            if (expectedNewStatus == false)
             {
                 dictionary.Words[index].Status = WordStatus.DoesNotExist;
                 _fileHelper.WriteDictionary(filename, dictionary);
                 return;
             }
             
+            Console.WriteLine(JsonConvert.SerializeObject(dictionary.Words[index]));
             dictionary.Words[index].Status = item.PermanentDefinition != null ? WordStatus.Permanent : WordStatus.Temporary;
+            Console.WriteLine(JsonConvert.SerializeObject(dictionary.Words[index]));
             
             _fileHelper.WriteDictionary(filename, dictionary);
         }

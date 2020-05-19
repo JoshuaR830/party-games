@@ -97,7 +97,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "sheep";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            _wordService.ToggleIsWordInDictionary(filename, word);
+            _wordService.ToggleIsWordInDictionary(filename, word, false);
 
             var json = TestFileHelper.Read(filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -117,7 +117,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "lion";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            _wordService.ToggleIsWordInDictionary(filename, word);
+            _wordService.ToggleIsWordInDictionary(filename, word, false);
 
             var json = TestFileHelper.Read(filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -137,7 +137,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "boxing";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            _wordService.ToggleIsWordInDictionary(filename, word);
+            _wordService.ToggleIsWordInDictionary(filename, word, false);
 
             var json = TestFileHelper.Read(filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -157,7 +157,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "dodo";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            _wordService.ToggleIsWordInDictionary(filename, word);
+            _wordService.ToggleIsWordInDictionary(filename, word, true);
 
             var json = TestFileHelper.Read(filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -177,7 +177,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "unicorn";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            _wordService.ToggleIsWordInDictionary(filename, word);
+            _wordService.ToggleIsWordInDictionary(filename, word, true);
 
             var json = TestFileHelper.Read(filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -197,7 +197,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "dinosaur";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            _wordService.ToggleIsWordInDictionary(filename, word);
+            _wordService.ToggleIsWordInDictionary(filename, word, true);
 
             var json = TestFileHelper.Read(filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -208,6 +208,46 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 TemporaryDefinition = null,
                 PermanentDefinition = null,
                 Status = WordStatus.Temporary
+            });
+        }
+        
+        [Fact]
+        public void WhenUserMarksPermanentWordWithNoDefinitionsAsExistingThenStatusShouldBePermanent()
+        {
+            var word = "sheep";
+            
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            _wordService.ToggleIsWordInDictionary(filename, word, true);
+
+            var json = TestFileHelper.Read(filename);
+            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+
+            dictionary.Words.Should().ContainEquivalentOf(new WordData
+            {
+                Word = word,
+                TemporaryDefinition = TestFileHelper.SheepTemporaryDefinition,
+                PermanentDefinition = TestFileHelper.SheepPermanentDefinition,
+                Status = WordStatus.Permanent
+            });
+        }
+        
+        [Fact]
+        public void WhenUserMarksNonExistingWordAsNonExistingThenStatusShouldBeNonExisting()
+        {
+            var word = "dinosaur";
+            
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            _wordService.ToggleIsWordInDictionary(filename, word, false);
+
+            var json = TestFileHelper.Read(filename);
+            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+
+            dictionary.Words.Should().ContainEquivalentOf(new WordData
+            {
+                Word = word,
+                TemporaryDefinition = null,
+                PermanentDefinition = null,
+                Status = WordStatus.DoesNotExist
             });
         }
 

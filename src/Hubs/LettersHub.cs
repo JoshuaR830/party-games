@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -10,27 +11,30 @@ namespace Chat.Hubs
 {
     public class LettersHub : Hub
     {
-        readonly WordValidationHelper _wordValidationHelper = new WordValidationHelper();
-        readonly DictionaryRequestHelper _requestHelper = new DictionaryRequestHelper();
+        // readonly WordValidationHelper _wordValidationHelper = new WordValidationHelper();
+        // readonly DictionaryRequestHelper _requestHelper = new DictionaryRequestHelper();
         private readonly IWordService _wordService;
         private readonly IFileHelper _fileHelper;
 
-        private const string Filename = "./word-dictionary.json";
+        private const string DictionaryFilename = "./word-dictionary.json";
+        private const string GuessedWordsFilename = "./words-guessed.json";
 
         public LettersHub(IWordService wordService, IFileHelper fileHelper)
         {
             _wordService = wordService;
             _fileHelper = fileHelper;
+
+            if (!File.Exists(DictionaryFilename))
+                File.Create(DictionaryFilename);
+            
+            if (!File.Exists(GuessedWordsFilename))
+                File.Create(GuessedWordsFilename);
         }
 
         public async Task AddToGroup(string groupName)
         {
-            var fileHelper =  new Letters.FileHelper();
-            fileHelper.CopyFileContent();
-            // var fileHelper = new FileHelper();
-            // var dictionaryContent = fileHelper.ReadDictionary();
-            // fileHelper.WriteToDictionary(dictionaryContent);
-            // var definition = _requestHelper.MakeDefinitionRequest("fish");
+            // var fileHelper =  new Letters.FileHelper();
+            // fileHelper.CopyFileContent();
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
@@ -45,38 +49,34 @@ namespace Chat.Hubs
 
         public async Task IsValidWord(string word, string group)
         {          
-            var isValid = _wordValidationHelper.ValidateWord(word);
+            // var isValid2 = _wordValidationHelper.ValidateWord(word);
+            var isValid = _wordService.GetWordStatus(DictionaryFilename, word);
+            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
-            // oat
-            // taxi
         }
 
-        public async Task WordTicked(string word, string group)
+        public async Task WordTicked(string word, string group, bool newStatus)
         {
             Console.WriteLine(word);
+            _wordService.ToggleIsWordInDictionary(DictionaryFilename, word, newStatus);
+            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, word);
             await Clients.Group(group).SendAsync("TickWord", word);
         }
 
         public async Task GetDefinition(string group, string word)
         {
-            System.Console.WriteLine("Hello");
-            var definition = _wordValidationHelper.GetDefinition(word);
-            var definition2 = _wordService.GetDefinition(Filename, word);
-            // var definition2 = _wordService.GetDefinition(word);
-            Console.WriteLine("\n\nDefinition old");
-            Console.WriteLine(definition);
-            Console.WriteLine("\n\nDefinition new");
-            Console.WriteLine(definition2);
-            // Console.WriteLine(definition2);
-            System.Console.WriteLine("Hi");
+            // var definition2 = _wordValidationHelper.GetDefinition(word);
+            var definition = _wordService.GetDefinition(DictionaryFilename, word);
+            // Console.WriteLine($"Old: {definition2}");
+            Console.WriteLine($"New: {definition}");
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
         }
 
         public async Task AddWordToDictionary(string group, string newWord, string newDefinition)
         {
             // var definition = _requestHelper.MakeDefinitionRequest(newWord);
-            _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
-            _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
+            // _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
+            _wordService.AmendDictionary(DictionaryFilename, newWord, newDefinition);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
     }

@@ -1,0 +1,40 @@
+﻿@page
+@model CrowdSourceModel
+@{
+    ViewData["Title"] = "Crowd Source";
+}
+
+@{
+    Layout = "_MenuLayout";
+}
+
+<div>
+    <div>
+        <div>Crowd Source</div>
+        
+        <div class="js-word-container">
+            <div>Hello</div>
+            <div>Hello</div>
+            <div>Hello</div>
+            <div>Hello</div>
+            <div>Hello</div>
+        </div>
+        
+        <div class="definition-container">
+            <div class="js-word">Word</div>
+            
+            <div>Is this a word</div>
+            <div style="display: inline-block;">
+                <div class="icon-button --tick" style="display: inline-block;"><span>check</span></div>
+                <div class="icon-button --cross" style="display: inline-block;"><span>close</span></div>
+            </div>
+
+            <div class="js-word">Please enter the definition for this word</div>
+            <textarea class="js-definition"></textarea>
+            <div class="button">Confirm definition</div>
+
+        </div>
+        
+        
+    </div>
+</div>

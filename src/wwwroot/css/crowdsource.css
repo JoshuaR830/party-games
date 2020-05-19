@@ -1,0 +1,30 @@
+﻿.icon-button 
+{
+    font-family: 'Material Icons';
+    height: 50px;
+    width: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 32px;
+    border-radius: 50%;
+    border: 2px solid purple;
+    color: purple;
+    box-sizing: content-box;
+}
+
+.icon-button:hover
+{
+    cursor: pointer;
+}
+
+.--tick:hover
+{
+    border-color: green;
+    color: green;
+}
+
+.--cross:hover
+{
+    border-color: red;
+    color: red;
+}

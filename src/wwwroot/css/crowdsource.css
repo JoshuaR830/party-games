@@ -46,3 +46,8 @@
     box-shadow: 0 0 15px #55edba;
     outline: none;
 }
+
+.--error
+{
+    box-shadow: 0 0 10px #ff00005b;
+}

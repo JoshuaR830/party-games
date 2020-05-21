@@ -73,6 +73,8 @@ namespace Chat.Hubs
         public async Task AddWordToDictionary(string group, string newWord, string newDefinition)
         {
             _wordService.AmendDictionary(DictionaryFilename, newWord, newDefinition);
+            _wordService.ToggleIsWordInDictionary(DictionaryFilename, newWord, true);
+            _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, newWord);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
 

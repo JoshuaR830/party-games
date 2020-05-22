@@ -12,6 +12,7 @@ namespace Chat.WordGame.LocalDictionaryHelpers
             TextReader reader = null;
             try
             {
+                Console.WriteLine($"Read {filename}");
                 reader = new StreamReader(filename);
                 var fileContent = reader.ReadToEnd();
                 return JsonConvert.DeserializeObject<Dictionary>(fileContent);

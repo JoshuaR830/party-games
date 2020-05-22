@@ -12,11 +12,15 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private IWordDefinitionHelper _wordDefinitionHelper;
         private IFileHelper _fileHelper;
+        private IFilenameHelper _filenameHelper;
 
         private const string Filename = "";
 
         public WordServiceTests()
         {
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper.GetDictionaryFilename().Returns(Filename);
+
             _wordHelper = Substitute.For<IWordHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
@@ -32,7 +36,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .DoesWordExist(word)
                 .Returns(true);
             
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var response = wordService.GetWordStatus(Filename, word);
             response.Should().BeTrue();
         }
@@ -50,7 +54,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .StrippedSuffixDictionaryCheck(Filename, word)
                 .Returns(true);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var response = wordService.GetWordStatus(Filename, word);
             response.Should().BeTrue();
         }
@@ -68,7 +72,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .StrippedSuffixDictionaryCheck(Filename, word)
                 .Returns(false);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var response = wordService.GetWordStatus(Filename, word);
             response.Should().BeFalse();
         }
@@ -94,7 +98,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .CheckWordWithEndingExists(word, "sheep")
                 .Returns(false);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var response = wordService.GetWordStatus(Filename, word);
             response.Should().BeFalse();
         }
@@ -116,7 +120,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .StrippedSuffixDictionaryCheck(Filename, word)
                 .Returns(false);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var response = wordService.GetWordStatus(Filename, word);
             response.Should().BeFalse();
         }
@@ -134,7 +138,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 
             _wordDefinitionHelper.GetDefinitionForWord(word).Returns("An absolutely baaing animal");
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var response = wordService.GetDefinition(Filename, word);
 
             _wordDefinitionHelper.Received().GetDefinitionForWord(word);
@@ -156,7 +160,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .StrippedSuffixDictionaryCheck(Filename, word)
                 .Returns(false);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var response = wordService.GetDefinition(Filename, word);
 
             _wordDefinitionHelper

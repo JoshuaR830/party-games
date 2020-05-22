@@ -3,6 +3,7 @@ using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using Newtonsoft.Json;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
@@ -17,13 +18,17 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private IWordHelper _wordHelper;
         private IWordDefinitionHelper _wordDefinitionHelper;
         private readonly FileHelper _fileHelper;
+        private IFilenameHelper _filenameHelper;
         private readonly WordService _wordService;
         
         public UpdateExistingWordInDictionary()
         {
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper.GetDictionaryFilename().Returns(Filename);
+
             TestFileHelper.Create(Filename);
             _fileHelper = new FileHelper();
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             
         }
         

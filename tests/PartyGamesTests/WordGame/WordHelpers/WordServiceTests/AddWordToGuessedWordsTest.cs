@@ -6,6 +6,7 @@ using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using Newtonsoft.Json;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
@@ -19,6 +20,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly List<string> _words = new List<string> {"cow", "dog", "frog", "pigeon"};
         private readonly Dictionary _dictionary;
         private readonly WordService _wordService;
+        private IFilenameHelper _filenameHelper;
 
 
         private const string GuessedWordsFilename = "./test-guessed-words";
@@ -26,9 +28,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 
         public AddWordToGuessedWordsTest()
         {
-            TestFileHelper.CreateCustomFile(GuessedWordsFilename, null);
-
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
 
             _dictionary = new Dictionary
             {
@@ -65,7 +64,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 }
             };
             
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper.GetDictionaryFilename().Returns(DictionaryFilename);
+
+            TestFileHelper.CreateCustomFile(GuessedWordsFilename, null);
             TestFileHelper.CreateCustomFile(DictionaryFilename, _dictionary);
+
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            
         }
         
         [Fact]

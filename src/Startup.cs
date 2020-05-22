@@ -33,6 +33,7 @@ namespace Chat
         {
             services.AddSignalR();
             services.AddSingleton<IFileHelper, FileHelper>();
+            services.AddSingleton<IFilenameHelper, FilenameHelper>();
             services.AddSingleton<IWebDictionaryRequestHelper, WebDictionaryRequestHelper>();
             services.AddSingleton<IWebRequestHelper, WebRequestHelper>();
             services.AddSingleton<IWordDefinitionHelper, WordDefinitionHelper>();

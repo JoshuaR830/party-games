@@ -1,11 +1,17 @@
-﻿using Chat.RoomManager;
+﻿using System;
+using Chat.RoomManager;
 using FluentAssertions;
 using Xunit;
 
-namespace PartyGamesTests.RoomManager
+namespace PartyGamesTests.RoomManager.RoomHelperTests
 {
-    public class RoomHelperTests
+    public class JoinTests : IDisposable
     {
+        public JoinTests()
+        {
+            Rooms.DeleteRooms();
+        }
+        
         [Fact]
         public void WhenAUserJoinsARoomThenTheUserShouldBeAddedToTheRoom()
         {
@@ -16,7 +22,35 @@ namespace PartyGamesTests.RoomManager
             
             roomHelper.CreateRoom(name, roomId);
 
-            var rooms = Rooms.GetRoomsList();
+            var rooms = Rooms.RoomsList;
+            
+            rooms.Should().HaveCount(1);
+            
+            rooms
+                .Should()
+                .ContainKey("NewGroup")
+                .WhichValue
+                .Users
+                .Should()
+                .ContainKey("Joshua")
+                .WhichValue
+                .Name
+                .Should()
+                .Be("Joshua");
+        }
+        
+        [Fact]
+        public void WhenTheSameUserTriesToJoinTheRoomTwiceThenTheDictionaryShouldOnlyBeUpdatedOnce()
+        {
+            var roomHelper = new RoomHelper();
+
+            var name = "Joshua";
+            var roomId = "NewGroup";
+            
+            roomHelper.CreateRoom(name, roomId);
+            roomHelper.CreateRoom(name, roomId);
+
+            var rooms = Rooms.RoomsList;
             
             rooms.Should().HaveCount(1);
             
@@ -43,9 +77,10 @@ namespace PartyGamesTests.RoomManager
             roomHelper.CreateRoom("Andrew", "NewGroup");
             roomHelper.CreateRoom("Kerry", "NewGroup");
 
-            var rooms = Rooms.GetRoomsList();
+            var rooms = Rooms.RoomsList;
             
-            rooms.Should().HaveCount(4);
+            rooms.Should().HaveCount(1);
+            rooms["NewGroup"].Users.Should().HaveCount(4);
             
             rooms
                 .Should()
@@ -106,7 +141,7 @@ namespace PartyGamesTests.RoomManager
             roomHelper.CreateRoom("Andrew", "NewGroup2");
             roomHelper.CreateRoom("Kerry", "NewGroup3");
 
-            var rooms = Rooms.GetRoomsList();
+            var rooms = Rooms.RoomsList;
             
             rooms.Should().HaveCount(4);
             
@@ -160,7 +195,7 @@ namespace PartyGamesTests.RoomManager
         }
 
         [Fact]
-        public void WhenAUserWithTheSameNameJoinsDifferentRoomsThenEachRoomSHouldHaveADifferentUserWithTheSameName()
+        public void WhenAUserWithTheSameNameJoinsDifferentRoomsThenEachRoomShouldHaveADifferentUserWithTheSameName()
         {
             var roomHelper = new RoomHelper();
           
@@ -169,7 +204,7 @@ namespace PartyGamesTests.RoomManager
             roomHelper.CreateRoom("Joshua", "NewGroup3");
             roomHelper.CreateRoom("Joshua", "NewGroup4");
 
-            var rooms = Rooms.GetRoomsList();
+            var rooms = Rooms.RoomsList;
             
             rooms.Should().HaveCount(4);
             
@@ -220,6 +255,11 @@ namespace PartyGamesTests.RoomManager
                 .Name
                 .Should()
                 .Be("Joshua");
+        }
+
+        public void Dispose()
+        {
+            Rooms.DeleteRooms();
         }
     }
 }

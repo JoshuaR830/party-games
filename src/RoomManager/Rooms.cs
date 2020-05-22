@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using Chat.WordGame.LocalDictionaryHelpers;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Chat.RoomManager
 {
     public class Rooms
     {
         private static readonly Rooms RoomsInstance = new Rooms();
-        public static Dictionary<string, Room> RoomsList { get; set; }
+        public static Dictionary<string, Room> RoomsList { get; private set; }
 
         private Rooms()
         {
@@ -18,9 +19,14 @@ namespace Chat.RoomManager
             return RoomsInstance;
         }
 
-        public static Dictionary<string, Room> GetRoomsList()
+        public static void CreateRoom(string name, string roomId)
         {
-            return RoomsList;
+            RoomsList.Add(roomId, new Room());
+        }
+
+        public static void DeleteRooms()
+        {
+            RoomsList.Clear();
         }
     }
 }

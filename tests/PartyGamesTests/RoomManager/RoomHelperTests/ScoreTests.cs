@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography.X509Certificates;
 using Chat.RoomManager;
 using FluentAssertions;
 using Xunit;
@@ -11,14 +12,14 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         private readonly JoinRoomHelper _joinRoomHelper;
         private readonly RoomHelper _roomHelper;
         private const string name = "Joshua";
-        private const string roomName = "room";
+        private readonly string _roomName;
 
         public ScoreTests()
         {
-            Rooms.DeleteRooms();
+            _roomName = Guid.NewGuid().ToString();
             _joinRoomHelper = new JoinRoomHelper();
-            _joinRoomHelper.CreateRoom(name, roomName);
-            _roomHelper = new RoomHelper(name, roomName);
+            _joinRoomHelper.CreateRoom(name, _roomName);
+            _roomHelper = new RoomHelper(name, _roomName);
         }
         
         [Theory]
@@ -31,7 +32,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         {
             _roomHelper.SetScore(actualScore);
             
-            Rooms.RoomsList[roomName].Users[name].Score.Should().Be(expectedScore);
+            Rooms.RoomsList[_roomName].Users[name].Score.Should().Be(expectedScore);
         }
         
         [Theory]
@@ -45,12 +46,12 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             _roomHelper.AddToScore(score2);
             _roomHelper.AddToScore(score3);
             
-            Rooms.RoomsList[roomName].Users[name].Score.Should().Be(expectedScore);
+            Rooms.RoomsList[_roomName].Users[name].Score.Should().Be(expectedScore);
         }
 
         public void Dispose()
         {
-            Rooms.DeleteRooms();
+            Rooms.DeleteRoom(_roomName);
         }
     }
 }

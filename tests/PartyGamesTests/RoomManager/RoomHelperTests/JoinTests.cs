@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Chat.RoomManager;
 using FluentAssertions;
 using Xunit;
@@ -8,10 +9,11 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
     public class JoinTests : IDisposable
     {
         private readonly JoinRoomHelper _joinRoomHelper;
+        private List<string> roomIds;
 
         public JoinTests()
         {
-            Rooms.DeleteRooms();
+            roomIds = new List<string>();
             _joinRoomHelper = new JoinRoomHelper();
         }
         
@@ -19,17 +21,15 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         public void WhenAUserJoinsARoomThenTheUserShouldBeAddedToTheRoom()
         {
             var name = "Joshua";
-            var roomId = "NewGroup";
-            
+            var roomId = GenerateRoomName();
+
             _joinRoomHelper.CreateRoom(name, roomId);
 
             var rooms = Rooms.RoomsList;
             
-            rooms.Should().HaveCount(1);
-            
             rooms
                 .Should()
-                .ContainKey("NewGroup")
+                .ContainKey(roomId)
                 .WhichValue
                 .Users
                 .Should()
@@ -44,18 +44,16 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         public void WhenTheSameUserTriesToJoinTheRoomTwiceThenTheDictionaryShouldOnlyBeUpdatedOnce()
         {
             var name = "Joshua";
-            var roomId = "NewGroup";
-            
+            var roomId = GenerateRoomName();
+
             _joinRoomHelper.CreateRoom(name, roomId);
             _joinRoomHelper.CreateRoom(name, roomId);
 
             var rooms = Rooms.RoomsList;
             
-            rooms.Should().HaveCount(1);
-            
             rooms
                 .Should()
-                .ContainKey("NewGroup")
+                .ContainKey(roomId)
                 .WhichValue
                 .Users
                 .Should()
@@ -69,19 +67,19 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         [Fact]
         public void WhenMultipleUsersJoinARoomUserJoinsARoomThenTheUserShouldBeAddedToTheRoom()
         {
-            _joinRoomHelper.CreateRoom("Joshua", "NewGroup");
-            _joinRoomHelper.CreateRoom("Lydia", "NewGroup");
-            _joinRoomHelper.CreateRoom("Andrew", "NewGroup");
-            _joinRoomHelper.CreateRoom("Kerry", "NewGroup");
+            var roomId = GenerateRoomName();
+
+
+            _joinRoomHelper.CreateRoom("Joshua", roomId);
+            _joinRoomHelper.CreateRoom("Lydia", roomId);
+            _joinRoomHelper.CreateRoom("Andrew", roomId);
+            _joinRoomHelper.CreateRoom("Kerry", roomId);
 
             var rooms = Rooms.RoomsList;
             
-            rooms.Should().HaveCount(1);
-            rooms["NewGroup"].Users.Should().HaveCount(4);
-            
             rooms
                 .Should()
-                .ContainKey("NewGroup")
+                .ContainKey(roomId)
                 .WhichValue
                 .Users
                 .Should()
@@ -93,7 +91,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup")
+                .ContainKey(roomId)
                 .WhichValue
                 .Users
                 .Should()
@@ -105,7 +103,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup")
+                .ContainKey(roomId)
                 .WhichValue
                 .Users
                 .Should()
@@ -117,7 +115,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup")
+                .ContainKey(roomId)
                 .WhichValue
                 .Users
                 .Should()
@@ -131,18 +129,21 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         [Fact]
         public void WhenUsersJoinDifferentRoomsThenTheUserShouldBeAddedToTheCorrectRoom()
         {
-            _joinRoomHelper.CreateRoom("Joshua", "NewGroup4");
-            _joinRoomHelper.CreateRoom("Lydia", "NewGroup1");
-            _joinRoomHelper.CreateRoom("Andrew", "NewGroup2");
-            _joinRoomHelper.CreateRoom("Kerry", "NewGroup3");
+            var roomId1 = GenerateRoomName();
+            var roomId2 = GenerateRoomName();
+            var roomId3 = GenerateRoomName();
+            var roomId4 = GenerateRoomName();
+            
+            _joinRoomHelper.CreateRoom("Joshua", roomId4);
+            _joinRoomHelper.CreateRoom("Lydia", roomId1);
+            _joinRoomHelper.CreateRoom("Andrew", roomId2);
+            _joinRoomHelper.CreateRoom("Kerry", roomId3);
 
             var rooms = Rooms.RoomsList;
             
-            rooms.Should().HaveCount(4);
-            
             rooms
                 .Should()
-                .ContainKey("NewGroup1")
+                .ContainKey(roomId1)
                 .WhichValue
                 .Users
                 .Should()
@@ -154,7 +155,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup2")
+                .ContainKey(roomId2)
                 .WhichValue
                 .Users
                 .Should()
@@ -166,7 +167,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup3")
+                .ContainKey(roomId3)
                 .WhichValue
                 .Users
                 .Should()
@@ -178,7 +179,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup4")
+                .ContainKey(roomId4)
                 .WhichValue
                 .Users
                 .Should()
@@ -192,18 +193,21 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         [Fact]
         public void WhenAUserWithTheSameNameJoinsDifferentRoomsThenEachRoomShouldHaveADifferentUserWithTheSameName()
         {
-            _joinRoomHelper.CreateRoom("Joshua", "NewGroup1");
-            _joinRoomHelper.CreateRoom("Joshua", "NewGroup2");
-            _joinRoomHelper.CreateRoom("Joshua", "NewGroup3");
-            _joinRoomHelper.CreateRoom("Joshua", "NewGroup4");
+            var roomId1 = GenerateRoomName();
+            var roomId2 = GenerateRoomName();
+            var roomId3 = GenerateRoomName();
+            var roomId4 = GenerateRoomName();
+
+            _joinRoomHelper.CreateRoom("Joshua", roomId1);
+            _joinRoomHelper.CreateRoom("Joshua", roomId2);
+            _joinRoomHelper.CreateRoom("Joshua", roomId3);
+            _joinRoomHelper.CreateRoom("Joshua", roomId4);
 
             var rooms = Rooms.RoomsList;
             
-            rooms.Should().HaveCount(4);
-            
             rooms
                 .Should()
-                .ContainKey("NewGroup1")
+                .ContainKey(roomId1)
                 .WhichValue
                 .Users
                 .Should()
@@ -215,7 +219,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup2")
+                .ContainKey(roomId2)
                 .WhichValue
                 .Users
                 .Should()
@@ -227,7 +231,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup3")
+                .ContainKey(roomId3)
                 .WhichValue
                 .Users
                 .Should()
@@ -239,7 +243,7 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
             
             rooms
                 .Should()
-                .ContainKey("NewGroup4")
+                .ContainKey(roomId4)
                 .WhichValue
                 .Users
                 .Should()
@@ -249,10 +253,20 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
                 .Should()
                 .Be("Joshua");
         }
+        
+        private string GenerateRoomName()
+        {
+            var roomName = Guid.NewGuid().ToString();
+            roomIds.Add(roomName);
+            return roomName;
+        }
 
         public void Dispose()
         {
-            Rooms.DeleteRooms();
+            foreach (string roomId in roomIds)
+            {
+                Rooms.DeleteRoom(roomId);
+            }
         }
     }
 }

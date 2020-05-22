@@ -24,9 +24,9 @@ namespace Chat.RoomManager
             RoomsList.Add(roomId, new Room());
         }
 
-        public static void DeleteRooms()
+        public static void DeleteRoom(string roomId)
         {
-            RoomsList.Clear();
+            RoomsList.Remove(roomId);
         }
     }
 }

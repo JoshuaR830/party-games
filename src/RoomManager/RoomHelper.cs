@@ -4,17 +4,30 @@ namespace Chat.RoomManager
 {
     public class RoomHelper: IRoomHelper
     {
-        public void CreateRoom(string name, string roomId)
-        {
-            var rooms = Rooms.RoomsList;
-            if (!rooms.ContainsKey(roomId))
-                Rooms.CreateRoom(name, roomId);
+        private readonly Dictionary<string, Room> _rooms;
 
-            if(!rooms[roomId].Users.ContainsKey(name))
-                rooms[roomId].AddUser(name);
+        public RoomHelper()
+        {
+            _rooms = Rooms.RoomsList;
         }
         
-        
-        
+        public void CreateRoom(string name, string roomId)
+        {
+            if (!_rooms.ContainsKey(roomId))
+                Rooms.CreateRoom(name, roomId);
+
+            if(!_rooms[roomId].Users.ContainsKey(name))
+                _rooms[roomId].AddUser(name);
+        }
+
+        public void AddToScore(int scoreToAdd)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void SetScore(int newScore)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

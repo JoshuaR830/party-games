@@ -6,28 +6,25 @@ namespace Chat.RoomManager
     {
         private readonly Dictionary<string, Room> _rooms;
 
-        public RoomHelper()
+        private readonly string _name;
+        private readonly string _roomId;
+        
+        public RoomHelper(string name, string roomId)
         {
             _rooms = Rooms.RoomsList;
-        }
-        
-        public void CreateRoom(string name, string roomId)
-        {
-            if (!_rooms.ContainsKey(roomId))
-                Rooms.CreateRoom(name, roomId);
-
-            if(!_rooms[roomId].Users.ContainsKey(name))
-                _rooms[roomId].AddUser(name);
+            _name = name;
+            _roomId = roomId;
         }
 
         public void AddToScore(int scoreToAdd)
         {
-            throw new System.NotImplementedException();
+            var score = _rooms[_roomId].Users[_name].Score + scoreToAdd;
+            SetScore(score);
         }
 
         public void SetScore(int newScore)
         {
-            throw new System.NotImplementedException();
+            _rooms[_roomId].Users[_name].SetScore(newScore);
         }
     }
 }

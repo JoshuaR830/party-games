@@ -7,20 +7,21 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
 {
     public class JoinTests : IDisposable
     {
+        private readonly JoinRoomHelper _joinRoomHelper;
+
         public JoinTests()
         {
             Rooms.DeleteRooms();
+            _joinRoomHelper = new JoinRoomHelper();
         }
         
         [Fact]
         public void WhenAUserJoinsARoomThenTheUserShouldBeAddedToTheRoom()
         {
-            var roomHelper = new RoomHelper();
-
             var name = "Joshua";
             var roomId = "NewGroup";
             
-            roomHelper.CreateRoom(name, roomId);
+            _joinRoomHelper.CreateRoom(name, roomId);
 
             var rooms = Rooms.RoomsList;
             
@@ -42,13 +43,11 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         [Fact]
         public void WhenTheSameUserTriesToJoinTheRoomTwiceThenTheDictionaryShouldOnlyBeUpdatedOnce()
         {
-            var roomHelper = new RoomHelper();
-
             var name = "Joshua";
             var roomId = "NewGroup";
             
-            roomHelper.CreateRoom(name, roomId);
-            roomHelper.CreateRoom(name, roomId);
+            _joinRoomHelper.CreateRoom(name, roomId);
+            _joinRoomHelper.CreateRoom(name, roomId);
 
             var rooms = Rooms.RoomsList;
             
@@ -70,12 +69,10 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         [Fact]
         public void WhenMultipleUsersJoinARoomUserJoinsARoomThenTheUserShouldBeAddedToTheRoom()
         {
-            var roomHelper = new RoomHelper();
-          
-            roomHelper.CreateRoom("Joshua", "NewGroup");
-            roomHelper.CreateRoom("Lydia", "NewGroup");
-            roomHelper.CreateRoom("Andrew", "NewGroup");
-            roomHelper.CreateRoom("Kerry", "NewGroup");
+            _joinRoomHelper.CreateRoom("Joshua", "NewGroup");
+            _joinRoomHelper.CreateRoom("Lydia", "NewGroup");
+            _joinRoomHelper.CreateRoom("Andrew", "NewGroup");
+            _joinRoomHelper.CreateRoom("Kerry", "NewGroup");
 
             var rooms = Rooms.RoomsList;
             
@@ -134,12 +131,10 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         [Fact]
         public void WhenUsersJoinDifferentRoomsThenTheUserShouldBeAddedToTheCorrectRoom()
         {
-            var roomHelper = new RoomHelper();
-          
-            roomHelper.CreateRoom("Joshua", "NewGroup4");
-            roomHelper.CreateRoom("Lydia", "NewGroup1");
-            roomHelper.CreateRoom("Andrew", "NewGroup2");
-            roomHelper.CreateRoom("Kerry", "NewGroup3");
+            _joinRoomHelper.CreateRoom("Joshua", "NewGroup4");
+            _joinRoomHelper.CreateRoom("Lydia", "NewGroup1");
+            _joinRoomHelper.CreateRoom("Andrew", "NewGroup2");
+            _joinRoomHelper.CreateRoom("Kerry", "NewGroup3");
 
             var rooms = Rooms.RoomsList;
             
@@ -197,12 +192,10 @@ namespace PartyGamesTests.RoomManager.RoomHelperTests
         [Fact]
         public void WhenAUserWithTheSameNameJoinsDifferentRoomsThenEachRoomShouldHaveADifferentUserWithTheSameName()
         {
-            var roomHelper = new RoomHelper();
-          
-            roomHelper.CreateRoom("Joshua", "NewGroup1");
-            roomHelper.CreateRoom("Joshua", "NewGroup2");
-            roomHelper.CreateRoom("Joshua", "NewGroup3");
-            roomHelper.CreateRoom("Joshua", "NewGroup4");
+            _joinRoomHelper.CreateRoom("Joshua", "NewGroup1");
+            _joinRoomHelper.CreateRoom("Joshua", "NewGroup2");
+            _joinRoomHelper.CreateRoom("Joshua", "NewGroup3");
+            _joinRoomHelper.CreateRoom("Joshua", "NewGroup4");
 
             var rooms = Rooms.RoomsList;
             

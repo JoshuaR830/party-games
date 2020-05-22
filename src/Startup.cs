@@ -40,6 +40,7 @@ namespace Chat
             services.AddSingleton<IWordHelper, WordHelper>();
             services.AddSingleton<IWordService, WordService>();
             services.AddSingleton<ITemporaryDefinitionHelper, TemporaryDefinitionHelper>();
+            services.AddSingleton<IJoinRoomHelper, JoinRoomHelper>();
             services.AddSingleton<IRoomHelper, RoomHelper>();
             services.Configure<CookiePolicyOptions>(options =>
             {

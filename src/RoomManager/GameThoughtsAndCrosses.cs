@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Chat.RoomManager
+﻿namespace Chat.RoomManager
 {
     public class GameThoughtsAndCrosses : IGameThoughtsAndCrosses
     {

@@ -1,15 +1,28 @@
-﻿using Chat.RoomManager;
+﻿using System.Collections.Generic;
+using Chat.RoomManager;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.RoomManager
 {
     public class GameThoughtsAndCrossesTests
     {
+        private readonly IShuffleHelper<string> _shuffleHelper;
+
+        public GameThoughtsAndCrossesTests()
+        {
+            _shuffleHelper = Substitute.For<IShuffleHelper<string>>();
+        }
+        
         [Fact]
         public void WhenLetterSetIsCalledLetterShouldHaveAValue()
         {
-            var thoughtsAndCrosses = new GameThoughtsAndCrosses();
+            _shuffleHelper
+                .ShuffleList(Arg.Any<List<string>>())
+                .Returns(new List<string>{ "B", "A", "D", "C", "XYZ", "W", "V", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "G", "F", "E" });
+            
+            var thoughtsAndCrosses = new GameThoughtsAndCrosses(_shuffleHelper);
 
             thoughtsAndCrosses.SetLetter();
             var letter1 = thoughtsAndCrosses.Letter.Letter;
@@ -28,11 +41,15 @@ namespace PartyGamesTests.RoomManager
         [Fact]
         public void SetTopics()
         {
-            var thoughtsAndCrosses = new GameThoughtsAndCrosses();
+            _shuffleHelper
+                .ShuffleList(Arg.Any<List<string>>())
+                .Returns(new List<string>{"Girls name", "Boys name", "Book", "Fictional character", "Company / Brand", "Something outside", "Hobby", "Toy", "Electrical item", "Kitchen item", "Body part", "Colour", "Song", "Something savoury", "Something sweet", "Colour", "Toy", "Movie", "Job / Occupation", "Sport / Game", "Place", "Food", "TV programme", "Transport", "Pet", "Actor / Actress", "Family member", "Holiday destination", "Weather", "Animal / Bird", "Something you make", "Fundraising Activity", "Drink", "Ice cream", "Artist", "Musical instrument", "Fundraising Activity"});
+            
+            var thoughtsAndCrosses = new GameThoughtsAndCrosses(_shuffleHelper);
 
-            thoughtsAndCrosses.SetLetter();
+            thoughtsAndCrosses.CalculateTopics();
             var topicsSet1 = thoughtsAndCrosses.Topics.ChosenTopics;
-            thoughtsAndCrosses.SetLetter();
+            thoughtsAndCrosses.CalculateTopics();
             var topicsSet2 = thoughtsAndCrosses.Topics.ChosenTopics;
             
             thoughtsAndCrosses

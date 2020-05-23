@@ -4,30 +4,26 @@ namespace Chat.RoomManager
 {
     public class GameThoughtsAndCrosses : IGameThoughtsAndCrosses
     {
+        private readonly IShuffleHelper<string> _shuffleHelper;
         public LetterManager Letter { get; }
         public TopicManager Topics { get; }
         public int TimerSeconds { get; }
 
-        public GameThoughtsAndCrosses()
+        public GameThoughtsAndCrosses(IShuffleHelper<string> shuffleHelper)
         {
-            
+            _shuffleHelper = shuffleHelper;
+            Letter = new LetterManager(_shuffleHelper);
+            Topics = new TopicManager(_shuffleHelper);
         }
 
         public void SetLetter()
         {
-            // ToDo: Ask the letter helper for a letter
-            // ToDo: Letter helper will have a list of currently guessed letters
-            // ToDo: this should be an instance of an object as it will need to manage state for the system
-            // ToDo: Reset the currently guessed letters when length of the list is length of alphabet list
-            throw new NotImplementedException();
+            Letter.SetLetter();
         }
 
         public void CalculateTopics()
         {
-            // ToDo: Create a topics helper that will return a list of chosen topics
-            // ToDo: The topic helper will also have a list of initial topics - this will be what it pulls the topics from
-            // ToDo: The topics helper should have a list of known topics - for that reason it needs to have state
-            throw new NotImplementedException();
+            Topics.SetChosenTopics();
         }
 
         public void SetTimer(int minutes, int seconds)

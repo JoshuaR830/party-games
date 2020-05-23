@@ -1,9 +1,8 @@
 ﻿using System;
-using Chat.Pages;
 
 namespace Chat.RoomManager
 {
-    public class GameThoughtsAndCrosses
+    public class GameThoughtsAndCrosses : IGameThoughtsAndCrosses
     {
         public LetterManager Letter { get; }
         public TopicManager Topics { get; }

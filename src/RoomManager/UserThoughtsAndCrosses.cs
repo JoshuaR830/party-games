@@ -37,5 +37,10 @@ namespace Chat.RoomManager
             // ToDo: set the status to unchecked
             throw new NotImplementedException();
         }
+
+        public void CalculateScore(List<bool> scores)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

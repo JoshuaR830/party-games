@@ -4,6 +4,6 @@ namespace Chat.RoomManager
 {
     public interface IScoreHelper
     {
-        int CalculateThoughtsAndCrossesScore(List<bool> score);
+        int CalculateThoughtsAndCrossesScore(List<bool> scoresList);
     }
 }

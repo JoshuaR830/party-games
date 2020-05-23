@@ -13,7 +13,8 @@ namespace PartyGamesTests.RoomManager
             {
                 // Everything
                 new object[] { new[] {true, true, true, true, true, true, true, true, true}, 33},
-                
+                new object[] { new[] {true, true, true, true, false, true, true, true, true}, 20},
+
                 // No lines
                 new object[] { new[] {false, false, false, false, false, false, false, false, false}, 0},
                 new object[] { new[] {true, false, false, false, false, false, false, false, false}, 1},

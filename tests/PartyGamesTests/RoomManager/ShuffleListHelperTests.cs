@@ -19,8 +19,8 @@ namespace PartyGamesTests.RoomManager
         [InlineData(new object[] {new[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"}})]
         public void WhenListToShuffleIsStringResponseShouldBeInDifferentOrderToInput(string[] data)
         {
+            var list = data.ToList();
             var shuffleHelper = new ShuffleHelper<string>();
-            var list = new List<string>{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O"};
             var shuffledList = shuffleHelper.ShuffleList(list);
             shuffledList.Should().NotEqual(list);
         }

@@ -8,8 +8,13 @@ namespace Chat.RoomManager
     {
         public List<T> ShuffleList(List<T> list)
         {
-            var shuffledList = list;
-            // ToDo: OrderBy random number
+            var rand = new Random();
+            var shuffledList = new List<T>();
+            do
+            {
+                shuffledList = list.OrderBy(x => rand.Next()).ToList();
+            } while (list.SequenceEqual(shuffledList));
+
             return shuffledList;
         }
     }

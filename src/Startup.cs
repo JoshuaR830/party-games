@@ -42,6 +42,7 @@ namespace Chat
             services.AddSingleton<ITemporaryDefinitionHelper, TemporaryDefinitionHelper>();
             services.AddSingleton<IJoinRoomHelper, JoinRoomHelper>();
             services.AddSingleton<IRoomHelper, RoomHelper>();
+            services.AddSingleton<IShuffleHelper<string>, ShuffleHelper<string>>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

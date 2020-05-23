@@ -7,7 +7,9 @@ namespace Chat.RoomManager
     public class Room
     {
         public Dictionary<string, User> Users { get; }
+        public GameThoughtsAndCrosses GameThoughtsAndCrosses { get; } 
 
+        
         public Room()
         {
             Users = new Dictionary<string, User>();

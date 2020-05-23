@@ -6,28 +6,29 @@ namespace PartyGamesTests.RoomManager
 {
     public class TopicManagerTests
     {
-        private TopicManager topicManager;
+        private readonly TopicManager _topicManager;
 
         public TopicManagerTests()
         {
-            this.topicManager = new TopicManager();
+            var shuffleHelper = new ShuffleHelper<string>();
+            _topicManager = new TopicManager(shuffleHelper);
         }
         
         [Fact]
         public void TheNumberOfInitialTopicsShouldBeGreaterThanOrEqualToNine()
         {
-            topicManager
+            _topicManager
                 .InitialTopics
                 .Should()
                 .HaveCountGreaterOrEqualTo(9);
         }
         
         [Fact]
-        public void TheNumberOfChosenTopicsShouldBeGreaterThanNine()
+        public void TheNumberOfChosenTopicsShouldBeNine()
         {
-            topicManager.SetChosenTopics();
+            _topicManager.SetChosenTopics();
             
-            topicManager
+            _topicManager
                 .ChosenTopics
                 .Should()
                 .HaveCount(9);
@@ -36,22 +37,22 @@ namespace PartyGamesTests.RoomManager
         [Fact]
         public void WhenMoreTopicsHaveBeenUsedThanTheInitialNumberOfTopicsStartAgain()
         {
-            var topics1 = topicManager.InitialTopics;
+            var topics1 = _topicManager.InitialTopics;
             var iterations = topics1.Count / 9;
 
 
             for (var i = 0; i < iterations + 1; i++)
             {
-                topicManager.SetChosenTopics();
+                _topicManager.SetChosenTopics();
             }
 
-            var topics2 = topicManager.InitialTopics;
+            var topics2 = _topicManager.InitialTopics;
 
             topics1.Should().NotEqual(topics2);
 
-            topicManager.NumTopicsUsed.Should().Be(9);
+            _topicManager.NumTopicsUsed.Should().Be(9);
             
-            topicManager
+            _topicManager
                 .ChosenTopics
                 .Should()
                 .HaveCount(9);

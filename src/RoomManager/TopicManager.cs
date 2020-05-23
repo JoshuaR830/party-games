@@ -1,23 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Chat.RoomManager
 {
     public class TopicManager
     {
-        public List<string> InitialTopics { get; }
-        public List<string> ChosenTopics { get; }
+        private readonly IShuffleHelper<string> _shuffleHelper;
+        
+        public List<string> InitialTopics { get; private set; }
+        public List<string> ChosenTopics { get; private set; }
         public int NumTopicsUsed { get; private set; }
+
+        public TopicManager(IShuffleHelper<string> shuffleHelper)
+        {
+            _shuffleHelper = shuffleHelper;
+            InitialTopics = new List<string>{"Boys name", "Girls name", "Hobby", "Fictional character", "Something outside", "Book", "Electrical item", "Kitchen item", "Body part", "Song", "Something savoury", "Something sweet", "Colour", "Toy", "Movie", "Job / Occupation", "Sport / Game", "Place", "Food", "TV programme", "Transport", "Pet", "Actor / Actress", "Family member", "Holiday destination", "Weather", "Animal / Bird", "Something you make", "Drink", "Ice cream", "Artist", "Company / Brand", "Musical instrument", "Fundraising Activity"};
+            InitialTopics = _shuffleHelper.ShuffleList(InitialTopics);
+        }
 
         public void SetChosenTopics()
         {
-            throw new NotImplementedException();
+            if (NumTopicsUsed + 9 > InitialTopics.Count)
+            {
+                InitialTopics = _shuffleHelper.ShuffleList(InitialTopics);
+                NumTopicsUsed = 0;
+            }
+            
+            var nineTopics = new List<string>();
+            for (var i = 0; i < 9; i++)
+            {
+                nineTopics.Add(InitialTopics[NumTopicsUsed+i]);
+            }
+
+            ChosenTopics = nineTopics;
+            NumTopicsUsed += 9;
         }
-        
-        // ToDo: sort the topics into a random order at the beginning
-        // ToDo: keep an index of how many you have used and just keep taking the next 9 from the list
-        // ToDo: when at the end of the list, reset the NumTopicsUsed and shuffle the array again
-        
-        // ToDo: have a list shuffle helper - could be used for both the alphabet and this
     }
 }

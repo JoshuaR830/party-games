@@ -4,7 +4,7 @@ using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
-namespace PartyGamesTests.RoomManager
+namespace PartyGamesTests.RoomManager.GameThoughtsAndCrossesTests
 {
     public class GameThoughtsAndCrossesTests
     {

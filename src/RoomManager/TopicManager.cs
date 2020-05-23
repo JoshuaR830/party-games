@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Chat.RoomManager
 {
@@ -6,7 +7,12 @@ namespace Chat.RoomManager
     {
         public List<string> InitialTopics { get; }
         public List<string> ChosenTopics { get; }
-        public int NumTopicsUsed { get; }
+        public int NumTopicsUsed { get; private set; }
+
+        public void SetChosenTopics()
+        {
+            throw new NotImplementedException();
+        }
         
         // ToDo: sort the topics into a random order at the beginning
         // ToDo: keep an index of how many you have used and just keep taking the next 9 from the list

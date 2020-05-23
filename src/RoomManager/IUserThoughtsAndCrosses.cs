@@ -8,6 +8,6 @@ namespace Chat.RoomManager
         void ManageGuess(string category, string userGuess);
         void CheckWord(string category);
         void UncheckWord(string category);
-        void CalculateScore(List<bool> scores);
+        void CalculateScore();
     }
 }

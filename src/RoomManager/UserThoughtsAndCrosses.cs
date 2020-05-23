@@ -6,10 +6,10 @@ namespace Chat.RoomManager
     public class UserThoughtsAndCrosses : IUserThoughtsAndCrosses
     {
         public List<(string category, string userGuess, bool isAccepted)> WordsGrid { get; }
+        public int Score { get; private set; }
 
         public UserThoughtsAndCrosses()
         {
-            
         }
 
         public void CreateGrid(List<string> categories)
@@ -38,7 +38,7 @@ namespace Chat.RoomManager
             throw new NotImplementedException();
         }
 
-        public void CalculateScore(List<bool> scores)
+        public void CalculateScore()
         {
             throw new NotImplementedException();
         }

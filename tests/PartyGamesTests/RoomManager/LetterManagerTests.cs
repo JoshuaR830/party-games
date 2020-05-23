@@ -28,13 +28,14 @@ namespace PartyGamesTests.RoomManager
         [Fact]
         public void TheNextLetterShouldBeDifferent()
         {
-            var letter = _letterManager.Letter;
+            _letterManager.SetLetter();
             var numLettersUsed = _letterManager.NumLettersUsed;
+            var letter = _letterManager.Letter;
             
             _letterManager.SetLetter();
 
+            _letterManager.Letter.Should().Be(_letterManager.Alphabet[numLettersUsed]);
             _letterManager.NumLettersUsed.Should().Be(numLettersUsed + 1);
-            _letterManager.Letter.Should().Be(_letterManager.Alphabet[numLettersUsed + 1]);
             _letterManager.Letter.Should().NotBe(letter);
         }
         

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Chat.RoomManager
 {
@@ -7,24 +6,27 @@ namespace Chat.RoomManager
     {
         private readonly IShuffleHelper<string> _shuffleHelper;
 
-        public List<string> Alphabet { get; }
+        public List<string> Alphabet { get; private set; }
         public int NumLettersUsed { get; private set; }
         public string Letter { get; private set; }
         
         public LetterManager(IShuffleHelper<string> shuffleHelper)
         {
             _shuffleHelper = shuffleHelper;
+            Alphabet = new List<string>{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "XYZ"};
+            Alphabet = _shuffleHelper.ShuffleList(Alphabet);
         }
 
         public void SetLetter()
         {
-            throw new NotImplementedException();
+            if (Alphabet.Count <= NumLettersUsed)
+            {
+                NumLettersUsed = 0;
+                Alphabet = _shuffleHelper.ShuffleList(Alphabet);
+            }
+            
+            Letter = Alphabet[NumLettersUsed];
+            NumLettersUsed ++;
         }
-
-        // ToDo: sort the letters into a random order at the beginning
-        // ToDo: keep an index of how many you have used and just keep taking the next 1 from the list
-        // ToDo: when at the end of the list, reset the NumTopicsUsed and shuffle the array again
-        
-        // ToDo: have a list shuffle helper - could be used for both the alphabet and this
     }
 }

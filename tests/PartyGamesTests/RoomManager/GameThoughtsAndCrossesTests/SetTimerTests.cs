@@ -12,7 +12,7 @@ namespace PartyGamesTests.RoomManager.GameThoughtsAndCrossesTests
         [InlineData(1, 20, 80)]
         [InlineData(0, 20, 20)]
         [InlineData(1, 0, 60)]
-        [InlineData(59, 59, 3540)]
+        [InlineData(59, 59, 3599)]
         public void WhenMinutesAndSecondsSetTheTotalSecondsShouldBeReturned(int minutes, int seconds, int expectedTotal)
         {
             IShuffleHelper<string> shuffleHelper = Substitute.For<IShuffleHelper<string>>();

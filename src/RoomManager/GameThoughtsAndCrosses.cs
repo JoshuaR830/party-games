@@ -7,7 +7,7 @@ namespace Chat.RoomManager
         private readonly IShuffleHelper<string> _shuffleHelper;
         public LetterManager Letter { get; }
         public TopicManager Topics { get; }
-        public int TimerSeconds { get; }
+        public int TimerSeconds { get; private set; }
 
         public GameThoughtsAndCrosses(IShuffleHelper<string> shuffleHelper)
         {
@@ -28,10 +28,7 @@ namespace Chat.RoomManager
 
         public void SetTimer(int minutes, int seconds)
         {
-            // ToDo: Multiply minutes by 60
-            // ToDo: add minutes to seconds
-            // ToDo: save
-            throw new NotImplementedException();
+            TimerSeconds =  (minutes * 60) + seconds;
         }
     }
 }

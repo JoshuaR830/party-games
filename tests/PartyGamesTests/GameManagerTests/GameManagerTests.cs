@@ -11,25 +11,93 @@ namespace PartyGamesTests.GameManagerTests
         [Fact]
         public void WhenGameMangerCalledANewRoomShouldBeCreated()
         {
-            var gameManager = new GameManager();
+            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper());
             
             gameManager.SetupGame("newRoom", "Joshua", GameType.ThoughtsAndCrosses);
 
-            Rooms.RoomsList.Should()
+            Rooms
+                .RoomsList
+                .Should()
                 .ContainKey("newRoom")
                 .WhichValue
+                .Users
                 .Should()
-                .Be("Joshua");
+                .ContainKey("Joshua")
+                .WhichValue
+                .UserThoughtsAndCrosses
+                .Should()
+                .NotBeNull();
 
-            Rooms.RoomsList["newRoom"]
+            Rooms
+                .RoomsList["newRoom"]
                 .GameThoughtsAndCrosses
                 .Should()
                 .NotBeNull();
 
             gameManager
                 .ActiveGameType
-                .Should
+                .Should()
                 .Be(GameType.ThoughtsAndCrosses);
+        }
+
+        [Fact]
+        public void WhenMultipleUsersAreInARoomThenTheyShouldAllBeInitialised()
+        {
+            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper());
+            gameManager.SetupGame("newRoom", "Joshua", GameType.ThoughtsAndCrosses);
+            gameManager.SetupGame("newRoom", "Lydia", GameType.ThoughtsAndCrosses);
+            gameManager.SetupGame("newRoom", "Kerry", GameType.ThoughtsAndCrosses);
+            gameManager.SetupGame("newRoom", "Andrew", GameType.ThoughtsAndCrosses);
+
+            Rooms.RoomsList["newRoom"]
+                .Users
+                .Count
+                .Should()
+                .Be(4);
+            
+            Rooms
+                .RoomsList["newRoom"]
+                .Users
+                .Should()
+                .ContainKey("Joshua")
+                .WhichValue
+                .UserThoughtsAndCrosses
+                .WordsGrid
+                .Should()
+                .NotBeNull();
+            
+            Rooms
+                .RoomsList["newRoom"]
+                .Users
+                .Should()
+                .ContainKey("Lydia")
+                .WhichValue
+                .UserThoughtsAndCrosses
+                .WordsGrid
+                .Should()
+                .NotBeNull();
+            
+            Rooms
+                .RoomsList["newRoom"]
+                .Users
+                .Should()
+                .ContainKey("Kerry")
+                .WhichValue
+                .UserThoughtsAndCrosses
+                .WordsGrid
+                .Should()
+                .NotBeNull();
+            
+            Rooms
+                .RoomsList["newRoom"]
+                .Users
+                .Should()
+                .ContainKey("Andrew")
+                .WhichValue
+                .UserThoughtsAndCrosses
+                .WordsGrid
+                .Should()
+                .NotBeNull();
         }
     }
 }

@@ -1,11 +1,21 @@
 ﻿using System;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using Chat.GameManager;
+using Chat.RoomManager;
+using Newtonsoft.Json;
 
 namespace Chat.Hubs
 {
     public class ChatHub : Hub
     {
+        private readonly IGameManager _gameManager;
+
+        public ChatHub(IGameManager gameManager)
+        {
+            _gameManager = gameManager;
+        }
+
         public async Task StartGame(string user, string letter, int[] time, string topics)
         {
             System.Console.WriteLine("Start\n\n");
@@ -107,5 +117,19 @@ namespace Chat.Hubs
             System.Console.WriteLine(message);
             await Clients.Group(recipient).SendAsync("ReceiveDirectMessage", recipient, myName, message);
         }
+        
+        
+        // Server side processing
+        public async Task JoinRoom(string roomId, string name, int gameId)
+        {
+            _gameManager.SetupGame(roomId, name, (GameType) gameId);
+            Console.WriteLine("Hello");
+
+            var userWordGrid = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.WordsGrid;
+            Console.WriteLine(JsonConvert.SerializeObject(userWordGrid));
+            // await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await Clients.Group(roomId).SendAsync("ReceiveWordGrid", userWordGrid);
+        }
+        
     }
 }

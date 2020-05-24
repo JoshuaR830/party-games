@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using Chat.GameManager;
 using Newtonsoft.Json;
 using Chat.Letters;
 using Chat.RoomManager;

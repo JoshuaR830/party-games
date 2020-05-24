@@ -28,7 +28,6 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 
         public AddWordToGuessedWordsTest()
         {
-
             _dictionary = new Dictionary
             {
                 Words = new List<WordData>
@@ -65,6 +64,9 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             };
             
             _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper
+                .GetGuessedWordsFilename()
+                .Returns(GuessedWordsFilename);
             _filenameHelper.GetDictionaryFilename().Returns(DictionaryFilename);
 
             TestFileHelper.CreateCustomFile(GuessedWordsFilename, null);
@@ -81,9 +83,12 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[1]);
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[2]);
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[3]);
+            _wordService.UpdateGuessedWordsFile();
 
             var json = TestFileHelper.Read(GuessedWordsFilename);
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);
+            
+
             
             guessedWords
                 .Words
@@ -95,6 +100,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                     new GuessedWord(_words[2], WordStatus.Suffix),
                     new GuessedWord(_words[3], WordStatus.DoesNotExist)
                 });
+            
         }
         
         [Fact]
@@ -106,6 +112,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             TestFileHelper.CreateCustomFile(GuessedWordsFilename, originalGuessedWords);
             
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[0]);
+            _wordService.UpdateGuessedWordsFile();
 
             var json = TestFileHelper.Read(GuessedWordsFilename);
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);
@@ -125,6 +132,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[0]);
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[0]);
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, _words[0]);
+            _wordService.UpdateGuessedWordsFile();
 
             var json = TestFileHelper.Read(GuessedWordsFilename);
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);
@@ -144,6 +152,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         public void IfWordDoesNotExistInDictionaryThenTheWordShouldBeAddedToGuessedWordsAsNotExists()
         {
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, "telescope");
+            _wordService.UpdateGuessedWordsFile();
 
             var json = TestFileHelper.Read(GuessedWordsFilename);
             var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json);

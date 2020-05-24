@@ -18,19 +18,30 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private IWordHelper _wordHelper;
         private ITemporaryDefinitionHelper _temporaryDefinitionHelper;
         private FileHelper _fileHelper;
+        private Dictionary _dictionary;
         private const string Filename = "./word-status-tests.json";
         
         public WordStatusTests()
         {
             _filenameHelper = Substitute.For<IFilenameHelper>();
-            _filenameHelper.GetDictionaryFilename().Returns(Filename);
+            _filenameHelper
+                .GetGuessedWordsFilename()
+                .Returns(Filename);
+            
+            _filenameHelper
+                .GetDictionaryFilename()
+                .Returns(Filename);
 
             TestFileHelper.Create(Filename);
+            var json = TestFileHelper.Read(Filename);
             
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordHelper = Substitute.For<IWordHelper>();
             _fileHelper = new FileHelper();
+            
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _dictionary = _wordService.GetDictionary();
         }
         
         [Fact]
@@ -39,7 +50,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "pelicans";
             var temporaryDefinition = TestFileHelper.PelicanTemporaryDefinition;
             _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
-            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(Filename, word, temporaryDefinition);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_dictionary, word, temporaryDefinition);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -61,6 +73,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -82,6 +95,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.AddNewWordToDictionary(Filename, word, newDefinition);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -102,6 +116,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -122,6 +137,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -142,6 +158,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -162,6 +179,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -182,6 +200,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -202,6 +221,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -222,6 +242,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -242,6 +263,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);

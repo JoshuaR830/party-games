@@ -11,5 +11,7 @@ namespace Chat.WordGame.WordHelpers
         void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus);
         void AddWordToGuessedWords(string dictionaryFilename, string guessedWordsFilename, string word);
         void AmendDictionary(string filename, string word, string definition);
+        void UpdateDictionaryFile();
+        void UpdateGuessedWordsFile();
     }
 }

@@ -2,21 +2,33 @@
 {
     public class FilenameHelper : IFilenameHelper
     {
-        public string Filename;
+        public string DictionaryFilename;
+        public string GuessedWordsFilename;
 
         public FilenameHelper()
         {
-            Filename = "./word-dictionary.json";
+            DictionaryFilename = "./word-dictionary.json";
+            GuessedWordsFilename = "./words-guessed.json";
         }
         
         public void SetDictionaryFilename(string fileName)
         {
-            Filename = fileName;
+            DictionaryFilename = fileName;
         }
 
         public string GetDictionaryFilename()
         {
-             return Filename;
+             return DictionaryFilename;
+        }
+
+        public void SetGuessedWordsFilename(string filename)
+        {
+            GuessedWordsFilename = filename;
+        }
+
+        public string GetGuessedWordsFilename()
+        {
+            return GuessedWordsFilename;
         }
     }
 }

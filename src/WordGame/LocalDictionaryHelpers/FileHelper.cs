@@ -45,18 +45,21 @@ namespace Chat.WordGame.LocalDictionaryHelpers
 
         public void WriteFile(string filename, object data)
         {
-            if (File.Exists(filename))
-                File.Delete(filename);
+            // if (File.Exists(filename))
+            //     File.Delete(filename);
+
+            Console.WriteLine(data);
             
             var json = JsonConvert.SerializeObject(data);
 
             try
             {
-                using (FileStream fs = File.Create(filename))
-                {
-                    var content = new UTF8Encoding(true).GetBytes(json);
-                    fs.Write(content, 0, content.Length);
-                }
+                File.WriteAllText(filename, json);
+                // using (var writer = new StreamWriter(filename, false))
+                // {
+                //     var content = new UTF8Encoding(true).GetBytes(json);
+                //     writer.Write(content);
+                // }
             }
             catch (Exception e)
             {

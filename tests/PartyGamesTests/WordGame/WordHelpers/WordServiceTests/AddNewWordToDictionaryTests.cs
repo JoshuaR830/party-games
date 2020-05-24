@@ -30,6 +30,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _fileHelper = new FileHelper();
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
+            _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
 
             if (File.Exists(Filename))
                 File.Delete(Filename);
@@ -44,8 +45,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var newDefinition = "Something that has only just come into existence";
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-
             _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
+            _wordService.UpdateDictionaryFile();
 
             var response = TestFileHelper.Read(Filename);
 
@@ -67,8 +68,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var newDefinition = "";
 
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-
             _wordService.AddNewWordToDictionary(Filename, newWord, newDefinition);
+            _wordService.UpdateDictionaryFile();
 
             var response = TestFileHelper.Read(Filename);
 

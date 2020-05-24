@@ -51,7 +51,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Returns(false);
 
             _wordHelper
-                .StrippedSuffixDictionaryCheck(Filename, word)
+                .StrippedSuffixDictionaryCheck(Arg.Any<Dictionary>(), word)
                 .Returns(true);
 
             var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
@@ -69,7 +69,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Returns(false);
 
             _wordHelper
-                .StrippedSuffixDictionaryCheck(Filename, word)
+                .StrippedSuffixDictionaryCheck(Arg.Any<Dictionary>(), word)
                 .Returns(false);
 
             var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
@@ -91,7 +91,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Returns(true);
 
             _wordHelper
-                .StrippedSuffixDictionaryCheck(Filename, word)
+                .StrippedSuffixDictionaryCheck(Arg.Any<Dictionary>(), word)
                 .Returns(false);
 
             _wordHelper
@@ -117,7 +117,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Returns(false);
 
             _wordHelper
-                .StrippedSuffixDictionaryCheck(Filename, word)
+                .StrippedSuffixDictionaryCheck(Arg.Any<Dictionary>(), word)
                 .Returns(false);
 
             var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
@@ -157,7 +157,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Returns(false);
             
             _wordHelper
-                .StrippedSuffixDictionaryCheck(Filename, word)
+                .StrippedSuffixDictionaryCheck(Arg.Any<Dictionary>(), word)
                 .Returns(false);
 
             var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);

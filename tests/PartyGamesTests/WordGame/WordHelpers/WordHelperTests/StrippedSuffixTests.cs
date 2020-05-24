@@ -40,7 +40,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .Returns("Word forms: there are some cheeses over there");
 
             var wordHelperUnderTest = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
-            var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeTrue();
         }
 
@@ -55,7 +55,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeFalse();
         }
         
@@ -70,7 +70,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("box")
                 .Returns("Word forms: there are some boxes over there");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeTrue();
         }
         
@@ -85,7 +85,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeFalse();
         }
         
@@ -100,7 +100,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("kick")
                 .Returns("Word forms: This is really kicking it");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeTrue();
         }
         
@@ -115,7 +115,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeFalse();
         }
         
@@ -130,7 +130,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("run")
                 .Returns("Word forms: got to love running in the park");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeTrue();
         }
 
@@ -145,7 +145,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
             response.Should().BeFalse();
         }
     }

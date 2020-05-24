@@ -20,19 +20,28 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordHelper _wordHelper;
+        private readonly IFilenameHelper _filenameHelper;
         private readonly FileHelper _fileHelper;
-        
+        private Dictionary _dictionary;
+
         public AutomaticallyAddNewWordToDictionaryTests()
         {
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordHelper = Substitute.For<IWordHelper>();
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper.GetDictionaryFilename().Returns(Filename);
+            _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
             _fileHelper = new FileHelper();
+            
             
             if (File.Exists(Filename))
                 File.Delete(Filename);
             
             TestFileHelper.Create(Filename);
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            var json = TestFileHelper.Read(Filename);
+            _dictionary = _wordService.GetDictionary();
         }
 
         [Fact]
@@ -42,7 +51,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var temporaryDefinition = "Something that has only just come into existence";
             
             _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
-            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_dictionary, newWord, temporaryDefinition);
+            _wordService.UpdateDictionaryFile();
 
             var response = TestFileHelper.Read(Filename);
 
@@ -64,7 +74,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var temporaryDefinition = "";
 
             _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
-            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(Filename, newWord, temporaryDefinition);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_dictionary, newWord, temporaryDefinition);
+            _wordService.UpdateDictionaryFile();
 
             var response = TestFileHelper.Read(Filename);
 

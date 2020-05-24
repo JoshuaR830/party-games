@@ -11,10 +11,8 @@ namespace Chat.WordGame.LocalDictionaryHelpers
             _fileHelper = fileHelper;
         }
         
-        public void AutomaticallySetTemporaryDefinitionForWord(string filename, string word, string temporaryDefinition)
+        public void AutomaticallySetTemporaryDefinitionForWord(Dictionary dictionary, string word, string temporaryDefinition)
         {
-            var dictionary = _fileHelper.ReadDictionary(filename);
-            
             dictionary.Words.Add(new WordData
             {
                 Word = word,
@@ -22,8 +20,6 @@ namespace Chat.WordGame.LocalDictionaryHelpers
                 TemporaryDefinition = temporaryDefinition,
                 Status = WordStatus.Suffix
             });
-            
-            _fileHelper.WriteDictionary(filename, dictionary);
         }
     }
 }

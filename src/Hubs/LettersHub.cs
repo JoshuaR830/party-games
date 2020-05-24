@@ -17,8 +17,6 @@ namespace Chat.Hubs
         private readonly IFilenameHelper _filenameHelper;
         private readonly IJoinRoomHelper _joinRoomHelper;
         private readonly IRoomHelper _roomHelper;
-
-        private const string GuessedWordsFilename = "./words-guessed.json";
         
         public LettersHub(IWordService wordService, IFileHelper fileHelper, IFilenameHelper filenameHelper, IJoinRoomHelper joinRoomHelper, IRoomHelper roomHelper)
         {
@@ -31,8 +29,8 @@ namespace Chat.Hubs
             if (!File.Exists(_filenameHelper.GetDictionaryFilename()))
                 File.Create(_filenameHelper.GetDictionaryFilename());
             
-            if (!File.Exists(GuessedWordsFilename))
-                File.Create(GuessedWordsFilename);
+            if (!File.Exists(_filenameHelper.GetGuessedWordsFilename()))
+                File.Create(_filenameHelper.GetGuessedWordsFilename());
         }
 
         public async Task AddToGroup(string groupName)
@@ -53,7 +51,7 @@ namespace Chat.Hubs
         public async Task IsValidWord(string word, string group)
         {
             var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);
-            _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), GuessedWordsFilename, word);
+            _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
         }
 
@@ -61,7 +59,7 @@ namespace Chat.Hubs
         {
             Console.WriteLine(word);
             _wordService.ToggleIsWordInDictionary(_filenameHelper.GetDictionaryFilename(), word, newStatus);
-            _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), GuessedWordsFilename, word);
+            _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
             await Clients.Group(group).SendAsync("TickWord", word);
         }
 
@@ -75,7 +73,7 @@ namespace Chat.Hubs
         {
             _wordService.AmendDictionary(_filenameHelper.GetDictionaryFilename(), newWord, newDefinition);
             _wordService.ToggleIsWordInDictionary(_filenameHelper.GetDictionaryFilename(), newWord, true);
-            _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), GuessedWordsFilename, newWord);
+            _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), newWord);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
 
@@ -88,8 +86,15 @@ namespace Chat.Hubs
 
         public async Task GetGuessedWords(string group)
         {
-            var wordData = _fileHelper.ReadFile(GuessedWordsFilename);
+            var wordData = _fileHelper.ReadFile(_filenameHelper.GetGuessedWordsFilename());
             await Clients.Group(group).SendAsync("ReceiveGuessedWord", wordData);
+        }
+
+        public void RoundComplete(string group)
+        {
+            Console.WriteLine("Update");
+            _wordService.UpdateDictionaryFile();
+            _wordService.UpdateGuessedWordsFile();
         }
     }
 }

@@ -7,13 +7,23 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
     public class FilenameHelperTests
     {
         [Fact]
-        public void WhenFilenameIsSetReturnTheFilename()
+        public void WhenDictionaryFilenameIsSetReturnTheDictionaryFilename()
         {
             var filenameHelper = new FilenameHelper();
-            filenameHelper.SetDictionaryFilename("SomeFile.json");
+            filenameHelper.SetDictionaryFilename("SomeDictionaryFile.json");
             var filename = filenameHelper.GetDictionaryFilename();
 
-            filename.Should().Be("SomeFile.json");
+            filename.Should().Be("SomeDictionaryFile.json");
+        }
+        
+        [Fact]
+        public void WhenGuessedFilenameIsSetReturnTheGuessedFilename()
+        {
+            var filenameHelper = new FilenameHelper();
+            filenameHelper.SetGuessedWordsFilename("SomeGuesssedFile.json");
+            var filename = filenameHelper.GetGuessedWordsFilename();
+
+            filename.Should().Be("SomeGuesssedFile.json");
         }
     }
 }

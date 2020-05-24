@@ -4,5 +4,7 @@
     {
         void SetDictionaryFilename(string fileName);
         string GetDictionaryFilename();
+        void SetGuessedWordsFilename(string filename);
+        string GetGuessedWordsFilename();
     }
 }

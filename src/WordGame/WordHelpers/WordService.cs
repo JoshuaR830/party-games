@@ -14,7 +14,8 @@ namespace Chat.WordGame.WordHelpers
         private readonly IFilenameHelper _filenameHelper;
 
         private readonly Dictionary _dictionary;
-        
+        private readonly GuessedWords _guessedWords;
+
         public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, IFilenameHelper filenameHelper)
         {
             _wordExistenceHelper = wordExistenceHelper;
@@ -26,8 +27,15 @@ namespace Chat.WordGame.WordHelpers
             if (_dictionary == null)
             {
                 Console.WriteLine("Hello");
-                var name = _filenameHelper.GetDictionaryFilename();
                 _dictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+            }
+
+            if (_guessedWords == null)
+            {
+                Console.WriteLine("Guessed words");
+                var json = _fileHelper.ReadFile(_filenameHelper.GetGuessedWordsFilename());
+                _guessedWords = JsonConvert.DeserializeObject<GuessedWords>(json) ?? new GuessedWords();
+
             }
         }
 
@@ -38,7 +46,7 @@ namespace Chat.WordGame.WordHelpers
             if (wordExists)
                 return true;
             
-            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(filename, word);
+            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(_dictionary, word);
 
             return wordExists;
         }
@@ -74,8 +82,6 @@ namespace Chat.WordGame.WordHelpers
                 TemporaryDefinition = null,
                 Status = WordStatus.Permanent
             });
-            
-            _fileHelper.WriteDictionary(filename, _dictionary);
         }
 
         public void UpdateExistingWord(string filename, string word, string definition)
@@ -91,8 +97,6 @@ namespace Chat.WordGame.WordHelpers
             var item = _dictionary.Words.IndexOf(wordList.First());
             _dictionary.Words[item].PermanentDefinition = definition;
             _dictionary.Words[item].Status = WordStatus.Permanent;
-
-            _fileHelper.WriteDictionary(filename, _dictionary);
         }
 
         public void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus)
@@ -109,36 +113,45 @@ namespace Chat.WordGame.WordHelpers
             if (expectedNewStatus == false)
             {
                 _dictionary.Words[index].Status = WordStatus.DoesNotExist;
-                _fileHelper.WriteDictionary(filename, _dictionary);
                 return;
             }
             
             Console.WriteLine(JsonConvert.SerializeObject(_dictionary.Words[index]));
             _dictionary.Words[index].Status = item.PermanentDefinition != null ? WordStatus.Permanent : WordStatus.Temporary;
             Console.WriteLine(JsonConvert.SerializeObject(_dictionary.Words[index]));
-            
-            _fileHelper.WriteDictionary(filename, _dictionary);
         }
 
         public void AddWordToGuessedWords(string dictionaryFilename, string guessedWordsFilename, string word)
         {
             var items = _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
-
-            var guessedWordsJson = _fileHelper.ReadFile(guessedWordsFilename);
-            var guessedWords = JsonConvert.DeserializeObject<GuessedWords>(guessedWordsJson) ?? new GuessedWords();
-            var guessed = guessedWords.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+            
+            var guessed = _guessedWords.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
             
             if (guessed.Any())
             {
-                var index = guessedWords.Words.IndexOf(guessed.First());
-                guessedWords.Words[index] = new GuessedWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
+                var index = _guessedWords.Words.IndexOf(guessed.First());
+                _guessedWords.Words[index] = new GuessedWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
             }
             else
             {
-                guessedWords.AddWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
+                _guessedWords.AddWord(word, items.Any() ? items.First().Status : WordStatus.DoesNotExist);
             }
 
-            _fileHelper.WriteFile(guessedWordsFilename, guessedWords);
+        }
+        
+        public void UpdateDictionaryFile()
+        {
+            _fileHelper.WriteFile(_filenameHelper.GetDictionaryFilename(), _dictionary);
+        }
+
+        public void UpdateGuessedWordsFile()
+        {
+            _fileHelper.WriteFile(_filenameHelper.GetGuessedWordsFilename(), _guessedWords);
+        }
+
+        public Dictionary GetDictionary()
+        {
+            return _dictionary;
         }
     }
 }

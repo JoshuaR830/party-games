@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Chat.GameManager;
 using Chat.RoomManager;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Newtonsoft.Json;
 
 namespace Chat.Hubs
@@ -117,18 +119,104 @@ namespace Chat.Hubs
             System.Console.WriteLine(message);
             await Clients.Group(recipient).SendAsync("ReceiveDirectMessage", recipient, myName, message);
         }
-        
+
         
         // Server side processing
+
+        public async Task Startup(string roomId, string name, int gameId)
+        {
+            Console.WriteLine("New room 1");
+            await Groups.AddToGroupAsync(Context.ConnectionId, name);
+
+            if (!Rooms.RoomsList.ContainsKey(roomId))
+            {
+                Console.WriteLine("New room 2");
+                _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
+                Rooms.RoomsList[roomId].GameThoughtsAndCrosses.SetLetter();
+                Console.WriteLine(name);
+            }
+        }
+
+        public void SetupNewUser(string roomId, string name)
+        {
+            Console.WriteLine("New user");
+            if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
+            {
+                var game = Rooms.RoomsList[roomId].GameThoughtsAndCrosses;
+                _gameManager.SetupNewUser(roomId, name, game);
+                Console.WriteLine(name);
+            }
+        }
+        
+        public async Task StartServerGame(string user, int[] time)
+        {
+            await Clients.Group(user).SendAsync("ReceiveTimeStart", time);
+            await Clients.Group(user).SendAsync("StartNewRound");
+        }
+        
         public async Task JoinRoom(string roomId, string name, int gameId)
         {
-            _gameManager.SetupGame(roomId, name, (GameType) gameId);
-            Console.WriteLine("Hello");
-
-            var userWordGrid = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.WordsGrid;
-            Console.WriteLine(JsonConvert.SerializeObject(userWordGrid));
+            Console.WriteLine("Join room");
+            // var userWordGrid = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.WordsGrid;
+            // Console.WriteLine(JsonConvert.SerializeObject(userWordGrid));
             // await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            await Clients.Group(roomId).SendAsync("ReceiveWordGrid", userWordGrid);
+            var letter = Rooms.RoomsList[roomId].GameThoughtsAndCrosses.Letter.Letter;
+
+            await Clients.Group(roomId).SendAsync("ReceiveLetter", letter);
+
+            foreach (var user in Rooms.RoomsList[roomId].Users)
+            {
+                Console.WriteLine(user.Value.UserThoughtsAndCrosses.WordsGrid);
+                Console.WriteLine(user.Value.Name);
+                await Clients.Group(user.Value.Name).SendAsync("ReceiveWordGrid", user.Value.UserThoughtsAndCrosses.WordsGrid);
+            }
+        }
+
+        public async Task SetGuessForCategory(string roomId, string name, string category, string userGuess)
+        {
+            Console.WriteLine(userGuess);
+            Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.ManageGuess(category, userGuess);   
+        }
+        
+        public async Task SetIsValidForCategory(string roomId, string name, string category, bool isValid)
+        {
+            if (isValid)
+            {
+                Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.CheckWord(category);
+            }
+            else
+            {
+                Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.UncheckWord(category);
+            }
+        }
+
+        public async Task CalculateScore(string roomId, string name)
+        {
+            Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.CalculateScore();
+            var score = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.Score;
+            await Clients.Group(name).SendAsync("ScoreCalculated", score);
+        }
+
+        public async Task ResetGame(string roomId, string name, int gameId)
+        {
+            var game = Rooms.RoomsList[roomId].GameThoughtsAndCrosses;
+            _gameManager.ResetThoughtsAndCrosses(roomId, game);
+            foreach (var user in Rooms.RoomsList[roomId].Users)
+            {
+                _gameManager.ResetUser(roomId, user.Value.Name, game);
+            }
+            
+            await JoinRoom(roomId, name, gameId);
+        }
+        
+        public async Task UpdateScoreBoard(string roomId, string name)
+        {
+            var score = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.Score;
+            var message = $"{name}: {score}";
+            // await SendDirectMessage("my group", "user", message);
+            Console.WriteLine("Indirect");
+
+            await Clients.Group(roomId).SendAsync("ReceiveMessage", Context.ConnectionId, roomId, message);
         }
         
     }

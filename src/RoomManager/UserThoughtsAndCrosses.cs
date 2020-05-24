@@ -38,8 +38,14 @@ namespace Chat.RoomManager
 
         public void CheckWord(string category)
         {
-            // ToDo: set the status to checked
-            throw new NotImplementedException();
+            var cells = WordsGrid.Where(x => x.category == category).ToList();
+
+            if (!cells.Any())
+                return;
+            
+            var index = WordsGrid.IndexOf(cells.First());
+            var valueTuple = WordsGrid[index];
+            WordsGrid[index] = (valueTuple.category, valueTuple.userGuess, true);
         }
 
         public void UncheckWord(string category)

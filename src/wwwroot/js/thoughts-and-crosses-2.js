@@ -1,5 +1,5 @@
 ﻿"use strict";
-
+var list = Array.from(Array(3), () => new Array(3));
 window.addEventListener('load', function() {
     document.getElementById("my-name").focus();
 });
@@ -41,50 +41,6 @@ var row;
 
 var counter = 0;
 console.log(list);
-for (var x = 0; x < 3; x++) {
-    row = document.createElement("div");
-    row.className = "row";
-    row.id = "row-" + x;
-    console.log("New row");
-    document.getElementById('table').appendChild(row);
-    for (var y = 0; y < 3; y++) {
-        list[x][y] = 0;
-        console.log(counter);
-        console.log(list);
-
-        var cell = document.createElement('div');
-        cell.className = 'cell cell-' + counter;
-        let a = x;
-        let b = y;
-        cell.addEventListener('click', function(event) {
-            console.log(event.target.classList);
-            if (event.target.classList.contains('answer')) {
-                return;
-            }
-
-            if (event.currentTarget.querySelector('.answer') == null) {
-                console.log("Not found");
-            } else if (event.currentTarget.querySelector('.answer').value.length <= 0) {
-                event.currentTarget.querySelector('.answer').focus();
-                return;
-            }
-
-            if(!event.currentTarget.classList.contains('selected')) {
-                event.currentTarget.classList.add('selected');
-                list[a][b] = 1;
-            } else {
-                event.currentTarget.classList.remove('selected');
-                list[a][b] = 0;
-            }
-            calculateScore();
-        });
-
-        row.appendChild(cell);
-
-        console.log("Cell")
-        counter ++;
-    }
-}
 
 document.getElementById("container").classList.remove("hidden");
 connection.start().then(function () {
@@ -167,33 +123,25 @@ connection.on("ReceiveCompleteRound", function() {
 })
 
 connection.on("ReceiveWordGrid", function(wordGrid) {
-    console.log(wordGrid);
     document.getElementById('table').innerHTML = "";
     counter = 0;
     for (let x = 0; x < 9; x += 3) {
         row = document.createElement("div");
         row.className = "row";
         row.id = "row-" + x;
-        console.log("New row");
         document.getElementById('table').appendChild(row);
         for (let y = 0; y < 3; y++) {
-            console.log(wordGrid[x + y]);
-
             var cell = document.createElement('div');
             cell.className = 'cell cell-' + counter;
-            console.log(wordGrid[x + y].item1);
             let category = wordGrid[x + y].item1;
             cell.setAttribute("data-category", category);
             cell.addEventListener('click', function (event) {
-                console.log(event.target.getAttribute("data-category"));
-                console.log(wordGrid[x + y])
 
                 if (event.target.classList.contains('answer')) {
                     return;
                 }
 
                 if (event.currentTarget.querySelector('.answer') == null) {
-                    console.log("Not found");
                 } else if (event.currentTarget.querySelector('.answer').value.length <= 0) {
                     event.currentTarget.querySelector('.answer').focus();
                     return;
@@ -217,17 +165,13 @@ connection.on("ReceiveWordGrid", function(wordGrid) {
             
             let myCell = cell;
             cell.addEventListener('keyup', function(event){
-                console.log("Hello");
                 connection.invoke("SetGuessForCategory", connectionName, document.querySelector('#my-name').value, wordGrid[x + y].item1, myCell.querySelector('.answer').value)
             })
             
             if (wordGrid[x + y].item3) {
                 myCell.classList.add('selected');
-                console.log(cell);
-                console.log("Selected");
             } else {
                 cell.classList.remove('selected');
-                console.log("Not selected");
             }
 
             row.appendChild(cell);
@@ -235,3 +179,36 @@ connection.on("ReceiveWordGrid", function(wordGrid) {
         }
     }
 });
+
+for (var x = 0; x < 3; x++) {
+    row = document.createElement("div");
+    row.className = "row";
+    row.id = "row-" + x;
+    console.log("New row");
+    document.getElementById('table').appendChild(row);
+    for (var y = 0; y < 3; y++) {
+        list[x][y] = 0;
+        console.log(counter);
+        console.log(list);
+
+        var cell = document.createElement('div');
+        cell.className = 'cell cell-' + counter;
+        let a = x;
+        let b = y;
+        cell.addEventListener('click', function(event) {
+            if(!event.currentTarget.classList.contains('selected')) {
+                event.currentTarget.classList.add('selected');
+                list[a][b] = 1;
+            } else {
+                event.currentTarget.classList.remove('selected');
+                list[a][b] = 0;
+            }
+            calculateScore();
+        });
+
+        row.appendChild(cell);
+
+        console.log("Cell")
+        counter ++;
+    }
+}

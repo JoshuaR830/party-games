@@ -59,9 +59,12 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         public void WhenAUserChangesTheirGuessValueShouldBeUpdated()
         {
             _userThoughtsAndCrosses.ManageGuess("Food", "Banana");
-            _userThoughtsAndCrosses.ManageGuess("Food", "Banana Bread");
+            _userThoughtsAndCrosses.WordsGrid[0].userGuess.Should().Be("Banana");
+
+            _userThoughtsAndCrosses.ManageGuess("Food", "Banana bread");
+            _userThoughtsAndCrosses.WordsGrid[0].userGuess.Should().Be("Banana bread");
+
             _userThoughtsAndCrosses.ManageGuess("Food", "Bun");
-            
             _userThoughtsAndCrosses.WordsGrid[0].userGuess.Should().Be("Bun");
         }
     }

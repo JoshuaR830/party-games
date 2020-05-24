@@ -31,9 +31,13 @@ namespace Chat.RoomManager
 
         public void ManageGuess(string category, string userGuess)
         {
-            // ToDo: find the position in the list of the category
-            // ToDo: add user guess to the WordsGrid
-            throw new NotImplementedException();
+            var index = GetIndex(category);
+
+            if (index < 0)
+                return;
+
+            var valueTuple = WordsGrid[index];
+            WordsGrid[index] = (valueTuple.category, userGuess, valueTuple.isAccepted);
         }
 
         public void CheckWord(string category)

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Chat.Letters;
+using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 
@@ -11,18 +12,20 @@ namespace Chat.Hubs
 {
     public class LettersHub : Hub
     {
-        // readonly WordValidationHelper _wordValidationHelper = new WordValidationHelper();
-        // readonly DictionaryRequestHelper _requestHelper = new DictionaryRequestHelper();
         private readonly IWordService _wordService;
         private readonly IFileHelper _fileHelper;
+        private readonly IJoinRoomHelper _joinRoomHelper;
+        private readonly IRoomHelper _roomHelper;
 
         private const string DictionaryFilename = "./word-dictionary.json";
         private const string GuessedWordsFilename = "./words-guessed.json";
 
-        public LettersHub(IWordService wordService, IFileHelper fileHelper)
+        public LettersHub(IWordService wordService, IFileHelper fileHelper, IJoinRoomHelper joinRoomHelper, IRoomHelper roomHelper)
         {
             _wordService = wordService;
             _fileHelper = fileHelper;
+            _joinRoomHelper = joinRoomHelper;
+            _roomHelper = roomHelper;
 
             if (!File.Exists(DictionaryFilename))
                 File.Create(DictionaryFilename);
@@ -33,9 +36,8 @@ namespace Chat.Hubs
 
         public async Task AddToGroup(string groupName)
         {
-            // var fileHelper =  new Letters.FileHelper();
-            // fileHelper.CopyFileContent();
-
+            // ToDo: Use a real name as entered by user
+            _joinRoomHelper.CreateRoom(groupName, "User name");
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         }
 
@@ -49,7 +51,6 @@ namespace Chat.Hubs
 
         public async Task IsValidWord(string word, string group)
         {          
-            // var isValid2 = _wordValidationHelper.ValidateWord(word);
             var isValid = _wordService.GetWordStatus(DictionaryFilename, word);
             _wordService.AddWordToGuessedWords(DictionaryFilename, GuessedWordsFilename, word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
@@ -65,17 +66,12 @@ namespace Chat.Hubs
 
         public async Task GetDefinition(string group, string word)
         {
-            // var definition2 = _wordValidationHelper.GetDefinition(word);
             var definition = _wordService.GetDefinition(DictionaryFilename, word);
-            // Console.WriteLine($"Old: {definition2}");
-            Console.WriteLine($"New: {definition}");
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
         }
 
         public async Task AddWordToDictionary(string group, string newWord, string newDefinition)
         {
-            // var definition = _requestHelper.MakeDefinitionRequest(newWord);
-            // _wordValidationHelper.UpdateDictionary(newWord, newDefinition);
             _wordService.AmendDictionary(DictionaryFilename, newWord, newDefinition);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }

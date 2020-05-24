@@ -7,6 +7,7 @@ namespace Chat.GameManager
         private IJoinRoomHelper _joinRoomHelper;
         private IShuffleHelper<string> _shuffleHelper;
         private IScoreHelper _scoreHelper;
+        public GameType ActiveGameType { get; private set; }
 
         public GameManager(IJoinRoomHelper joinRoomHelper, IShuffleHelper<string> shuffleHelper, IScoreHelper scoreHelper)
         {
@@ -14,9 +15,8 @@ namespace Chat.GameManager
             _shuffleHelper = shuffleHelper;
             _scoreHelper = scoreHelper;
         }
-
-        public GameType ActiveGameType { get; private set; }
-        public void SetupGame(string roomId, string userId, GameType game)
+        
+        public void SetupNewGame(string roomId, string userId, GameType game)
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
             ActiveGameType = game;
@@ -30,6 +30,34 @@ namespace Chat.GameManager
                     ThoughtsAndCrosses(roomId, userId);
                     break;
             }
+            
+            SetupNewUser(roomId, userId, Rooms.RoomsList[roomId].GameThoughtsAndCrosses);
+        }
+        
+        public void ResetThoughtsAndCrosses(string roomId, GameThoughtsAndCrosses game)
+        {
+            Rooms.RoomsList[roomId].GameThoughtsAndCrosses.SetLetter();
+            Rooms.RoomsList[roomId].GameThoughtsAndCrosses.CalculateTopics();
+        }
+
+        public void ResetUser(string roomId, string userId, GameThoughtsAndCrosses game)
+        {
+            var topics = Rooms.RoomsList[roomId].GameThoughtsAndCrosses.Topics.ChosenTopics;
+
+            Rooms.RoomsList[roomId].Users[userId].UserThoughtsAndCrosses.CreateGrid(topics);
+            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleHelper);
+            userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
+            
+            Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
+        }
+
+        public void SetupNewUser(string roomId, string userId, GameThoughtsAndCrosses game)
+        {
+            _joinRoomHelper.CreateRoom(userId, roomId);
+            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleHelper);
+            userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
+            
+            Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
         }
 
         void ThoughtsAndCrosses(string roomId, string userId)
@@ -39,11 +67,6 @@ namespace Chat.GameManager
             gameThoughtsAndCrosses.SetLetter();
             
             Rooms.RoomsList[roomId].SetThoughtsAndCrosses(gameThoughtsAndCrosses);
-            
-            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleHelper);
-            userThoughtsAndCrosses.CreateGrid(gameThoughtsAndCrosses.Topics.ChosenTopics);
-            
-            Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
         }
     }
 }

@@ -38,26 +38,40 @@ namespace Chat.RoomManager
 
         public void CheckWord(string category)
         {
-            var cells = WordsGrid.Where(x => x.category == category).ToList();
-
-            if (!cells.Any())
+            var index = GetIndex(category);
+            
+            if (index < 0)
                 return;
             
-            var index = WordsGrid.IndexOf(cells.First());
             var valueTuple = WordsGrid[index];
             WordsGrid[index] = (valueTuple.category, valueTuple.userGuess, true);
         }
 
         public void UncheckWord(string category)
         {
-            // ToDo: set the status to unchecked
-            throw new NotImplementedException();
+            var index = GetIndex(category);
+
+            if (index < 0)
+                return;
+            
+            var valueTuple = WordsGrid[index];
+            WordsGrid[index] = (valueTuple.category, valueTuple.userGuess, false);
         }
 
         public void CalculateScore()
         {
             var isAcceptedList = WordsGrid.Select(x => x.isAccepted).ToList();
             Score = _scoreHelper.CalculateThoughtsAndCrossesScore(isAcceptedList);
+        }
+
+        private int GetIndex(string category)
+        {
+            var cells = WordsGrid.Where(x => x.category == category).ToList();
+
+            if (!cells.Any())
+                return -1;
+            
+            return WordsGrid.IndexOf(cells.First());
         }
     }
 }

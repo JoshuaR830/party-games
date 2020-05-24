@@ -320,7 +320,7 @@ function launchThoughtsAndCrosses() {
 
     console.log(">>>" + letter)
 
-    connection.invoke("StartGame", user, letter, time, topics);
+    // connection.invoke("StartGame", user, letter, time, topics);
 }
 
 connection.on("ReceiveCompleteRound", function() {
@@ -332,3 +332,67 @@ connection.on("ReceiveCompleteRound", function() {
     document.getElementById('playAgain').classList.remove('hidden');
     stopTimer();
 })
+
+connection.on("ReceiveWordGrid", function(wordGrid) {
+    console.log(wordGrid);
+    document.getElementById('table').innerHTML = "";
+    counter = 0;
+    for (let x = 0; x < 9; x += 3) {
+        row = document.createElement("div");
+        row.className = "row";
+        row.id = "row-" + x;
+        console.log("New row");
+        document.getElementById('table').appendChild(row);
+        for (let y = 0; y < 3; y++) {
+            console.log(wordGrid[x + y]);
+
+            var cell = document.createElement('div');
+            cell.className = 'cell cell-' + counter;
+            console.log(wordGrid[x + y].item1);
+            let category = wordGrid[x + y].item1;
+            cell.setAttribute("data-category", category);
+            cell.addEventListener('click', function (event) {
+                console.log(event.target.getAttribute("data-category"));
+                console.log(wordGrid[x + y])
+
+                if (event.target.classList.contains('answer')) {
+                    return;
+                }
+
+                if (event.currentTarget.querySelector('.answer') == null) {
+                    console.log("Not found");
+                } else if (event.currentTarget.querySelector('.answer').value.length <= 0) {
+                    event.currentTarget.querySelector('.answer').focus();
+                    return;
+                }
+                
+                if (wordGrid[x + y].item3) {
+                    event.currentTarget.classList.remove('selected');
+                    wordGrid[x + y].item3 = false;
+                } else {
+                    event.currentTarget.classList.add('selected');
+                    wordGrid[x + y].item3 = true;
+                }
+
+                // ToDo: use the new server side calculateScore();
+            });
+            
+            if (wordGrid[x + y].item3) {
+                console.log("Is checked")
+            } else {
+                console.log("Not checked")
+            }
+
+            row.appendChild(cell);
+            counter ++;
+        }
+    }
+});
+//
+//     for (var y = 0; y < 3; y++) {
+//         cell.addEventListener('click', function(event) {
+////             calculateScore();
+//         });
+//         counter ++;
+//     }
+// }

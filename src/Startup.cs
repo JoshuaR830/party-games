@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Chat.GameManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,6 +33,8 @@ namespace Chat
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
+            services.AddSingleton<IGameManager, GameManager.GameManager>();
+            services.AddSingleton<IScoreHelper, ScoreHelper>();
             services.AddSingleton<IFileHelper, FileHelper>();
             services.AddSingleton<IWebDictionaryRequestHelper, WebDictionaryRequestHelper>();
             services.AddSingleton<IWebRequestHelper, WebRequestHelper>();

@@ -5,7 +5,7 @@
         public string Name { get; }
         public int Score { get; private set; }
 
-        public UserThoughtsAndCrosses UserThoughtsAndCrosses { get;}
+        public UserThoughtsAndCrosses UserThoughtsAndCrosses { get; private set; }
 
         public User(string name)
         {
@@ -17,7 +17,10 @@
         {
             Score = score;
         }
-        
-        
+
+        public void SetUserThoughtsAndCrosses(UserThoughtsAndCrosses game)
+        {
+            UserThoughtsAndCrosses = game;
+        }
     }
 }

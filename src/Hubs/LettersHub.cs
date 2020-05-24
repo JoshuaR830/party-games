@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using Chat.GameManager;
 using Newtonsoft.Json;
 using Chat.Letters;
 using Chat.RoomManager;
@@ -20,7 +21,7 @@ namespace Chat.Hubs
         private const string DictionaryFilename = "./word-dictionary.json";
         private const string GuessedWordsFilename = "./words-guessed.json";
 
-        public LettersHub(IWordService wordService, IFileHelper fileHelper, IJoinRoomHelper joinRoomHelper, IRoomHelper roomHelper)
+        public LettersHub(IWordService wordService, IFileHelper fileHelper, IJoinRoomHelper joinRoomHelper, IRoomHelper roomHelper, IGameManager gameManager)
         {
             _wordService = wordService;
             _fileHelper = fileHelper;

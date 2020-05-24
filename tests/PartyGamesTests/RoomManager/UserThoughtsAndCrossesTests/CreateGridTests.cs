@@ -23,9 +23,16 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
             
             _shuffleHelper = Substitute.For<IShuffleHelper<string>>();
             
-
+            _shuffleHelper
+                .ShuffleList(_categoriesShuffled1)
+                .Returns(_categoriesShuffled1);
+            
+            _shuffleHelper
+                .ShuffleList(_categoriesShuffled2)
+                .Returns(_categoriesShuffled2);
+            
             var scoreHelper = new ScoreHelper();
-            _userThoughtsAndCrosses = new UserThoughtsAndCrosses(scoreHelper);
+            _userThoughtsAndCrosses = new UserThoughtsAndCrosses(scoreHelper, _shuffleHelper);
         }
         
         [Fact]
@@ -54,21 +61,13 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         [Fact]
         public void Creating2WithSameCategoriesListsShouldCreateDifferentGrids()
         {
-            _shuffleHelper
-                .ShuffleList(_categoriesInitial)
-                .Returns(_categoriesShuffled1);
-            
-            _userThoughtsAndCrosses.CreateGrid(_categoriesInitial);
+            _userThoughtsAndCrosses.CreateGrid(_categoriesShuffled1);
             var firstGrid = _userThoughtsAndCrosses.WordsGrid;
             
-            _shuffleHelper
-                .ShuffleList(_categoriesInitial)
-                .Returns(_categoriesShuffled2);
-            
-            _userThoughtsAndCrosses.CreateGrid(_categoriesInitial);
+            _userThoughtsAndCrosses.CreateGrid(_categoriesShuffled2);
             var secondGrid = _userThoughtsAndCrosses.WordsGrid;
 
-            firstGrid.Should().NotBeEquivalentTo(secondGrid);
+            firstGrid.Should().NotEqual(secondGrid);
         }
     }
 }

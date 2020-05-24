@@ -14,7 +14,6 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         public void WhenCategoriesSelectedScoreShouldBeCalculatedCorrectly()
         {
             var scoreHelper = new ScoreHelper();
-            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(scoreHelper);
 
             var categories = new List<string> {"Animal", "Colour", "Bird", "News", "Food", "Boat", "Plane", "Car", "Fruit"};
             
@@ -23,6 +22,7 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
                 .ShuffleList(categories)
                 .Returns(categories);
             
+            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(scoreHelper, _shuffleHelper);
             userThoughtsAndCrosses.CreateGrid(categories);
             userThoughtsAndCrosses.CalculateScore();
             var initialScore = userThoughtsAndCrosses.Score;

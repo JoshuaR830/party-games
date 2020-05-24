@@ -6,20 +6,27 @@ namespace Chat.RoomManager
 {
     public class UserThoughtsAndCrosses : IUserThoughtsAndCrosses
     {
-        private IScoreHelper _scoreHelper;
-        public List<(string category, string userGuess, bool isAccepted)> WordsGrid { get; }
+        private readonly IScoreHelper _scoreHelper;
+        private IShuffleHelper<string> _shuffleHelper;
+        public List<(string category, string userGuess, bool isAccepted)> WordsGrid { get; private set; }
         public int Score { get; private set; }
 
-        public UserThoughtsAndCrosses(IScoreHelper scoreHelper)
+        public UserThoughtsAndCrosses(IScoreHelper scoreHelper, IShuffleHelper<string> shuffleHelper)
         {
             _scoreHelper = scoreHelper;
+            _shuffleHelper = shuffleHelper;
+            WordsGrid = new List<(string category, string userGuess, bool isAccepted)>();
         }
 
         public void CreateGrid(List<string> categories)
         {
-            // ToDo: Put the categories into a grid in a random order - categories.[OrderBy (a => rand.Next())]
-            // ToDo return the grid to the user
-            throw new NotImplementedException();
+            var shuffledCategories = _shuffleHelper.ShuffleList(categories);
+            WordsGrid = new List<(string category, string userGuess, bool isAccepted)>();
+
+            foreach (var category in shuffledCategories)
+            {
+                WordsGrid.Add((category, "", false));
+            }
         }
 
         public void ManageGuess(string category, string userGuess)

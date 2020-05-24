@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chat.RoomManager
 {
     public class UserThoughtsAndCrosses : IUserThoughtsAndCrosses
     {
+        private IScoreHelper _scoreHelper;
         public List<(string category, string userGuess, bool isAccepted)> WordsGrid { get; }
         public int Score { get; private set; }
 
-        public UserThoughtsAndCrosses()
+        public UserThoughtsAndCrosses(IScoreHelper scoreHelper)
         {
+            _scoreHelper = scoreHelper;
         }
 
         public void CreateGrid(List<string> categories)
@@ -40,7 +43,8 @@ namespace Chat.RoomManager
 
         public void CalculateScore()
         {
-            throw new NotImplementedException();
+            var isAcceptedList = WordsGrid.Select(x => x.isAccepted).ToList();
+            Score = _scoreHelper.CalculateThoughtsAndCrossesScore(isAcceptedList);
         }
     }
 }

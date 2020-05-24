@@ -13,17 +13,19 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         [Fact]
         public void WhenCategoriesSelectedScoreShouldBeCalculatedCorrectly()
         {
-           var userThoughtsAndCrosses = new UserThoughtsAndCrosses();
+            var scoreHelper = new ScoreHelper();
+            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(scoreHelper);
 
-            userThoughtsAndCrosses.CalculateScore();
-            var initialScore = userThoughtsAndCrosses.Score;
-            
             var categories = new List<string> {"Animal", "Colour", "Bird", "News", "Food", "Boat", "Plane", "Car", "Fruit"};
-
+            
             _shuffleHelper = Substitute.For<IShuffleHelper<string>>();
             _shuffleHelper
                 .ShuffleList(categories)
                 .Returns(categories);
+            
+            userThoughtsAndCrosses.CreateGrid(categories);
+            userThoughtsAndCrosses.CalculateScore();
+            var initialScore = userThoughtsAndCrosses.Score;
 
             userThoughtsAndCrosses.CheckWord("Animal");
             userThoughtsAndCrosses.CheckWord("Bird");
@@ -31,8 +33,7 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
             userThoughtsAndCrosses.CheckWord("Plane");
             userThoughtsAndCrosses.CheckWord("Fruit");
 
-            userThoughtsAndCrosses.CreateGrid(categories);
-
+            userThoughtsAndCrosses.CalculateScore();
             var finalScore = userThoughtsAndCrosses.Score;
 
             initialScore

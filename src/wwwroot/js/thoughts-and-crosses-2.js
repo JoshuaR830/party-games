@@ -1,14 +1,13 @@
 ﻿"use strict";
+var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+var connectionName = "GroupOfJoshua";
 var list = Array.from(Array(3), () => new Array(3));
+
+document.getElementById("sendButton").disabled = true;
+
 window.addEventListener('load', function() {
     document.getElementById("my-name").focus();
 });
-
-var connectionName = "GroupOfJoshua";
-
-var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
-
-document.getElementById("sendButton").disabled = true;
 
 connection.on("CompletedScores", function() {
     submitScores();
@@ -36,7 +35,6 @@ document.querySelector('.js-login-button').addEventListener('click', function() 
     connection.invoke("SetupNewUser", connectionName, document.querySelector('#my-name').value);
 });
 
-console.log(list[0][0]);
 var row;
 
 var counter = 0;

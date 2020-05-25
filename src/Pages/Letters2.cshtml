@@ -1,0 +1,91 @@
+@page
+@model LettersModel2
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h1>Server Side Word Game</h1>
+
+<div id="options" class="options hidden">
+    <div id="view-score-option" class="button">View scores</div>
+    <div id="play-again-option" class="button">Play again</div>
+</div>
+
+<div class="js-letter-game-container">
+    <div class="letter-input-row js-letter-input-row"></div>
+    <div class="button hidden js-confirm-word">Confirm word</div>
+
+    <div class="letter-selection-container js-random-letters-container"></div>
+    <div class="button js-letters-start">Start</div>
+
+    <div class="word-list-container js-word-list hidden"></div>
+    <div class="button js-word-to-define hidden"></div>
+
+    <div class="definition-container js-definition-container hidden"></div>
+    <div class="definition-container definition-input js-no-definition-container hidden">
+        <textarea class="definition-update js-definition-update"></textarea>
+        <div class="button js-submit-new-definition">Submit</div>
+    </div>
+</div>
+
+<div class="home-screen-container js-home-screen-container">
+    <a href="/" class="button">Return to games library</a>
+    <div class="image-1">
+        <div class="pretty-image">T</div>
+        <div class="pretty-image">A</div>
+        <div class="pretty-image">P</div>
+    </div>
+    <div class="image-2">
+        <div class="pretty-image">S</div>
+        <div class="pretty-image">T</div>
+        <div class="pretty-image">A</div>
+        <div class="pretty-image">R</div>
+        <div class="pretty-image">T</div>
+    </div>
+    <div class="image-3">
+        <div class="pretty-image">T</div>
+        <div class="pretty-image">O</div>
+    </div>
+    <div class="image-4">
+        <div class="pretty-image">B</div>
+        <div class="pretty-image">E</div>
+        <div class="pretty-image">G</div>
+        <div class="pretty-image">I</div>
+        <div class="pretty-image">N</div>
+    </div>
+</div>
+
+<div id="startGame" class="start-fab fab"><span class="material-icons">play_arrow</span></div>
+<div id="playAgain" class="start-fab fab hidden"><span class="material-icons">check</span></div>
+
+
+<div class="top-nav">
+    <div class="top-score-fab js-score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+    <div class="timer-fab fab">
+
+        <span class="material-icons" style="margin-right: 4px; margin-left: 4px;">alarm</span><span id="clock-minutes"></span>:<span id="clock-seconds"></span>
+    </div>
+</div>
+
+<div class="popup-modal js-login-modal">
+    @Html.Partial("LoginPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-timer-modal">
+    @Html.Partial("TimerPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-modal">
+    @Html.Partial("ScoresPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-breakdown-modal">
+    @Html.Partial("ScoresBreakDownPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-times-up">
+    @Html.Partial("GameOver");
+</div>
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/letters2.js"></script>

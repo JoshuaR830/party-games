@@ -132,7 +132,7 @@ namespace Chat.Hubs
             {
                 Console.WriteLine("New room 2");
                 _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
-                Rooms.RoomsList[roomId].GameThoughtsAndCrosses.SetLetter();
+                Rooms.RoomsList[roomId].ThoughtsAndCrosses.SetLetter();
                 Console.WriteLine(name);
             }
         }
@@ -142,8 +142,8 @@ namespace Chat.Hubs
             Console.WriteLine("New user");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
-                var game = Rooms.RoomsList[roomId].GameThoughtsAndCrosses;
-                _gameManager.SetupNewUser(roomId, name, game);
+                var game = Rooms.RoomsList[roomId].ThoughtsAndCrosses;
+                _gameManager.SetupNewThoughtsAndCrossesUser(roomId, name, game);
                 Console.WriteLine(name);
             }
         }
@@ -160,46 +160,46 @@ namespace Chat.Hubs
             // var userWordGrid = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.WordsGrid;
             // Console.WriteLine(JsonConvert.SerializeObject(userWordGrid));
             // await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            var letter = Rooms.RoomsList[roomId].GameThoughtsAndCrosses.Letter.Letter;
+            var letter = Rooms.RoomsList[roomId].ThoughtsAndCrosses.Letter.Letter;
 
             await Clients.Group(roomId).SendAsync("ReceiveLetter", letter);
 
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
-                Console.WriteLine(user.Value.UserThoughtsAndCrosses.WordsGrid);
+                Console.WriteLine(user.Value.ThoughtsAndCrosses.WordsGrid);
                 Console.WriteLine(user.Value.Name);
-                await Clients.Group(user.Value.Name).SendAsync("ReceiveWordGrid", user.Value.UserThoughtsAndCrosses.WordsGrid);
+                await Clients.Group(user.Value.Name).SendAsync("ReceiveWordGrid", user.Value.ThoughtsAndCrosses.WordsGrid);
             }
         }
 
         public async Task SetGuessForCategory(string roomId, string name, string category, string userGuess)
         {
             Console.WriteLine(userGuess);
-            Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.ManageGuess(category, userGuess);   
+            Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.ManageGuess(category, userGuess);   
         }
         
         public async Task SetIsValidForCategory(string roomId, string name, string category, bool isValid)
         {
             if (isValid)
             {
-                Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.CheckWord(category);
+                Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.CheckWord(category);
             }
             else
             {
-                Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.UncheckWord(category);
+                Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.UncheckWord(category);
             }
         }
 
         public async Task CalculateScore(string roomId, string name)
         {
-            Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.CalculateScore();
-            var score = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.Score;
+            Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.CalculateScore();
+            var score = Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.Score;
             await Clients.Group(name).SendAsync("ScoreCalculated", score);
         }
 
         public async Task ResetGame(string roomId, string name, int gameId)
         {
-            var game = Rooms.RoomsList[roomId].GameThoughtsAndCrosses;
+            var game = Rooms.RoomsList[roomId].ThoughtsAndCrosses;
             _gameManager.ResetThoughtsAndCrosses(roomId, game);
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
@@ -211,7 +211,7 @@ namespace Chat.Hubs
         
         public async Task UpdateScoreBoard(string roomId, string name)
         {
-            var score = Rooms.RoomsList[roomId].Users[name].UserThoughtsAndCrosses.Score;
+            var score = Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.Score;
             var message = $"{name}: {score}";
             // await SendDirectMessage("my group", "user", message);
             Console.WriteLine("Indirect");

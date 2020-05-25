@@ -5,7 +5,8 @@ namespace Chat.RoomManager
     public class Room
     {
         public Dictionary<string, User> Users { get; }
-        public GameThoughtsAndCrosses GameThoughtsAndCrosses { get; private set; }
+        public GameThoughtsAndCrosses ThoughtsAndCrosses { get; private set; }
+        public GameWordGame WordGame { get; private set; }
 
 
         public Room()
@@ -20,7 +21,12 @@ namespace Chat.RoomManager
 
         public void SetThoughtsAndCrosses(GameThoughtsAndCrosses game)
         {
-            GameThoughtsAndCrosses = game;
+            ThoughtsAndCrosses = game;
+        }
+
+        public void SetWordGame(GameWordGame game)
+        {
+            WordGame = game;
         }
     }
 }

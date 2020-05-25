@@ -17,15 +17,15 @@ namespace Chat.Hubs
         private readonly IFileHelper _fileHelper;
         private readonly IFilenameHelper _filenameHelper;
         private readonly IJoinRoomHelper _joinRoomHelper;
-        private readonly IRoomHelper _roomHelper;
-        
-        public LettersHub(IWordService wordService, IFileHelper fileHelper, IFilenameHelper filenameHelper, IJoinRoomHelper joinRoomHelper, IRoomHelper roomHelper)
+        private readonly IGameManager _gameManager;
+
+        public LettersHub(IWordService wordService, IFileHelper fileHelper, IFilenameHelper filenameHelper, IJoinRoomHelper joinRoomHelper, IGameManager gameManager)
         {
             _wordService = wordService;
             _fileHelper = fileHelper;
             _filenameHelper = filenameHelper;
             _joinRoomHelper = joinRoomHelper;
-            _roomHelper = roomHelper;
+            _gameManager = gameManager;
 
             if (!File.Exists(_filenameHelper.GetDictionaryFilename()))
                 File.Create(_filenameHelper.GetDictionaryFilename());
@@ -96,6 +96,44 @@ namespace Chat.Hubs
             Console.WriteLine("Update");
             _wordService.UpdateDictionaryFile();
             _wordService.UpdateGuessedWordsFile();
+        }
+        
+        
+        // Server setup
+        
+        public async Task Startup(string roomId, string name, int gameId)
+        {
+            Console.WriteLine("New room 1");
+            await Groups.AddToGroupAsync(Context.ConnectionId, name);
+
+            if (!Rooms.RoomsList.ContainsKey(roomId))
+            {
+                Console.WriteLine("New room 2");
+                _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
+                Rooms.RoomsList[roomId].WordGame.GetLetters();
+                Console.WriteLine(name);
+            }
+        }
+
+        public void SetupNewUser(string roomId, string name)
+        {
+            Console.WriteLine("New user");
+            if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
+            {
+                var game = Rooms.RoomsList[roomId].WordGame;
+                _gameManager.SetUpNewWordGameUser(roomId, name, game);
+                Console.WriteLine(name);
+            }
+        }
+
+        public async Task GetUserData(string roomId, string name)
+        {
+            Console.WriteLine("Get user data");
+            var letters = Rooms.RoomsList[roomId].WordGame.Letters;
+            var serializedLetters = JsonConvert.SerializeObject(letters);
+            var words = JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users[name].WordGame.WordList);
+            var letterCount = letters.Count;
+            await Clients.Group(name).SendAsync("ReceiveUserData", serializedLetters, words, letterCount);
         }
     }
 }

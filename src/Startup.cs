@@ -45,7 +45,6 @@ namespace Chat
             services.AddSingleton<IWordService, WordService>();
             services.AddSingleton<ITemporaryDefinitionHelper, TemporaryDefinitionHelper>();
             services.AddSingleton<IJoinRoomHelper, JoinRoomHelper>();
-            services.AddSingleton<IRoomHelper, RoomHelper>();
             services.AddSingleton<IShuffleHelper<string>, ShuffleHelper<string>>();
             services.Configure<CookiePolicyOptions>(options =>
             {

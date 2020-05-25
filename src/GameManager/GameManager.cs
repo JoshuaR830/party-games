@@ -1,4 +1,6 @@
 ﻿using Chat.RoomManager;
+using Chat.WordGame.LocalDictionaryHelpers;
+using Chat.WordGame.WordHelpers;
 
 namespace Chat.GameManager
 {
@@ -7,13 +9,17 @@ namespace Chat.GameManager
         private IJoinRoomHelper _joinRoomHelper;
         private IShuffleHelper<string> _shuffleHelper;
         private IScoreHelper _scoreHelper;
+        private readonly IFilenameHelper _filenameHelper;
+        private readonly IWordService _wordService;
         public GameType ActiveGameType { get; private set; }
 
-        public GameManager(IJoinRoomHelper joinRoomHelper, IShuffleHelper<string> shuffleHelper, IScoreHelper scoreHelper)
+        public GameManager(IJoinRoomHelper joinRoomHelper, IShuffleHelper<string> shuffleHelper, IScoreHelper scoreHelper, IFilenameHelper filenameHelper, IWordService wordService)
         {
             _joinRoomHelper = joinRoomHelper;
             _shuffleHelper = shuffleHelper;
             _scoreHelper = scoreHelper;
+            _filenameHelper = filenameHelper;
+            _wordService = wordService;
         }
         
         public void SetupNewGame(string roomId, string userId, GameType game)
@@ -25,39 +31,50 @@ namespace Chat.GameManager
             {
                 case GameType.ThoughtsAndCrosses:
                     ThoughtsAndCrosses(roomId, userId);
+                    SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
+                    break;
+                case GameType.WordGame:
+                    WordGame(roomId, userId);
+                    SetUpNewWordGameUser(roomId, userId, Rooms.RoomsList[roomId].WordGame);
                     break;
                 default:
                     ThoughtsAndCrosses(roomId, userId);
+                    SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
                     break;
             }
-            
-            SetupNewUser(roomId, userId, Rooms.RoomsList[roomId].GameThoughtsAndCrosses);
         }
         
         public void ResetThoughtsAndCrosses(string roomId, GameThoughtsAndCrosses game)
         {
-            Rooms.RoomsList[roomId].GameThoughtsAndCrosses.SetLetter();
-            Rooms.RoomsList[roomId].GameThoughtsAndCrosses.CalculateTopics();
+            Rooms.RoomsList[roomId].ThoughtsAndCrosses.SetLetter();
+            Rooms.RoomsList[roomId].ThoughtsAndCrosses.CalculateTopics();
         }
 
         public void ResetUser(string roomId, string userId, GameThoughtsAndCrosses game)
         {
-            var topics = Rooms.RoomsList[roomId].GameThoughtsAndCrosses.Topics.ChosenTopics;
+            var topics = Rooms.RoomsList[roomId].ThoughtsAndCrosses.Topics.ChosenTopics;
 
-            Rooms.RoomsList[roomId].Users[userId].UserThoughtsAndCrosses.CreateGrid(topics);
+            Rooms.RoomsList[roomId].Users[userId].ThoughtsAndCrosses.CreateGrid(topics);
             var userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleHelper);
             userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
             
             Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
         }
 
-        public void SetupNewUser(string roomId, string userId, GameThoughtsAndCrosses game)
+        public void SetupNewThoughtsAndCrossesUser(string roomId, string userId, GameThoughtsAndCrosses game)
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
             var userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleHelper);
             userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
             
             Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
+        }
+
+        public void SetUpNewWordGameUser(string roomId, string userId, GameWordGame game)
+        {
+            _joinRoomHelper.CreateRoom(userId, roomId);
+            var userWordGame = new UserWordGame(_wordService, _filenameHelper);
+            Rooms.RoomsList[roomId].Users[userId].SetUserWordGame(userWordGame);
         }
 
         void ThoughtsAndCrosses(string roomId, string userId)
@@ -67,6 +84,14 @@ namespace Chat.GameManager
             gameThoughtsAndCrosses.SetLetter();
             
             Rooms.RoomsList[roomId].SetThoughtsAndCrosses(gameThoughtsAndCrosses);
+        }
+        
+        void WordGame(string roomId, string userId)
+        {
+            var wordGame = new GameWordGame();
+            wordGame.GetLetters();
+            
+            Rooms.RoomsList[roomId].SetWordGame(wordGame);
         }
     }
 }

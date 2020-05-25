@@ -20,6 +20,7 @@ connection.on("CompletedScores", function() {
 
 connection.on('StartNewRound', function() {
     gameRoundNumber ++;
+    document.querySelector('.js-word-continue').classList.add('hidden');
     document.getElementById('startGame').classList.add('hidden');
     document.getElementById('playAgainFab').classList.add('hidden');
     document.getElementById("table").classList.remove('hidden');
@@ -94,8 +95,10 @@ connection.on("ScoreCalculated", function(score){
     document.getElementById('score').textContent  = score;
 })
 
-document.getElementById('startGame').addEventListener('click', launchThoughtsAndCrosses);
+document.getElementById('startGame').addEventListener('click', resetThoughtsAndCrosses);
 document.getElementById('playAgainFab').addEventListener('click', resetThoughtsAndCrosses);
+document.querySelector('.js-word-continue').addEventListener('click', launchThoughtsAndCrosses);
+
 
 function resetThoughtsAndCrosses() {
     connection.invoke("ResetGame", connectionName, document.querySelector('#my-name').value, 0);

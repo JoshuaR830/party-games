@@ -10,6 +10,6 @@ namespace Chat.GameManager
         void ResetThoughtsAndCrosssesForUser(string roomId, string userId, GameThoughtsAndCrosses game);
         void SetUpNewWordGameUser(string roomId, string userId, GameWordGame game);
         void ResetWordGame(string roomId);
-       void ResetWordGameForUser(string roomId, string userId);
+        void ResetWordGameForUser(string roomId, string userId);
     }
 }

@@ -136,13 +136,14 @@ namespace Chat.Hubs
                 Console.WriteLine(name);
             }
             
-            if (Rooms.RoomsList[roomId].WordGame == null)
+            if (Rooms.RoomsList[roomId].ThoughtsAndCrosses == null)
             {
                 _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
-                if (Rooms.RoomsList[roomId].WordGame == null)
+                if (Rooms.RoomsList[roomId].ThoughtsAndCrosses == null)
                     return;
                 
-                Rooms.RoomsList[roomId].WordGame.GetLetters();
+                Rooms.RoomsList[roomId].ThoughtsAndCrosses.CalculateTopics();
+                Rooms.RoomsList[roomId].ThoughtsAndCrosses.SetLetter();
             }
         }
 
@@ -156,10 +157,10 @@ namespace Chat.Hubs
                 Console.WriteLine(name);
             }
             
-            if (Rooms.RoomsList[roomId].Users[name].WordGame == null)
+            if (Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses == null)
             {
-                var game = Rooms.RoomsList[roomId].WordGame;
-                _gameManager.SetUpNewWordGameUser(roomId, name, game);
+                var game = Rooms.RoomsList[roomId].ThoughtsAndCrosses;
+                _gameManager.SetupNewThoughtsAndCrossesUser(roomId, name, game);
             }
         }
         

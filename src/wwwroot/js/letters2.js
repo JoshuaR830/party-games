@@ -81,10 +81,11 @@ connection.on("ReceiveCompleteRound", function() {
     })
 })
 
-document.querySelector('.js-letters-start').addEventListener('click', launchWordGame);
+document.querySelector('.js-letters-start').addEventListener('click', resetWordGame);
 
-document.querySelector('#startGame').addEventListener('click', launchWordGame);
+document.querySelector('#startGame').addEventListener('click', resetWordGame);
 document.querySelector('#play-again-option').addEventListener('click', resetWordGame);
+document.querySelector('.js-letters-continue').addEventListener('click', launchWordGame);
 
 document.getElementById('playAgain').addEventListener('click', function() {
     connection.invoke("CollectScores", connectionName);
@@ -94,7 +95,6 @@ document.getElementById('playAgain').addEventListener('click', function() {
 function launchWordGame() {
     gameRoundNumber ++;
     lettersConnection.invoke("GetUserData", connectionName, document.getElementById('my-name').value)
-    document.getElementById('playAgainFab').classList.add('hidden');
     let timerMins = parseInt(document.getElementById('set-minutes').value);
     let timerSecs = parseInt(document.getElementById('set-seconds').value);
 
@@ -120,6 +120,9 @@ lettersConnection.on("ReceiveUserData", function(letters, words, letterCount, wo
     console.log(chosenLetters);
     console.log(">>>", words);
     console.log("Bye");
+
+    document.getElementById('playAgainFab').classList.add('hidden');
+    document.querySelector('.js-letters-continue').classList.add('hidden');
 
     document.querySelector('.js-word-list').classList.remove('hidden');
     document.querySelector('.js-home-screen-container').classList.add('hidden');

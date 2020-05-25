@@ -5,17 +5,19 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     public class WordDefinitionHelper : IWordDefinitionHelper
     {
         private readonly IFileHelper _fileHelper;
+        private readonly Dictionary _dictionary;
         private const string Filename = "./word-dictionary.json";
 
         public WordDefinitionHelper(IFileHelper fileHelper)
         {
             _fileHelper = fileHelper;
+            if(_dictionary == null)
+                _dictionary = _fileHelper.ReadDictionary(Filename);
         }
 
         public string GetDefinitionForWord(string word)
         {
-            var dictionary = _fileHelper.ReadDictionary(Filename);
-            var words = dictionary
+            var words = _dictionary
                 .Words
                 .Where(x => x.Word.ToLower() == word.ToLower())
                 .ToList();

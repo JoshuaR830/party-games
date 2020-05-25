@@ -32,10 +32,21 @@ window.addEventListener('load', function() {
     document.querySelector('#my-name').focus();
 })
 
+document.querySelector('#my-name').addEventListener('keydown', function(event) {
+    console.log("Key code");
+    if (event.keyCode === 13){
+        console.log("Trigger events");
+        let name = document.querySelector('#my-name').value;
+        lettersConnection.invoke("Startup", connectionName, name, 1);
+        lettersConnection.invoke("SetupNewUser", connectionName, name);
+    }
+});
+
 document.querySelector('.js-login-button').addEventListener('click', function() {
     console.log("Trigger events")
-    lettersConnection.invoke("Startup", connectionName, document.querySelector('#my-name').value, 1);
-    lettersConnection.invoke("SetupNewUser", connectionName, document.querySelector('#my-name').value);
+    let name = document.querySelector('#my-name').value;
+    lettersConnection.invoke("Startup", connectionName, name, 1);
+    lettersConnection.invoke("SetupNewUser", connectionName, name);
 });
 
 connection.on("ReceiveCompleteRound", function() {
@@ -81,7 +92,9 @@ document.getElementById('playAgain').addEventListener('click', function() {
 });
 
 function launchWordGame() {
+    gameRoundNumber ++;
     lettersConnection.invoke("GetUserData", connectionName, document.getElementById('my-name').value)
+    document.getElementById('playAgainFab').classList.add('hidden');
     let timerMins = parseInt(document.getElementById('set-minutes').value);
     let timerSecs = parseInt(document.getElementById('set-seconds').value);
 
@@ -219,6 +232,7 @@ lettersConnection.on("ReceiveUserData", function(letters, words, letterCount, wo
 connection.on("CompletedScores", function() {
     submitScores();
     
+    console.log("Hello");
     document.getElementById('playAgain').classList.add('hidden');
     document.getElementById('startGame').classList.add('hidden');
     document.getElementById('playAgainFab').classList.remove('hidden');
@@ -370,7 +384,6 @@ lettersConnection.on("TickWord", function(word) {
         wordListItem.classList.add("word-ticked");
         wordListItem.classList.remove("word-error");
     }
-    
 })
 
 wordToDefine.addEventListener('click', function(event) {

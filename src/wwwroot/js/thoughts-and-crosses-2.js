@@ -35,6 +35,16 @@ document.querySelector('.js-login-button').addEventListener('click', function() 
     connection.invoke("SetupNewUser", connectionName, document.querySelector('#my-name').value);
 });
 
+document.querySelector('#my-name').addEventListener('keydown', function(event) {
+    console.log("Key code");
+    if (event.keyCode === 13){
+        console.log("Trigger events");
+        let name = document.querySelector('#my-name').value;
+        connection.invoke("Startup", connectionName, name, 0);
+        connection.invoke("SetupNewUser", connectionName, name);
+    }
+});
+
 var row;
 
 var counter = 0;

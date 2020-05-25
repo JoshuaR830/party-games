@@ -26,5 +26,10 @@ namespace Chat.RoomManager
         {
             WordList[word].ChangeValidity(status);
         }
+        
+        public void ResetWordList()
+        {
+            WordList.Clear();
+        }
     }
 }

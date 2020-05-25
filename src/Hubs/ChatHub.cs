@@ -135,6 +135,15 @@ namespace Chat.Hubs
                 Rooms.RoomsList[roomId].ThoughtsAndCrosses.SetLetter();
                 Console.WriteLine(name);
             }
+            
+            if (Rooms.RoomsList[roomId].WordGame == null)
+            {
+                _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
+                if (Rooms.RoomsList[roomId].WordGame == null)
+                    return;
+                
+                Rooms.RoomsList[roomId].WordGame.GetLetters();
+            }
         }
 
         public void SetupNewUser(string roomId, string name)
@@ -145,6 +154,12 @@ namespace Chat.Hubs
                 var game = Rooms.RoomsList[roomId].ThoughtsAndCrosses;
                 _gameManager.SetupNewThoughtsAndCrossesUser(roomId, name, game);
                 Console.WriteLine(name);
+            }
+            
+            if (Rooms.RoomsList[roomId].Users[name].WordGame == null)
+            {
+                var game = Rooms.RoomsList[roomId].WordGame;
+                _gameManager.SetUpNewWordGameUser(roomId, name, game);
             }
         }
         
@@ -203,7 +218,7 @@ namespace Chat.Hubs
             _gameManager.ResetThoughtsAndCrosses(roomId, game);
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
-                _gameManager.ResetUser(roomId, user.Value.Name, game);
+                _gameManager.ResetThoughtsAndCrosssesForUser(roomId, user.Value.Name, game);
             }
             
             await JoinRoom(roomId, name, gameId);

@@ -113,6 +113,15 @@ namespace Chat.Hubs
                 Rooms.RoomsList[roomId].WordGame.GetLetters();
                 Console.WriteLine(name);
             }
+
+            if (Rooms.RoomsList[roomId].WordGame == null)
+            {
+                _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
+                if (Rooms.RoomsList[roomId].WordGame == null)
+                    return;
+                
+                Rooms.RoomsList[roomId].WordGame.GetLetters();
+            }
         }
 
         public void SetupNewUser(string roomId, string name)
@@ -124,16 +133,43 @@ namespace Chat.Hubs
                 _gameManager.SetUpNewWordGameUser(roomId, name, game);
                 Console.WriteLine(name);
             }
+
+            if (Rooms.RoomsList[roomId].Users[name].WordGame == null)
+            {
+                var game = Rooms.RoomsList[roomId].WordGame;
+                _gameManager.SetUpNewWordGameUser(roomId, name, game);
+            }
+        }
+        
+        public async Task ServerIsValidWord(string word, string roomId, string name)
+        {
+            var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);
+            _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
+            Rooms.RoomsList[roomId].Users[name].WordGame.AddWordToList(word);
+            Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users[name].WordGame.WordList));
+            await Clients.Group(name).SendAsync("WordStatusResponse", isValid, word);
         }
 
         public async Task GetUserData(string roomId, string name)
         {
             Console.WriteLine("Get user data");
             var letters = Rooms.RoomsList[roomId].WordGame.Letters;
+            var words = Rooms.RoomsList[roomId].Users[name].WordGame.WordList.Values;
             var serializedLetters = JsonConvert.SerializeObject(letters);
-            var words = JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users[name].WordGame.WordList);
+            var serializedWords = JsonConvert.SerializeObject(words);
             var letterCount = letters.Count;
-            await Clients.Group(name).SendAsync("ReceiveUserData", serializedLetters, words, letterCount);
+
+            await Clients.Group(name).SendAsync("ReceiveUserData", serializedLetters, serializedWords, letterCount, words.Count);
+        }
+
+        public async Task ResetGame(string roomId, string word, int gameId)
+        {
+            var game = Rooms.RoomsList[roomId].WordGame;
+            _gameManager.ResetWordGame(roomId);
+            foreach (var user in Rooms.RoomsList[roomId].Users)
+            {
+                _gameManager.ResetWordGameForUser(roomId, user.Value.Name);
+            }
         }
     }
 }

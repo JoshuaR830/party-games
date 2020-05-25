@@ -16,6 +16,9 @@ var definitionSubmitButton = document.querySelector('.js-submit-new-definition')
 
 var connectionName = "GroupOfJoshua";
 
+window.addEventListener('load', function(){
+    console.log("Loaded");
+})
 
 lettersConnection.start().then(function () {
     lettersConnection.invoke("AddToGroup", connectionName);
@@ -70,7 +73,7 @@ connection.on("ReceiveCompleteRound", function() {
 document.querySelector('.js-letters-start').addEventListener('click', launchWordGame);
 
 document.querySelector('#startGame').addEventListener('click', launchWordGame);
-document.querySelector('#play-again-option').addEventListener('click', launchWordGame);
+document.querySelector('#play-again-option').addEventListener('click', resetWordGame);
 
 document.getElementById('playAgain').addEventListener('click', function() {
     connection.invoke("CollectScores", connectionName);
@@ -83,13 +86,23 @@ function launchWordGame() {
     let timerSecs = parseInt(document.getElementById('set-seconds').value);
 
     let time = [timerMins, timerSecs];
-    connection.invoke("SendTime", connectionName, time)
+    connection.invoke("SendTime", connectionName, time);
     // lettersConnection.invoke("ChooseLetters", connectionName);
 }
 
-lettersConnection.on("ReceiveUserData", function(letters, words, letterCount) {
+document.getElementById('playAgainFab').addEventListener('click', function() {
+    resetWordGame();
+})
+
+function resetWordGame() {
+    lettersConnection.invoke("ResetGame", connectionName, document.querySelector('#my-name').value, 1);
+    launchWordGame();
+}
+
+
+lettersConnection.on("ReceiveUserData", function(letters, words, letterCount, wordCount) {
     let chosenLetters = JSON.parse(letters);
-    console.log(chosenLetters) 
+    console.log(chosenLetters);
     console.log("Hi");
     console.log(chosenLetters);
     console.log(">>>", words);
@@ -114,19 +127,14 @@ lettersConnection.on("ReceiveUserData", function(letters, words, letterCount) {
     letterOrigins = [];
     wordsCreated = [];
     wordList.innerHTML = "";
-    for (let i = 0; i < chosenLetters.length; i ++) {
+    for (let i = 0; i < letterCount; i ++) {
         chosenLetters[i].Letter;
-        console.log(chosenLetters[i].Letter);
-        // <div class="letter-container letter-choice populated js-letter random-letter-0" data-origin="0">A</div>
 
         let letterContainer = document.createElement('div');
         let myName = document.querySelector('#my-name').value;
-        console.log(myName);
         letterContainer.className = `letter-container letter-choice populated js-letter ${myName === "Andrew" ? `random-letter-${i}` : ""}`;
-        console.log(myName);
         if (myName.toLowerCase() === "andrew") {
             document.querySelector(`.js-random-letters-container`).style = "height: 260px; width: 260px; border-radius: 50%; border: 2px solid #55edba5b; box-sizing: content-box; box-shadow: 0 0 10px #55edba5b;"
-            console.log(chosenLetters[i].Letter);
             let angle = (2 * Math.PI) / chosenLetters.length;
             let xPos = (260 / 2) - 30;
             let yPos = (260 / 2) - 30;
@@ -134,9 +142,7 @@ lettersConnection.on("ReceiveUserData", function(letters, words, letterCount) {
             letterContainer.style = ""
             let x = Math.round(radius * (Math.sin(i * angle))) + xPos;
             let y = Math.round(radius * (Math.cos(i * angle))) + yPos;
-            console.log(`${x},${y}`);
             letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; border-radius: 50%;`;
-            // }
         }
         letterContainer.setAttribute('data-origin', `${i}`);
         letterContainer.setAttribute('data-score', `${chosenLetters[i].Score}`);
@@ -150,72 +156,11 @@ lettersConnection.on("ReceiveUserData", function(letters, words, letterCount) {
 
         letterSpaces.push('');
         letterOrigins.push('');
-    }
-    
-});
-
-lettersConnection.on("LettersForGame", function(jsonLetters) {
-    document.querySelector('.js-word-list').classList.remove('hidden');
-    document.querySelector('.js-home-screen-container').classList.add('hidden');
-    wordToDefine.classList.add("hidden");
-    definitionContainer.classList.add("hidden");
-    document.querySelector('#options').classList.add('hidden');
-    document.querySelector('.js-letter-game-container').classList.remove('hidden');
-    document.querySelector('#startGame').classList.add('hidden');
-    confirmWord.classList.remove('hidden');
-    document.querySelector('.js-letters-start').classList.add('hidden');
-    var chosenLetters = JSON.parse(jsonLetters);
-    console.log(chosenLetters);
-    let container = document.querySelector('.js-random-letters-container');
-    letterInputRow.classList.remove('hidden');
-    container.innerHTML = "";
-    letterInputRow.innerHTML = "";
-    letterSpaces = [];
-    letterOrigins = [];
-    wordsCreated = [];
-    wordList.innerHTML = "";
-    for (let i = 0; i < chosenLetters.length; i ++) {
-        chosenLetters[i].Letter;
-        // <div class="letter-container letter-choice populated js-letter random-letter-0" data-origin="0">A</div>
-        
-        let letterContainer = document.createElement('div');
-        let myName = document.querySelector('#my-name').value;
-        console.log(myName);
-        letterContainer.className = `letter-container letter-choice populated js-letter ${myName==="Andrew"?`random-letter-${i}`:""}`;
-        console.log(myName);
-        if (myName.toLowerCase() === "andrew") {
-            document.querySelector(`.js-random-letters-container`).style = "height: 260px; width: 260px; border-radius: 50%; border: 2px solid #55edba5b; box-sizing: content-box; box-shadow: 0 0 10px #55edba5b;"
-            console.log(chosenLetters[i].Letter);
-            let angle = (2*Math.PI)/chosenLetters.length;
-            let xPos = (260/2) - 30;
-            let yPos = (260/2) - 30;
-            let radius = 100;
-            letterContainer.style = ""
-            let x = Math.round(radius * (Math.sin(i *angle))) + xPos;
-            let y = Math.round(radius * (Math.cos(i *angle))) + yPos;
-            console.log(`${x},${y}`);
-            letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; border-radius: 50%;`;
-            // }
-        }
-        letterContainer.setAttribute('data-origin', `${i}`);
-        letterContainer.setAttribute('data-score', `${chosenLetters[i].Score}`);
-        letterContainer.textContent = chosenLetters[i].Letter;
-        container.appendChild(letterContainer);
-
-        let letterSelectionContainer = document.createElement('div');
-        letterSelectionContainer.className = `letter-container letter-${i} js-selected-letter`;
-        letterSelectionContainer.setAttribute('data-letter', `${i}`);
-        letterInputRow.appendChild(letterSelectionContainer);
-
-        letterSpaces.push('');
-        letterOrigins.push('');
-        // <div class="letter-container letter-0 js-selected-letter" data-letter="0"></div>
-        
     }
 
     var letters = document.querySelectorAll('.js-letter');
     var selectedLetters = document.querySelectorAll('.js-selected-letter');
-    
+
     letters.forEach(function($el) {
         $el.addEventListener('click', function(event) {
             if ($el.classList.contains('populated')) {
@@ -229,14 +174,11 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
             }
         })
     })
-    
+
     selectedLetters.forEach(function($el) {
         $el.addEventListener('click', function(event) {
             if ($el.classList.contains('populated')) {
                 let letter = $el.dataset.letter; // This is the wrong thing - this could be up to 5
-                console.log($el.dataset.letter)
-                console.log(letterSpaces[$el.dataset.letter]);
-                console.log(letterOrigins[$el.dataset.letter]);
                 $el.classList.remove('populated');
                 let origin = letterOrigins[letter];
                 letters[origin].textContent = letterSpaces[letter];
@@ -247,13 +189,39 @@ lettersConnection.on("LettersForGame", function(jsonLetters) {
             }
         })
     })
-})
+
+    let serializedWords = JSON.parse(words);
+    for(let i = 0; i < wordCount; i++ ) {
+        console.log();
+        let currentWord = serializedWords[i].Word;
+        
+        wordsCreated.push(currentWord);
+        let num = wordsCreated.length - 1;
+        var word = document.createElement('div');
+        word.textContent = currentWord;
+        console.log(serializedWords[i].IsValid);
+        word.className = `word-list-item word-${num} ${serializedWords[i].IsValid?"": "word-error"}`;
+        word.setAttribute('data-score', serializedWords[i].Score);
+
+        word.addEventListener('click', function () {
+            var statusToSet = true;
+            if (word.classList.contains('word-ticked')) {
+                statusToSet = false;
+            }
+            lettersConnection.invoke("WordTicked", currentWord, connectionName, statusToSet);
+        })
+
+        wordList.appendChild(word);
+    }
+    
+});
 
 connection.on("CompletedScores", function() {
     submitScores();
     
     document.getElementById('playAgain').classList.add('hidden');
-    document.getElementById('startGame').classList.remove('hidden');
+    document.getElementById('startGame').classList.add('hidden');
+    document.getElementById('playAgainFab').classList.remove('hidden');
     document.querySelector('.js-letter-game-container').classList.add('hidden');
     document.getElementById("options").classList.remove('hidden');
     document.querySelector('.js-home-screen-container').classList.remove('hidden');
@@ -349,7 +317,7 @@ confirmWord.addEventListener('click', function() {
 
     wordList.appendChild(word);
 
-    lettersConnection.invoke("IsValidWord", currentWord, connectionName);
+    lettersConnection.invoke("ServerIsValidWord", currentWord, connectionName, document.getElementById('my-name').value);
 
     var wordListContainer = document.querySelector('.js-word-list');
     var scrollWidth = wordListContainer.scrollWidth;

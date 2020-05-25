@@ -1,16 +1,25 @@
 ﻿using Chat.GameManager;
 using Chat.RoomManager;
+using Chat.WordGame.LocalDictionaryHelpers;
+using Chat.WordGame.WordHelpers;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.GameManagerTests
 {
     public class GameManagerTests
     {
+        private IFilenameHelper _filenameHelper;
+        private IWordService _wordService;
+
         [Fact]
         public void WhenGameMangerCalledANewRoomShouldBeCreated()
         {
-            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper());
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _wordService = Substitute.For<IWordService>();
+            
+            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper(), _filenameHelper, _wordService);
             
             gameManager.SetupNewGame("newRoom", "Joshua", GameType.ThoughtsAndCrosses);
 
@@ -42,7 +51,7 @@ namespace PartyGamesTests.GameManagerTests
         [Fact]
         public void WhenMultipleUsersAreInARoomThenTheyShouldAllBeInitialised()
         {
-            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper());
+            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper(), _filenameHelper, _wordService);
             gameManager.SetupNewGame("newRoom", "Joshua", GameType.ThoughtsAndCrosses);
             gameManager.SetupNewGame("newRoom", "Lydia", GameType.ThoughtsAndCrosses);
             gameManager.SetupNewGame("newRoom", "Kerry", GameType.ThoughtsAndCrosses);

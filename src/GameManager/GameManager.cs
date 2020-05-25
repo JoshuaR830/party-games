@@ -1,6 +1,8 @@
-﻿using Chat.RoomManager;
+﻿using System.Collections.Generic;
+using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Chat.GameManager
 {
@@ -50,7 +52,7 @@ namespace Chat.GameManager
             Rooms.RoomsList[roomId].ThoughtsAndCrosses.CalculateTopics();
         }
 
-        public void ResetUser(string roomId, string userId, GameThoughtsAndCrosses game)
+        public void ResetThoughtsAndCrosssesForUser(string roomId, string userId, GameThoughtsAndCrosses game)
         {
             var topics = Rooms.RoomsList[roomId].ThoughtsAndCrosses.Topics.ChosenTopics;
 
@@ -59,6 +61,16 @@ namespace Chat.GameManager
             userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
             
             Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
+        }
+
+        public void ResetWordGame(string roomId)
+        {
+            Rooms.RoomsList[roomId].WordGame.GetLetters();
+        }
+        
+        public void ResetWordGameForUser(string roomId, string userId)
+        {
+            Rooms.RoomsList[roomId].Users[userId].WordGame.ResetWordList();
         }
 
         public void SetupNewThoughtsAndCrossesUser(string roomId, string userId, GameThoughtsAndCrosses game)

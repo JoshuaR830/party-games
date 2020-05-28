@@ -152,14 +152,19 @@ namespace Chat.Hubs
 
         public async Task GetUserData(string roomId, string name)
         {
-            Console.WriteLine("Get user data");
-            var letters = Rooms.RoomsList[roomId].WordGame.Letters;
-            var words = Rooms.RoomsList[roomId].Users[name].WordGame.WordList.Values;
-            var serializedLetters = JsonConvert.SerializeObject(letters);
-            var serializedWords = JsonConvert.SerializeObject(words);
-            var letterCount = letters.Count;
+            
 
-            await Clients.Group(name).SendAsync("ReceiveUserData", serializedLetters, serializedWords, letterCount, words.Count);
+            foreach (var user in Rooms.RoomsList[roomId].Users)
+            {
+                Console.WriteLine("Get user data");
+                var letters = Rooms.RoomsList[roomId].WordGame.Letters;
+                var words = Rooms.RoomsList[roomId].Users[user.Value.Name].WordGame.WordList.Values;
+                var serializedLetters = JsonConvert.SerializeObject(letters);
+                var serializedWords = JsonConvert.SerializeObject(words);
+                var letterCount = letters.Count;
+                await Clients.Group(user.Value.Name).SendAsync("ReceiveUserData", serializedLetters, serializedWords, letterCount, words.Count);
+            }
+            
         }
 
         public async Task ResetGame(string roomId, string word, int gameId)

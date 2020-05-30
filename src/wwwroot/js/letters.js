@@ -68,6 +68,7 @@ document.querySelector('#play-again-option').addEventListener('click', launchWor
 
 document.getElementById('playAgain').addEventListener('click', function() {
     connection.invoke("CollectScores", connectionName);
+    lettersConnection.invoke("RoundComplete", connectionName);
 });
 
 function launchWordGame() {
@@ -346,7 +347,7 @@ definitionSubmitButton.addEventListener('click', function() {
 
 lettersConnection.on("ReceiveDefinition", function(definition, word) {
 
-    if (definition === "" )
+    if (definition === "" || definition === null)
     {
         document.querySelector('.js-definition-container').classList.add('hidden');
         document.querySelector('.js-no-definition-container').classList.remove('hidden');
@@ -369,6 +370,11 @@ function getWordPosition(word) {
     }
     return wordPos;
 }
+
+document.querySelector('#completeRoundButton').addEventListener('click', function () {
+    lettersConnection.invoke("RoundComplete", connectionName);
+    console.log('Completed round button pressed invoke round complete');
+});
 
 document.querySelectorAll('.word-list-item').forEach(function($el) {
     $el.addEventListener()

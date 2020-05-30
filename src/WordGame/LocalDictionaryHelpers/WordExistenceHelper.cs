@@ -8,16 +8,20 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     {
         private readonly IFileHelper _fileHelper;
         private const string Filename = "./word-dictionary.json";
+        private readonly Dictionary _dictionary;
 
         public WordExistenceHelper(IFileHelper fileHelper)
         {
             _fileHelper = fileHelper;
+
+            if(_dictionary == null)
+                _dictionary = _fileHelper.ReadDictionary(Filename);
         }
 
         public bool DoesWordExist(string word)
         {
-            var dictionary = _fileHelper.ReadDictionary(Filename);
-            var matchingWords = dictionary
+            Console.WriteLine("Match 1");
+            var matchingWords = _dictionary
                 .Words
                 .Where(x => x.Word.ToLower() == word.ToLower())
                 .ToList();

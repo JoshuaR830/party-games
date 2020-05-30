@@ -1,0 +1,57 @@
+﻿@page
+@model ThoughtsAndCrosses2Model
+@{
+    ViewData["Title"] = "Home page";
+}
+<input type="hidden" id="userInput"/>
+<h1>Thoughts and Crosses</h1>
+<div id="container" class="container hidden">
+    <input type="hidden" id="messageInput"/>
+    <input type="hidden" id="sendButton" value="Calculate" />
+
+    <div id="startGame" class="start-fab fab"><span class="material-icons">play_arrow</span></div>
+    <div id="playAgainFab" class="start-fab fab hidden"><span class="material-icons">play_arrow</span></div>
+    <div id="playAgain" class="start-fab fab hidden"><span class="material-icons">check</span></div>
+    <div class="button js-word-continue">Continue previous</div>
+    
+    <div class="top-nav">
+        <div class="letter-fab"><span class="material-icons" style="line-height: 50px; margin-right: 4px; margin-left: 4px;">edit</span><span id="letter"></span></div>
+        <div class="timer-fab fab">
+
+            <span class="material-icons" style="margin-right: 4px; margin-left: 4px;">alarm</span><span id="clock-minutes"></span>:<span id="clock-seconds"></span>
+        </div>
+    </div>
+    <div class="score-fab js-score-fab score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+
+    <input type="hidden" id="letterButton" value="Select letter" class="button"/>
+    <input type="hidden" id="categoryButton" value="Pick topic" class="button"/>
+    <input type="hidden" id="topicsButton" value="Set topics" class="button"/>
+    <input type="hidden" id="submitScoresButton" value="Submit score" class="button"/>
+
+    @Html.Partial("ThoughtsAndCrossesGrid")
+
+    <div id="category" class="category-button"></div>
+
+</div>
+
+<div class="popup-modal js-login-modal">
+    @Html.Partial("LoginPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-timer-modal">
+    @Html.Partial("TimerPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-modal">
+    @Html.Partial("ScoresPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-breakdown-modal">
+    @Html.Partial("ScoresBreakDownPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-times-up">
+    @Html.Partial("GameOver");
+</div>
+
+<script src="~/js/thoughts-and-crosses-2.js"></script>

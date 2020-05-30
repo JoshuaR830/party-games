@@ -1,8 +1,10 @@
-﻿namespace Chat.WordGame.WordHelpers
+﻿using Chat.WordGame.LocalDictionaryHelpers;
+
+namespace Chat.WordGame.WordHelpers
 {
     public interface IWordHelper
     {
-        bool StrippedSuffixDictionaryCheck(string filename, string word);
+        bool StrippedSuffixDictionaryCheck(Dictionary dictionary, string word);
         bool CheckWordWithEndingExists(string word, string shortWord);
     }
 }

@@ -23,10 +23,10 @@ namespace Chat.WordGame.WordHelpers
             _temporaryDefinitionHelper = temporaryDefinitionHelper;
         }
 
-        public bool StrippedSuffixDictionaryCheck(string filename, string word)
+        public bool StrippedSuffixDictionaryCheck(Dictionary dictionary, string word)
         {
             word = word.ToLower();
-            var endings = new List<string> {"ning", "ing", "ed", "er", "es", "s"};
+            var endings = new List<string> {"ning", "ing", "ed", "er", "es", "s", "d"};
             endings = endings
                 .Where(x => x.Length < word.Length)
                 .OrderByDescending(s => s.Length)
@@ -46,7 +46,7 @@ namespace Chat.WordGame.WordHelpers
                 if (CheckWordWithEndingExists(word, shortenedWord))
                 {
                     var temporaryDefinition = _wordDefinitionHelper.GetDefinitionForWord(shortenedWord);
-                    _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(filename, word, temporaryDefinition);
+                    _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(dictionary, word, temporaryDefinition);
                     return true;
                 }
             }

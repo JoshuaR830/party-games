@@ -11,7 +11,13 @@ connection.on("ReceiveTimeStart", function (time) {
 });
 
 connection.on("ReceiveStopTimer", function () {
-    document.getElementById('startGame').classList.remove('hidden');
+    
+    if(document.getElementById('playAgainFab') !== null) {
+        document.getElementById('playAgainFab').classList.remove('hidden');
+    } else {
+        document.getElementById('startGame').classList.remove('hidden');
+    }
+    
     stopTimer();
 });
 

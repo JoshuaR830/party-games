@@ -5,6 +5,7 @@ using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using Newtonsoft.Json;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
@@ -12,19 +13,18 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
     public class AmendDictionaryTests : IDisposable
     {
         private const string Filename = "./amend-dictionary-tests.json";
+        private const string GuessedWordsFilename = "./amend-dictionary-tests.json";
         private IWordExistenceHelper _wordExistenceHelper;
         private IWordHelper _wordHelper;
         private IWordDefinitionHelper _wordDefinitionHelper;
         private FileHelper _fileHelper;
+        private IFilenameHelper _filenameHelper;
 
         private readonly WordService _wordService;
 
         public AmendDictionaryTests()
         {
-            _fileHelper = new FileHelper();
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper);
-            
-            var data = new Dictionary
+           var data = new Dictionary
             {
                 Words = new List<WordData>
                 {
@@ -37,7 +37,16 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                     }
                 }
             };
+            
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper
+                .GetGuessedWordsFilename()
+                .Returns(GuessedWordsFilename);
+            _filenameHelper.GetDictionaryFilename().Returns(Filename);
+
             TestFileHelper.CreateCustomFile(Filename, data);
+            _fileHelper = new FileHelper();
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
         }
 
         [Fact]
@@ -45,11 +54,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "pelican";
             var definition = TestFileHelper.PelicanPermanentDefinition;
+            
             _wordService.AmendDictionary(Filename, word, definition);
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var response = JsonConvert.DeserializeObject<Dictionary>(json);
-            
+
             response.Should().BeEquivalentTo(new Dictionary
             {
                 Words = new List<WordData>
@@ -71,6 +82,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "sheep";
             var definition = TestFileHelper.SheepPermanentDefinition; 
             _wordService.AmendDictionary(Filename, word, definition);
+            
+            _wordService.UpdateDictionaryFile();
             
             var json = TestFileHelper.Read(Filename);
             var response = JsonConvert.DeserializeObject<Dictionary>(json);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Chat.RoomManager
 {
@@ -65,7 +66,9 @@ namespace Chat.RoomManager
         public void CalculateScore()
         {
             var isAcceptedList = WordsGrid.Select(x => x.isAccepted).ToList();
+            Console.WriteLine(JsonConvert.SerializeObject(isAcceptedList));
             Score = _scoreHelper.CalculateThoughtsAndCrossesScore(isAcceptedList);
+            Console.WriteLine(Score);
         }
 
         private int GetIndex(string category)

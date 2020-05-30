@@ -308,6 +308,8 @@ document.getElementById('playAgain').addEventListener('click', function() {
 });
 
 function launchThoughtsAndCrosses() {
+    connection.invoke("JoinRoom", connectionName, document.querySelector('#my-name').value, 0);
+
     let timerMins = parseInt(document.getElementById('set-minutes').value);
     let timerSecs = parseInt(document.getElementById('set-seconds').value);
 

@@ -19,15 +19,27 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         private ITemporaryDefinitionHelper _temporaryDefinitionHelper;
         private readonly FileHelper _fileHelper;
         private readonly WordService _wordService;
+        private Dictionary _dictionary;
+        private IFilenameHelper _filenameHelper;
         private const string Filename = "./automatically-set-temporary-definitions";
         
         public AutomaticallySetTemporaryDefinitions()
         {
             TestFileHelper.Create(Filename);
+            
+            var json = TestFileHelper.Read(Filename);
+            
             _webDictionaryRequestHelper = Substitute.For<IWebDictionaryRequestHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _fileHelper = new FileHelper();
+
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
+            _filenameHelper.GetDictionaryFilename().Returns(Filename);
+            
+            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _dictionary = _wordService.GetDictionary();
         }
 
         [Fact]
@@ -42,7 +54,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             
             _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
-            wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            wordHelper.StrippedSuffixDictionaryCheck(_dictionary, word);
+            
+            _wordService.UpdateDictionaryFile();
+
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
@@ -68,7 +84,9 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             
             _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
             var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
-            wordHelper.StrippedSuffixDictionaryCheck(Filename, word);
+            wordHelper.StrippedSuffixDictionaryCheck(_dictionary, word);
+            
+            _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
             var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);

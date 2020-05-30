@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Chat.GameManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -32,7 +33,10 @@ namespace Chat
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSignalR();
+            services.AddSingleton<IGameManager, GameManager.GameManager>();
+            services.AddSingleton<IScoreHelper, ScoreHelper>();
             services.AddSingleton<IFileHelper, FileHelper>();
+            services.AddSingleton<IFilenameHelper, FilenameHelper>();
             services.AddSingleton<IWebDictionaryRequestHelper, WebDictionaryRequestHelper>();
             services.AddSingleton<IWebRequestHelper, WebRequestHelper>();
             services.AddSingleton<IWordDefinitionHelper, WordDefinitionHelper>();
@@ -41,7 +45,6 @@ namespace Chat
             services.AddSingleton<IWordService, WordService>();
             services.AddSingleton<ITemporaryDefinitionHelper, TemporaryDefinitionHelper>();
             services.AddSingleton<IJoinRoomHelper, JoinRoomHelper>();
-            services.AddSingleton<IRoomHelper, RoomHelper>();
             services.AddSingleton<IShuffleHelper<string>, ShuffleHelper<string>>();
             services.Configure<CookiePolicyOptions>(options =>
             {

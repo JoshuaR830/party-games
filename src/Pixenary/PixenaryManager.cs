@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
-using Chat.WordGame.WordHelpers;
 
 namespace Chat.Pixenary
 {
@@ -10,9 +9,9 @@ namespace Chat.Pixenary
         private readonly IShuffleHelper<string> _shuffleStringHelper;
         private readonly IWordCategoryHelper _wordCategoryHelper;
         private readonly IShuffleHelper<WordData> _shuffleWordDataHelper;
-        public List<string> Players { get; }
+        public List<string> Players { get; private set; }
         public List<string> Grid { get; private set; }
-        public List<WordData> WordsWithCategories { get; }
+        public List<WordData> WordsWithCategories { get; private set; }
         public string ActivePlayer { get; private set; }
         public WordData Word { get; private set; }
         public int PlayerTurns { get; private set; }
@@ -27,13 +26,25 @@ namespace Chat.Pixenary
             Grid = new List<string>();
             
             WordsWithCategories = _wordCategoryHelper.GetAllWordsWithCategories();
-            _shuffleWordDataHelper.ShuffleList(WordsWithCategories);
+            WordsWithCategories = _shuffleWordDataHelper.ShuffleList(WordsWithCategories);
             
             var users = Rooms.RoomsList[roomId].Users;
             foreach(var player in users)
                 Players.Add(player.Key);
 
-            _shuffleStringHelper.ShuffleList(Players);
+            if(Players.Count > 1)
+                Players = _shuffleStringHelper.ShuffleList(Players);
+        }
+
+        public void AddPlayersToGame(IEnumerable<string> users)
+        {
+            Players.Clear();
+            foreach (var user in users)
+            {
+                Players.Add(user);
+            }
+
+            Players = _shuffleStringHelper.ShuffleList(Players);
         }
 
         public void CreateNewList(int gridSize)
@@ -47,7 +58,8 @@ namespace Chat.Pixenary
         {
             if (PlayerTurns == Players.Count)
             {
-                _shuffleStringHelper.ShuffleList(Players);
+                if(Players.Count > 1)
+                    Players = _shuffleStringHelper.ShuffleList(Players);
                 PlayerTurns = 0;
             }
 
@@ -65,7 +77,7 @@ namespace Chat.Pixenary
         {
             if (WordsUsed == WordsWithCategories.Count)
             {
-                _shuffleWordDataHelper.ShuffleList(WordsWithCategories);
+                WordsWithCategories = _shuffleWordDataHelper.ShuffleList(WordsWithCategories);
                 WordsUsed = 0;
             }
 

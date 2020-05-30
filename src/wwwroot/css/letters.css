@@ -1,7 +1,7 @@
 .letter-input-row
 {
     display: flex;
-    flex-wrap: none;
+    flex-wrap: nowrap;
     justify-content: space-between;
     max-width: 600px;
     margin-left: auto;

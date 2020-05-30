@@ -1,4 +1,5 @@
 ﻿using Chat.GameManager;
+using Chat.Pixenary;
 using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
@@ -12,6 +13,7 @@ namespace PartyGamesTests.GameManagerTests
     {
         private IFilenameHelper _filenameHelper;
         private IWordService _wordService;
+        private IWordCategoryHelper _wordCategoryHelper;
 
         [Fact]
         public void WhenGameMangerCalledANewRoomShouldBeCreated()
@@ -19,7 +21,7 @@ namespace PartyGamesTests.GameManagerTests
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _wordService = Substitute.For<IWordService>();
             
-            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper(), _filenameHelper, _wordService);
+            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper(), _filenameHelper, _wordService, new ShuffleHelper<WordData>(), _wordCategoryHelper);
             
             gameManager.SetupNewGame("newRoom", "Joshua", GameType.ThoughtsAndCrosses);
 
@@ -51,7 +53,7 @@ namespace PartyGamesTests.GameManagerTests
         [Fact]
         public void WhenMultipleUsersAreInARoomThenTheyShouldAllBeInitialised()
         {
-            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper(), _filenameHelper, _wordService);
+            var gameManager = new GameManager(new JoinRoomHelper(), new ShuffleHelper<string>(), new ScoreHelper(), _filenameHelper, _wordService, new ShuffleHelper<WordData>(), _wordCategoryHelper);
             gameManager.SetupNewGame("newRoom", "Joshua", GameType.ThoughtsAndCrosses);
             gameManager.SetupNewGame("newRoom", "Lydia", GameType.ThoughtsAndCrosses);
             gameManager.SetupNewGame("newRoom", "Kerry", GameType.ThoughtsAndCrosses);

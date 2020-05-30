@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Chat.Pixenary;
 
 namespace Chat.RoomManager
 {
@@ -7,6 +8,7 @@ namespace Chat.RoomManager
         public Dictionary<string, User> Users { get; }
         public GameThoughtsAndCrosses ThoughtsAndCrosses { get; private set; }
         public GameWordGame WordGame { get; private set; }
+        public PixenaryManager PixenaryGame { get; private set; }
 
 
         public Room()
@@ -27,6 +29,11 @@ namespace Chat.RoomManager
         public void SetWordGame(GameWordGame game)
         {
             WordGame = game;
+        }
+
+        public void SetPixenaryGame(PixenaryManager game)
+        {
+            PixenaryGame = game;
         }
     }
 }

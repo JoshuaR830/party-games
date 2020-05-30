@@ -6,11 +6,12 @@ namespace Chat.WordGame.WordHelpers
     {
         bool GetWordStatus(string filename, string word);
         string GetDefinition(string filename, string word);
-        void AddNewWordToDictionary(string filename, string word, string definition);
-        void UpdateExistingWord(string filename, string word, string definition);
+        WordCategory GetCategory(string filename, string word);
+        void AddNewWordToDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None);
+        void UpdateExistingWord(string filename, string word, string definition, WordCategory category = WordCategory.None);
         void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus);
         void AddWordToGuessedWords(string dictionaryFilename, string guessedWordsFilename, string word);
-        void AmendDictionary(string filename, string word, string definition);
+        void AmendDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None);
         void UpdateDictionaryFile();
         void UpdateGuessedWordsFile();
     }

@@ -67,22 +67,24 @@ namespace Chat.Hubs
         public async Task GetDefinition(string group, string word)
         {
             var definition = _wordService.GetDefinition(_filenameHelper.GetDictionaryFilename(), word);
+            var category = _wordService.GetCategory(_filenameHelper.GetDictionaryFilename(), word);
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
+            await Clients.Group(group).SendAsync("ReceiveCategory", category);
         }
 
-        public async Task AddWordToDictionary(string group, string newWord, string newDefinition)
+        public async Task AddWordToDictionary(string group, string newWord, string newDefinition, int category = 0)
         {
-            _wordService.AmendDictionary(_filenameHelper.GetDictionaryFilename(), newWord, newDefinition);
+            _wordService.AmendDictionary(_filenameHelper.GetDictionaryFilename(), newWord, newDefinition, (WordCategory) category);
             _wordService.ToggleIsWordInDictionary(_filenameHelper.GetDictionaryFilename(), newWord, true);
             _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), newWord);
             await Clients.Group(group).SendAsync("DefinitionUpdated", newWord);
         }
 
-        public void UpdateDictionary(string group, string word, string definition)
+        public void UpdateDictionary(string group, string word, string definition, int category = 0)
         {
             Console.WriteLine(word);
             Console.WriteLine(definition);
-            _wordService.UpdateExistingWord(_filenameHelper.GetDictionaryFilename(), word, definition);
+            _wordService.UpdateExistingWord(_filenameHelper.GetDictionaryFilename(), word, definition, (WordCategory) category);
         }
 
         public async Task GetGuessedWords(string group)
@@ -152,8 +154,6 @@ namespace Chat.Hubs
 
         public async Task GetUserData(string roomId, string name)
         {
-            
-
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
                 Console.WriteLine("Get user data");
@@ -164,7 +164,6 @@ namespace Chat.Hubs
                 var letterCount = letters.Count;
                 await Clients.Group(user.Value.Name).SendAsync("ReceiveUserData", serializedLetters, serializedWords, letterCount, words.Count);
             }
-            
         }
 
         public async Task ResetGame(string roomId, string word, int gameId)
@@ -175,6 +174,12 @@ namespace Chat.Hubs
             {
                 _gameManager.ResetWordGameForUser(roomId, user.Value.Name);
             }
+        }
+
+        public void SaveUpdatesToFile()
+        {
+            _wordService.UpdateDictionaryFile();
+            _wordService.UpdateGuessedWordsFile();
         }
     }
 }

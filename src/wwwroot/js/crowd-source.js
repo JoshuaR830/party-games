@@ -60,10 +60,24 @@ lettersConnection.on("ReceiveDefinition", function(definition, word) {
     console.log(definition, word)
 });
 
+lettersConnection.on("ReceiveCategory", function(category) {
+    console.log(category);
+    let radioInput = document.querySelectorAll('input[name="word-category"]');
+    radioInput.forEach(function($el){
+        if(parseInt($el.value) === category){
+            console.log("Checked")
+            $el.checked = true;
+        }
+    });
+})
+
 $definitionButton.addEventListener('click', function() {
     console.log($word.textContent);
     console.log($definition.value);
-    lettersConnection.invoke("UpdateDictionary", connectionName, $word.textContent, $definition.value);
+    let category = document.querySelector('input[name="word-category"]:checked').value;
+    console.log(category);
+    lettersConnection.invoke("UpdateDictionary", connectionName, $word.textContent, $definition.value, category);
+    lettersConnection.invoke("SaveUpdatesToFile");
 })
 
 $tickButton.addEventListener('click', function() {

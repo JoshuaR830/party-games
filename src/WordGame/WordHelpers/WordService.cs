@@ -58,33 +58,42 @@ namespace Chat.WordGame.WordHelpers
 
             return null;
         }
+        
+        public WordCategory GetCategory(string filename, string word)
+        {
+            if (GetWordStatus(filename, word))
+                return _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList()[0].Category;
 
-        public void AmendDictionary(string filename, string word, string definition)
+            return WordCategory.None;
+        }
+
+        public void AmendDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None)
         {
 
             if (_dictionary.Words.Any(x => x.Word.ToLower() == word.ToLower()))
             {
-                UpdateExistingWord(filename, word, definition);
+                UpdateExistingWord(filename, word, definition, category);
             }
             else
             {
-                AddNewWordToDictionary(filename, word, definition);
+                AddNewWordToDictionary(filename, word, definition, category);
             }
             
         }
 
-        public void AddNewWordToDictionary(string filename, string word, string definition)
+        public void AddNewWordToDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None)
         {
             _dictionary.Words.Add(new WordData
             {
                 Word = word,
                 PermanentDefinition = definition,
                 TemporaryDefinition = null,
-                Status = WordStatus.Permanent
+                Status = WordStatus.Permanent,
+                Category = category
             });
         }
 
-        public void UpdateExistingWord(string filename, string word, string definition)
+        public void UpdateExistingWord(string filename, string word, string definition, WordCategory category = WordCategory.None)
         {
             if (word == "" || definition == "")
                 return;
@@ -97,6 +106,7 @@ namespace Chat.WordGame.WordHelpers
             var item = _dictionary.Words.IndexOf(wordList.First());
             _dictionary.Words[item].PermanentDefinition = definition;
             _dictionary.Words[item].Status = WordStatus.Permanent;
+            _dictionary.Words[item].Category = category;
         }
 
         public void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus)

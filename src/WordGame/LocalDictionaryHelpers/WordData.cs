@@ -9,6 +9,7 @@ namespace Chat.WordGame.LocalDictionaryHelpers
         public string TemporaryDefinition { get; set; }
         public string PermanentDefinition { get; set; }
         public WordStatus Status { get; set; }
+        public WordCategory Category { get; set; }
     }
 
     public class Dictionary
@@ -17,7 +18,7 @@ namespace Chat.WordGame.LocalDictionaryHelpers
 
         public Dictionary()
         {
-            this.Words = new List<WordData>();
+            Words = new List<WordData>();
         }
     }
 }

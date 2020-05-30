@@ -1,5 +1,11 @@
-﻿using Chat.Pixenary;
+﻿using System;
+using System.Collections.Generic;
+using Chat.Pixenary;
+using Chat.RoomManager;
+using Chat.WordGame.LocalDictionaryHelpers;
+using Chat.WordGame.WordHelpers;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.Pixenary.PixenaryManagerTests
@@ -10,7 +16,29 @@ namespace PartyGamesTests.Pixenary.PixenaryManagerTests
 
         public UpdatePixelTests()
         {
-            _pixenaryManager = new PixenaryManager();
+            var roomName = Guid.NewGuid().ToString();
+            Rooms.RoomsList.Add(roomName, new Room());
+            var shuffleHelper = Substitute.For<IShuffleHelper<string>>();
+            
+            
+            var wordList = new List<WordData>
+            {
+                new WordData { Word = "Sheep", Category = WordCategory.Animal },
+                new WordData { Word = "Plane", Category = WordCategory.Vehicle },
+                new WordData { Word = "Snowdrop", Category = WordCategory.Plant }
+            }; 
+            
+            var shuffleStringHelper = Substitute.For<IShuffleHelper<string>>();
+            var shuffleWordHelper = Substitute.For<IShuffleHelper<WordData>>();
+            shuffleWordHelper
+                .ShuffleList(Arg.Any<List<WordData>>())
+                .Returns(wordList);
+            
+            var wordCategoryHelper = Substitute.For<IWordCategoryHelper>();
+            wordCategoryHelper.GetAllWordsWithCategories().Returns(wordList);
+
+            _pixenaryManager = new PixenaryManager(shuffleStringHelper, shuffleWordHelper, wordCategoryHelper, roomName);
+
             _pixenaryManager.CreateNewList(10);
         }
 
@@ -27,7 +55,7 @@ namespace PartyGamesTests.Pixenary.PixenaryManagerTests
         [InlineData(99, "#4400ff")]
         public void WhenAPixelLocationIsSetThenTheListShouldBeUpdated(int pixel, string colour)
         {
-            _pixenaryManager.UpdatePixel(pixel);
+            _pixenaryManager.UpdatePixel(pixel, colour);
             _pixenaryManager.Grid[pixel].Should().Be(colour);
         }
     }

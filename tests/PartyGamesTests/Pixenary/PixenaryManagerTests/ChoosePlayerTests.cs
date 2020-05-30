@@ -1,5 +1,12 @@
-﻿using Chat.Pixenary;
+﻿using System;
+using System.Collections.Generic;
+using Chat.Letters;
+using Chat.Pixenary;
+using Chat.RoomManager;
+using Chat.WordGame.LocalDictionaryHelpers;
+using Chat.WordGame.WordHelpers;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.Pixenary.PixenaryManagerTests
@@ -7,12 +14,36 @@ namespace PartyGamesTests.Pixenary.PixenaryManagerTests
     public class ChoosePlayerTests
     {
         private readonly PixenaryManager _pixenaryManager;
+        private Dictionary<string, User> users;
 
         public ChoosePlayerTests()
         {
-            _pixenaryManager = new PixenaryManager();
-            _pixenaryManager.AddPlayer("Joshua");
-            _pixenaryManager.AddPlayer("Lydia");
+            var room = new Room();
+            room.AddUser("Joshua");
+            room.AddUser("Lydia");
+
+            var roomName = Guid.NewGuid().ToString();
+            Rooms.RoomsList.Add(roomName, room);
+
+            var shuffleStringHelper = Substitute.For<IShuffleHelper<string>>();
+            shuffleStringHelper
+                .ShuffleList(Arg.Any<List<string>>())
+                .Returns(new List<string> { "Joshua", "Lydia" });
+
+            var shuffleWordHelper = Substitute.For<IShuffleHelper<WordData>>();
+            shuffleWordHelper
+                .ShuffleList(Arg.Any<List<WordData>>())
+                .Returns(new List<WordData>());
+            
+            var wordCategoryHelper = Substitute.For<IWordCategoryHelper>();
+            wordCategoryHelper.GetAllWordsWithCategories().Returns(new List<WordData>
+            {
+                new WordData { Word = "Sheep", Category = WordCategory.Animal },
+                new WordData { Word = "Plane", Category = WordCategory.Vehicle },
+                new WordData { Word = "Snowdrop", Category = WordCategory.Plant }
+            });
+
+            _pixenaryManager = new PixenaryManager(shuffleStringHelper, shuffleWordHelper, wordCategoryHelper, roomName);
         }
 
         [Fact]

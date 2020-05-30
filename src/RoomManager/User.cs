@@ -31,5 +31,10 @@ namespace Chat.RoomManager
         {
             WordGame = game;
         }
+        
+        public void SetUserPixenaryGame(UserPixenaryGame game)
+        {
+            PixenaryGame = game;
+        }
     }
 }

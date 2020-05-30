@@ -1,26 +1,53 @@
-﻿using Chat.Pixenary;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using Chat.Pixenary;
+using Chat.RoomManager;
+using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.Pixenary.WordCategoryHelperTests
 {
     public class GetAllWordsWithCategoriesTests
     {
-        private readonly WordCategoryHelper _wordCategoryHelperTests;
+        private readonly WordCategoryHelper _wordCategoryHelper;
+        private const string Filename = "./categories-test";
 
         public GetAllWordsWithCategoriesTests()
         {
-            _wordCategoryHelperTests = new WordCategoryHelper();
+            var fileHelper = Substitute.For<IFileHelper>();
+            var filenameHelper = Substitute.For<IFilenameHelper>();
+
+            filenameHelper
+                .GetDictionaryFilename()
+                .Returns(Filename);
+
+            fileHelper.ReadDictionary(Filename).Returns(new Dictionary
+            {
+                Words = new List<WordData>
+                {
+                    new WordData { Category = WordCategory.Animal },
+                    new WordData { Category = WordCategory.Plant },
+                    new WordData { Category = WordCategory.Vehicle },
+                    new WordData { Category = WordCategory.None },
+                    new WordData { Category = WordCategory.None },
+                    new WordData { Category = WordCategory.Animal },
+                    new WordData { Category = WordCategory.Plant },
+                    new WordData { Category = WordCategory.Vehicle },
+                    new WordData { Category = WordCategory.None }
+                },
+            });
+
+            _wordCategoryHelper = new WordCategoryHelper(fileHelper, filenameHelper);
         }
 
         [Fact]
         public void OnlyWordsFromTheDictionaryWithoutCategoryNoneShouldBeReturned()
         {
-            var pixenaryManager = new PixenaryManager();
-            pixenaryManager.ChooseWord();
-
-            var words = _wordCategoryHelperTests.GetAllWordsWithCategories();
+            var words = _wordCategoryHelper.GetAllWordsWithCategories();
             
             words.Should().NotBeEmpty().And.OnlyContain(x => x.Category != WordCategory.None);
         }

@@ -1,4 +1,6 @@
-﻿namespace Chat.RoomManager
+﻿using Chat.Pixenary;
+
+namespace Chat.RoomManager
 {
     public class User
     {
@@ -7,6 +9,7 @@
 
         public UserThoughtsAndCrosses ThoughtsAndCrosses { get; private set; }
         public UserWordGame WordGame { get; private set; }
+        public UserPixenaryGame PixenaryGame { get; private set; }
 
         public User(string name)
         {

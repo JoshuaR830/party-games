@@ -105,13 +105,15 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
 							""Word"": ""sheep"",
 							""PermanentDefinition"": ""An animal with a wool laden coat"",
 							""TemporaryDefinition"": ""A fluffy animal that sits"",
-							""Status"": {(int)WordStatus.Permanent}
+							""Status"": {(int)WordStatus.Permanent},
+							""Category"" : 0
 						}},
 						{{
 							""Word"": ""sloth"",
 							""PermanentDefinition"": ""An animal that likes sleeping"",
 							""TemporaryDefinition"": ""A sleepy animal that sleeps"",
-							""Status"": {(int)WordStatus.DoesNotExist}
+							""Status"": {(int)WordStatus.DoesNotExist},
+							""Category"" : 0
 						}}
 					]
 				}}");

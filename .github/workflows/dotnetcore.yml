@@ -26,11 +26,13 @@ jobs:
     - name: build image
       run: |
         docker info
-        docker build -t aspnetapp -f src/Dockerfile .
+        docker build -t release -f src/Dockerfile .
     - name: deploy
       run: |
         docker login --username=joshuaquarryhouse@gmail.com --password=402b1ef9-d3ba-4acd-ac79-f032566d87ba registry.heroku.com
-        docker tag aspnetapp registry.heroku.com/games-by-joshua/web
+        docker tag release registry.heroku.com/games-by-joshua/web
         docker push registry.heroku.com/games-by-joshua/web
         curl https://cli-assets.heroku.com/install.sh | sh
-        heroku container:release web -a games-by-joshua
+        heroku container: push web -a games-by-joshua
+        heroku container:release web release -a games-by-joshua
+        heroku open

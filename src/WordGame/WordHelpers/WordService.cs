@@ -109,6 +109,17 @@ namespace Chat.WordGame.WordHelpers
             _dictionary.Words[item].Category = category;
         }
 
+        public void UpdateCategory(string filename, string word, WordCategory category)
+        {
+            var wordList = _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+
+            if (!wordList.Any())
+                return;
+
+            var item = _dictionary.Words.IndexOf(wordList.First());
+            _dictionary.Words[item].Category = category;
+        }
+
         public void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus)
         {
             var items = _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();

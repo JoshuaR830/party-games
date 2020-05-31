@@ -23,6 +23,10 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+    - name: build image
+      run: |
+        docker info
+        docker build -t aspnetapp -f src/Dockerfile .
     - name: deploy
       run: |
         docker login --username=joshuaquarryhouse@gmail.com --password=402b1ef9-d3ba-4acd-ac79-f032566d87ba registry.heroku.com

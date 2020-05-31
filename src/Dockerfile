@@ -3,11 +3,11 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-COPY "*Chat.csproj" ./
+COPY "src/*.csproj" ./
 RUN dotnet restore
 
-COPY . ./
-RUN dotnet publish -c Realease -o out
+COPY src ./
+RUN dotnet publish "Chat.csproj" -c Realease -o out
 
 FROM build AS publish
 

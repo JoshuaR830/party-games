@@ -23,3 +23,18 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+    - name: Deploy
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }} 
+      run : |
+            docker build -t release -f src/Dockerfile .
+            curl https://cli-assets.heroku.com/install.sh | sh
+            docker login --username=_ --password $HEROKU_API_KEY registry.heroku.com
+            docker tag release registry.heroku.com/games-by-joshua/web
+            docker push registry.heroku.com/games-by-joshua/web
+            export HEROKU_API_KEY=$HEROKU_API_KEY
+            heroku container:login
+            heroku container:push web --app games-by-joshua
+            heroku container:release web --app games-by-joshua
+
+

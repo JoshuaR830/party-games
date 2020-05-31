@@ -1,20 +1,13 @@
-FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
+FROM microsoft/dotnet:2.2-sdk AS build-env
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
-WORKDIR /src
-COPY ["Chat/Chat.csproj", "Chat/"]
-RUN dotnet restore "Chat/Chat.csproj"
-COPY . .
-WORKDIR "/src/Chat"
-RUN dotnet build "Chat.csproj" -c Release -o /app
+COPY "src/*.csproj" ./
+RUN dotnet restore
 
-FROM build AS publish
-RUN dotnet publish "Chat.csproj" -c Release -o /app
+COPY src ./
+RUN dotnet publish "Chat.csproj" -c Realease -o out
 
-FROM base AS final
+FROM microsoft/dotnet:2.2-aspnetcore-runtime
 WORKDIR /app
-COPY --from=publish /app .
-ENTRYPOINT ["dotnet", "Chat.dll"]
+COPY --from=build-env /app/out .
+CMD dotnet Chat.dll

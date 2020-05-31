@@ -1,0 +1,43 @@
+﻿@page
+@model Chat.Pages.Pixenary
+
+@{
+    ViewData["Title"] = "Pixenary";
+}
+
+<div class="button js-reset-button">Start</div>
+<div class="title">Pixenary</div>
+<div class="word-choice js-word-choice"></div>
+
+
+<div class="pixenary-table js-pixenary-table"></div>
+
+<div class="color-container js-color-container"></div>
+
+
+<div class="popup-modal js-login-modal">
+    @await Html.PartialAsync("LoginPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-timer-modal">
+    @await Html.PartialAsync("TimerPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-modal">
+    @await Html.PartialAsync("ScoresPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-breakdown-modal">
+    @await Html.PartialAsync("ScoresBreakDownPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-times-up">
+    @await Html.PartialAsync("GameOver");
+</div>
+
+<div class="popup-modal popup-hidden js-color-modal">
+    @await Html.PartialAsync("ColorPopup");
+</div>
+
+<script src="~/js/pixenary.js"></script>
+

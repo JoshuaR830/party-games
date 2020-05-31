@@ -1,7 +1,9 @@
-﻿using Chat.Pixenary;
+﻿using System;
+using Chat.Pixenary;
 using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
+using Newtonsoft.Json;
 
 namespace Chat.GameManager
 {
@@ -43,7 +45,9 @@ namespace Chat.GameManager
                     SetUpNewWordGameUser(roomId, userId, Rooms.RoomsList[roomId].WordGame);
                     break;
                 case GameType.Pixenary:
-                    
+                    PixenaryGame(roomId, userId);
+                    SetUpNewPixenaryUser(roomId, userId, Rooms.RoomsList[roomId].PixenaryGame);
+                    break;
                 default:
                     ThoughtsAndCrosses(roomId, userId);
                     SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
@@ -120,10 +124,15 @@ namespace Chat.GameManager
 
         void PixenaryGame(string roomId, string userId)
         {
-            var pixenaryGame = new PixenaryManager(_shuffleStringHelper, _shuffleWordDataHelper, _wordCategoryHelper, roomId);
+            var pixenaryGame = Rooms.RoomsList[roomId].PixenaryGame;
+            
+            if(pixenaryGame == null)
+                pixenaryGame = new PixenaryManager(_shuffleStringHelper, _shuffleWordDataHelper, _wordCategoryHelper, roomId);
+            
             pixenaryGame.ChooseWord();
-            pixenaryGame.ChooseActivePlayer();
-            pixenaryGame.CreateNewList(50);
+            pixenaryGame.CreateNewList(15);
+            
+            Rooms.RoomsList[roomId].SetPixenaryGame(pixenaryGame);
         }
     }
 }

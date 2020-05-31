@@ -87,6 +87,11 @@ namespace Chat.Hubs
             _wordService.UpdateExistingWord(_filenameHelper.GetDictionaryFilename(), word, definition, (WordCategory) category);
         }
 
+        public void UpdateCategory(string group, string word, int category)
+        {
+            _wordService.UpdateCategory(_filenameHelper.GetDictionaryFilename(), word, (WordCategory) category);
+        }
+
         public async Task GetGuessedWords(string group)
         {
             var wordData = _fileHelper.ReadFile(_filenameHelper.GetGuessedWordsFilename());

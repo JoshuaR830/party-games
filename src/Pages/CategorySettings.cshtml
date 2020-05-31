@@ -1,0 +1,25 @@
+﻿@page
+@model Chat.Pages.CategorySettings
+@{
+    Layout = "_MenuLayout";
+}
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<input type="text" class="js-word-input"/>
+<div class="button js-submit-button">Submit</div>
+
+<div>
+    <label for="animal">Animal</label>
+    <input type="radio" id="animal" name="word-category" value="1">
+    <label for="plant">Plant</label>
+    <input type="radio" id="plant" name="word-category" value="3">
+    <label for="vehicle">Vehicle</label>
+    <input type="radio" id="vehicle" name="word-category" value="2">
+    <label for="none">None</label>
+    <input type="radio" id="none" name="word-category" value="0" checked>
+</div>
+
+<script src="~/lib/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/category-settings.js"></script>

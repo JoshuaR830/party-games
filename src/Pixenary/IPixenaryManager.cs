@@ -11,5 +11,6 @@ namespace Chat.Pixenary
         void ChooseWord();
         void ResetGame();
         void UpdatePixel(int position, string colour);
+        void AddPlayersToGame(IEnumerable<string> users);
     }
 }

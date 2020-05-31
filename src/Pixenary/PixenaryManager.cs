@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
 
@@ -80,7 +81,6 @@ namespace Chat.Pixenary
                 WordsWithCategories = _shuffleWordDataHelper.ShuffleList(WordsWithCategories);
                 WordsUsed = 0;
             }
-
             Word = WordsWithCategories[WordsUsed];
             WordsUsed ++;
         }

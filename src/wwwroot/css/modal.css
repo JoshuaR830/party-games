@@ -51,6 +51,40 @@
     top: calc(50% - 132px);
 }
 
+.modal-title
+{
+    font-size: 24px;
+}
+
+.color-modal
+{
+    width: 200px;
+    height: 300px;
+    border: 1px solid #55edbb;
+    background-color: #55475c;
+    text-align: center;
+    color: white;
+    border-radius: 8px;
+    position: absolute;
+    left: calc(50% - 100px);
+    top: calc(50% - 150px);
+}
+
+.color-input
+{
+    visibility: hidden;
+}
+
+.color-selectors
+{
+    padding: 20px;
+}
+
+.color-input-wrapper
+{
+    
+}
+
 .popup-input 
 {
     text-align: center;

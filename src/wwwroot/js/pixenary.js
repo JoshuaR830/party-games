@@ -4,12 +4,15 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 var connectionName = "GroupOfJoshua"
 
 var $table = document.querySelector('.js-pixenary-table');
-var $red = document.querySelector('.js-red');
-var $yellow = document.querySelector('.js-yellow');
-var $green = document.querySelector('.js-green');
-var $blue = document.querySelector('.js-blue');
-var $brown = document.querySelector('.js-brown');
-var $grey = document.querySelector('.js-grey');
+
+var $colorTable = document.querySelector('.js-color-container');
+var $setColoursButton = document.querySelector('.js-set-colors-button');
+
+var $colorModal = document.querySelector('.js-color-modal');
+
+var $colorSelectorContainer = document.querySelector('.js-color-selectors');
+
+var colorList = ["#1E90FF", "#ff0000", "#ffff00", "#228B22", "#8B4513", "white"];
 
 var $wordToDraw = document.querySelector('.js-word-choice');
 
@@ -47,13 +50,16 @@ pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn) {
                 cell.style.backgroundColor = data[x + y];
                 cell.classList.remove('--not-selected');
             }
-            if (isUsersTurn === true) {
+            
+            console.log(isUsersTurn);
+            // if (isUsersTurn === true) {
                 cell.addEventListener('click', function() {
                     cell.style.backgroundColor = color;
                     cell.classList.remove('--not-selected');
+                    console.log(color);
                     pixenaryConnection.invoke("UpdatePixelGrid", connectionName, x + y, color);
                 });
-            }
+            // }
             row.appendChild(cell);
         }
         $table.appendChild(row);
@@ -63,12 +69,20 @@ pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn) {
 pixenaryConnection.on("PixelGridUpdate", function(pixelPosition, pixelColor) {
     let $selectedCell = document.querySelector(`#cell-${pixelPosition}`);
     $selectedCell.style.backgroundColor = pixelColor;
+
+    $selectedCell.classList.remove("--eraser");
+
+    if(pixelColor === "white") {
+        $selectedCell.classList.add("--eraser");
+    }
+    
     $selectedCell.classList.remove('--not-selected');
 });
 
 pixenaryConnection.on("PixelWord", function(word) {
     console.log(word);
-    
+    $colorModal.querySelector('.modal-title').textContent = `Word: ${word.word}`;
+    $colorModal.classList.remove('popup-hidden');
     $wordToDraw.textContent = word.word;
 });
 
@@ -78,48 +92,73 @@ pixenaryConnection.on("ResetGame", function() {
 });
 
 $resetButton.addEventListener('click', function() {
-    // if(confirm("Do you want to move to the next round? Your current drawing will be deleted.")){
     pixenaryConnection.invoke("ResetPixenary", connectionName);
-    // }
+});
+
+pixenaryConnection.on("ReceiveColors", function (colorsChosen) {
+    colorList = colorsChosen;
+    drawColours();
 })
 
-$red.addEventListener('click', function() {
-    color = "red";
-    selectColor($red);
-});
+function drawColours() {
+    $colorTable.innerHTML = "";
+    let colorSelection = $colorSelectorContainer.querySelectorAll('.color');
+    colorList.forEach(function (myColor, index) {
+        
+        if(index < colorSelection.length) {
+            colorSelection[index].style.backgroundColor = myColor;
+        }      
+        console.log(myColor);
 
-$green.addEventListener('click', function() {
-    color = "green";
-    selectColor($green);
-});
+        let $el = document.createElement('div');
+        $el.className = "color"
+        $el.style.backgroundColor = myColor;
 
-$blue.addEventListener('click', function() {
-    color = "dodgerblue";
-    selectColor($blue);
-});
+        $el.classList.remove("eraser");
+        if (myColor === "white") {
+            $el.classList.add("eraser");
+        }
 
-$yellow.addEventListener('click', function() {
-    color = "yellow";
-    selectColor($yellow);
-});
+        $el.addEventListener('click', function () {
+            color = myColor;
+            selectColor($el);
+        })
 
-$brown.addEventListener('click', function() {
-    color = "saddlebrown";
-    selectColor($brown);
-});
+        $colorTable.appendChild($el);
+    })
+}
 
-$grey.addEventListener('click', function() {
-    color = "lightslategrey";
-    selectColor($grey);
+$colorSelectorContainer.innerHTML = "";
+colorList.forEach(function (itemColor, index) {
+    if (itemColor === "white") {
+        return;
+    }
+    let $colorInput = document.createElement('input');
+    let $colorLabel = document.createElement('label');
+    $colorInput.type = "color";
+    $colorInput.className = "color-input";
+    $colorLabel.className = "color";
+    $colorLabel.style.backgroundColor = itemColor;
+    $colorInput.value = itemColor;
+
+    $colorInput.addEventListener('change', function() {
+        $colorInput.parentNode.style.backgroundColor = $colorInput.value;
+        colorList[index] = $colorInput.value;
+    })
+    $colorLabel.appendChild($colorInput);
+    $colorSelectorContainer.appendChild($colorLabel);
+})
+
+$setColoursButton.addEventListener('click', function() {
+    $colorModal.classList.add('popup-hidden');
+    pixenaryConnection.invoke("SendColors", connectionName, colorList)
 });
 
 function selectColor($color) {
-    $red.classList.remove('--selected-color');
-    $green.classList.remove('--selected-color');
-    $blue.classList.remove('--selected-color');
-    $yellow.classList.remove('--selected-color');
-    $brown.classList.remove('--selected-color');
-    $grey.classList.remove('--selected-color');
+    let colorEls = $colorTable.querySelectorAll('.color');
+    colorEls.forEach(function($el) {
+        $el.classList.remove('--selected-color');
+    });
     
     $color.classList.add('--selected-color')
 }

@@ -60,11 +60,11 @@ namespace Chat.Hubs
         {
             
             var game = Rooms.RoomsList[roomId].PixenaryGame;
+            Rooms.RoomsList[roomId].PixenaryGame.ChooseActivePlayer();
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
                 var userId = user.Value.Name;
                 
-                Rooms.RoomsList[roomId].PixenaryGame.ChooseActivePlayer();
                 
                 var playerTurn = Rooms.RoomsList[roomId].PixenaryGame.ActivePlayer;
                 await Clients.Group(userId).SendAsync("PixelGridResponse", JsonConvert.SerializeObject(game.Grid), playerTurn == userId);

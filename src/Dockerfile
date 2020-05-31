@@ -12,4 +12,4 @@ RUN dotnet publish "Chat.csproj" -c Realease -o out
 FROM microsoft/dotnet:2.2-aspnetcore-runtime
 WORKDIR /app
 COPY --from=build-env /app/out .
-CMD dotnet AspNetCoreHerokuDocker.dll
+CMD dotnet Chat.dll

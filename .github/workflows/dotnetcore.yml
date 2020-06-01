@@ -32,9 +32,6 @@ jobs:
             docker login --username=_ --password $HEROKU_API_KEY registry.heroku.com
             docker tag release registry.heroku.com/games-by-joshua/web
             docker push registry.heroku.com/games-by-joshua/web
-            export HEROKU_API_KEY=$HEROKU_API_KEY
-            heroku container:login
-            heroku container:push web --app games-by-joshua
             heroku container:release web --app games-by-joshua
 
 

@@ -5,8 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Chat
@@ -16,15 +14,15 @@ namespace Chat
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args)
-		.UseKestrel()
-		.UseUrls("http://0.0.0.0:" + Environment.GetEnvironmentVariable("PORT"))
-		.Build();
+				.UseKestrel()
+				.UseUrls("http://0.0.0.0:" + Environment.GetEnvironmentVariable("PORT"))
+				.Build();
 
-	    using(var scope = host.Services.CreateScope())
-	    {
-	    }
-	    
-	    host.Run();
+		    using(var scope = host.Services.CreateScope())
+		    {
+		    }
+		    
+		    host.Run();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>

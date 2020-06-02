@@ -1,7 +1,5 @@
 FROM microsoft/dotnet:2.2-sdk AS build-env
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
 COPY "src/*.csproj" ./
 RUN dotnet restore

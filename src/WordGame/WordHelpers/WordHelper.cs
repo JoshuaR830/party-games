@@ -11,19 +11,17 @@ namespace Chat.WordGame.WordHelpers
         private readonly IWebDictionaryRequestHelper _webDictionaryRequestHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
-        private readonly IFileHelper _fileHelper;
         private readonly ITemporaryDefinitionHelper _temporaryDefinitionHelper;
 
-        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, ITemporaryDefinitionHelper temporaryDefinitionHelper)
+        public WordHelper(IWebDictionaryRequestHelper webDictionaryRequestHelper, IWordExistenceHelper wordExistenceHelper, IWordDefinitionHelper wordDefinitionHelper, ITemporaryDefinitionHelper temporaryDefinitionHelper)
         {
             _webDictionaryRequestHelper = webDictionaryRequestHelper;
             _wordExistenceHelper = wordExistenceHelper;
             _wordDefinitionHelper = wordDefinitionHelper;
-            _fileHelper = fileHelper;
             _temporaryDefinitionHelper = temporaryDefinitionHelper;
         }
 
-        public bool StrippedSuffixDictionaryCheck(Dictionary dictionary, string word)
+        public bool StrippedSuffixDictionaryCheck(WordDictionary wordDictionary, string word)
         {
             word = word.ToLower();
             var endings = new List<string> {"ning", "ing", "ed", "er", "es", "s", "d"};
@@ -46,7 +44,7 @@ namespace Chat.WordGame.WordHelpers
                 if (CheckWordWithEndingExists(word, shortenedWord))
                 {
                     var temporaryDefinition = _wordDefinitionHelper.GetDefinitionForWord(shortenedWord);
-                    _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(dictionary, word, temporaryDefinition);
+                    _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(wordDictionary, word, temporaryDefinition);
                     return true;
                 }
             }

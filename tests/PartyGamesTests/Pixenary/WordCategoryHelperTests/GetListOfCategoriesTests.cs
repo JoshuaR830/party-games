@@ -22,7 +22,7 @@ namespace PartyGamesTests.Pixenary.WordCategoryHelperTests
                 .GetDictionaryFilename()
                 .Returns(Filename);
 
-            fileHelper.ReadDictionary(Filename).Returns(new Dictionary
+            fileHelper.ReadDictionary(Filename).Returns(new WordDictionary
             {
                 Words = new List<WordData>
                 {

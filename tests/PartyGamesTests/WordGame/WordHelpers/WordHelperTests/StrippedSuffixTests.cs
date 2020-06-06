@@ -39,8 +39,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("cheese")
                 .Returns("Word forms: there are some cheeses over there");
 
-            var wordHelperUnderTest = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
-            var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var wordHelperUnderTest = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
+            var response = wordHelperUnderTest.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeTrue();
         }
 
@@ -49,13 +49,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "REALLYNOTAWORDS";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeFalse();
         }
         
@@ -64,13 +64,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "BOXES";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("box")
                 .Returns("Word forms: there are some boxes over there");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeTrue();
         }
         
@@ -79,13 +79,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "REALLYNOTAWORDES";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeFalse();
         }
         
@@ -94,13 +94,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "KICKING";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("kick")
                 .Returns("Word forms: This is really kicking it");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeTrue();
         }
         
@@ -109,13 +109,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "reallynotawording";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeFalse();
         }
         
@@ -124,13 +124,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "RUNNING";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             
             _webDictionaryRequestHelper
                 .MakeContentRequest("run")
                 .Returns("Word forms: got to love running in the park");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeTrue();
         }
 
@@ -139,13 +139,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         {
             var word = "reallynotawordning";
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
 
             _webDictionaryRequestHelper
                 .MakeContentRequest("reallynotaword")
                 .Returns("This really isn't a word");
 
-            var response = wordHelper.StrippedSuffixDictionaryCheck(new Dictionary(), word);
+            var response = wordHelper.StrippedSuffixDictionaryCheck(new WordDictionary(), word);
             response.Should().BeFalse();
         }
     }

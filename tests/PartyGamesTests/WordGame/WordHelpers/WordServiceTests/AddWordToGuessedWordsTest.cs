@@ -13,22 +13,27 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 {
     public class AddWordToGuessedWordsTest : IDisposable
     {
+        private const string GuessedWordsFilename = "./test-guessed-words";
+        private const string DictionaryFilename = "./guessed-words-dictionary";
+        
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IWordExistenceHelper _wordExistenceHelper;
         private readonly IWordHelper _wordHelper;
-        private readonly FileHelper _fileHelper = new FileHelper();
+        private readonly IFilenameHelper _filenameHelper;
+
+        private readonly FileHelper _fileHelper;
         private readonly List<string> _words = new List<string> {"cow", "dog", "frog", "pigeon"};
-        private readonly Dictionary _dictionary;
+        private readonly WordDictionary _wordDictionary;
         private readonly WordService _wordService;
-        private IFilenameHelper _filenameHelper;
-
-
-        private const string GuessedWordsFilename = "./test-guessed-words";
-        private const string DictionaryFilename = "./guessed-words-dictionary";
 
         public AddWordToGuessedWordsTest()
         {
-            _dictionary = new Dictionary
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper.GetDictionaryFilename().Returns(DictionaryFilename);
+            
+            _fileHelper = new FileHelper(_filenameHelper);
+            
+            _wordDictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -70,7 +75,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _filenameHelper.GetDictionaryFilename().Returns(DictionaryFilename);
 
             TestFileHelper.CreateCustomFile(GuessedWordsFilename, null);
-            TestFileHelper.CreateCustomFile(DictionaryFilename, _dictionary);
+            TestFileHelper.CreateCustomFile(DictionaryFilename, _wordDictionary);
 
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             
@@ -173,6 +178,9 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             
             if (File.Exists(GuessedWordsFilename))
                 File.Delete(GuessedWordsFilename);
+            
+            WordDictionaryGetter.WordDictionary.Remove(DictionaryFilename);
+            WordDictionaryGetter.StringDictionary.Remove(GuessedWordsFilename);
         }
     }
 }

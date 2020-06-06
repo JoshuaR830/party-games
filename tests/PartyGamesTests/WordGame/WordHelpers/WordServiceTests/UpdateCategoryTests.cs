@@ -20,8 +20,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly IWordHelper _wordHelper;
         private readonly IFilenameHelper _filenameHelper;
         private readonly FileHelper _fileHelper;
-        private Dictionary _dictionary;
-        private Dictionary _categoriesDictionary;
+        private WordDictionary _wordDictionary;
+        private WordDictionary _categoriesWordDictionary;
 
         public UpdateCategoryTests()
         {
@@ -31,14 +31,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
             _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
-            _fileHelper = new FileHelper();
+            _fileHelper = new FileHelper(_filenameHelper);
             
             _wordExistenceHelper.DoesWordExist(Arg.Any<string>()).Returns(true);
             
             if (File.Exists(Filename))
                 File.Delete(Filename);
             
-            _categoriesDictionary = new Dictionary
+            _categoriesWordDictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -66,17 +66,17 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             };
             
             
-            TestFileHelper.CreateCustomFile(Filename, _categoriesDictionary);
+            TestFileHelper.CreateCustomFile(Filename, _categoriesWordDictionary);
 
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            _dictionary = _wordService.GetDictionary();
+            _wordDictionary = _wordService.GetDictionary();
         }
         
         [Fact]
         public void WhenSettingAVehicleCategoryTheCategoryShouldBeVehicle()
         {
             _wordService.UpdateCategory(Filename, "Bus", WordCategory.Vehicle);
-            _dictionary
+            _wordDictionary
                 .Words
                 .Where(x => x.Word == "Bus")
                 .ToList()[0]
@@ -89,7 +89,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         public void WhenSettingAPlantCategoryTheCategoryShouldBePlant()
         {
             _wordService.UpdateCategory(Filename, "Tree", WordCategory.Plant);
-            _dictionary
+            _wordDictionary
                 .Words
                 .Where(x => x.Word == "Tree")
                 .ToList()[0]
@@ -102,7 +102,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         public void WhenSettingAnAnimalCategoryTheCategoryShouldBeAnimal()
         {
             _wordService.UpdateCategory(Filename, "Elephant", WordCategory.Animal);
-            _dictionary
+            _wordDictionary
                 .Words
                 .Where(x => x.Word == "Elephant")
                 .ToList()[0]
@@ -115,7 +115,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         public void WhenSettingANoneCategoryTheCategoryShouldBeNone()
         {
             _wordService.UpdateCategory(Filename, "Because", WordCategory.None);
-            _dictionary
+            _wordDictionary
                 .Words
                 .Where(x => x.Word == "Because")
                 .ToList()[0]
@@ -128,6 +128,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             if (File.Exists(Filename))
                 File.Delete(Filename);
+            
+            WordDictionaryGetter.WordDictionary.Remove(Filename);
         }
     }
 }

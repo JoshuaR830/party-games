@@ -38,7 +38,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("end")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             var response = wordHelper.CheckWordWithEndingExists(word, "end");
             response.Should().BeTrue();
         }
@@ -53,7 +53,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("sheeps")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             var response = wordHelper.CheckWordWithEndingExists(nonExistentWord, "sheeps");
             response.Should().BeFalse();
         }
@@ -68,7 +68,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("diamond")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             var response = wordHelper.CheckWordWithEndingExists(word, "diamond");
             response.Should().BeFalse();
         }
@@ -83,7 +83,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("sheeps")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             var response = wordHelper.CheckWordWithEndingExists(nonExistentWord, "sheeps");
             response.Should().BeFalse();
         }
@@ -98,7 +98,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("diamond")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             var response = wordHelper.CheckWordWithEndingExists(word, "diamond");
             response.Should().BeTrue();
         }
@@ -113,7 +113,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
                 .MakeContentRequest("sheeps")
                 .Returns(responseString);
             
-            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _fileHelper, _temporaryDefinitionHelper);
+            var wordHelper = new WordHelper(_webDictionaryRequestHelper, _wordExistenceHelper, _wordDefinitionHelper, _temporaryDefinitionHelper);
             var response = wordHelper.CheckWordWithEndingExists(nonExistentWord, "sheeps");
             response.Should().BeFalse();
         }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
@@ -8,7 +9,7 @@ using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 {
-    public class UpdateExistingWordInDictionary
+    public class UpdateExistingWordInDictionary : IDisposable
     {
         const string Filename = "./file-with-existing-words.json";
 
@@ -30,7 +31,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
 
             TestFileHelper.Create(Filename);
-            _fileHelper = new FileHelper();
+            _fileHelper = new FileHelper(_filenameHelper);
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             
         }
@@ -38,14 +39,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         [Fact]
         public void WhenWordExistsUpdateDefinitionThePermanentDefinitionShouldBeUpdated()
         {
-            var newDefinition = "A cloud like fluffy animal";
+            var newDefinition = "Cloud like fluffy animals";
             var word = "sheep";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -69,7 +70,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -97,7 +98,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -114,14 +115,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         [Fact]
         public void WhenUpdateHappensButWordIsEmptyNothingShouldBeChanged()
         {
-            var newDefinition = "A cloud like fluffy animal";
+            var newDefinition = "A cloud like fluffy thing";
             var word = "";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -149,7 +150,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -170,14 +171,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         [Fact]
         public void WhenCapitalisationIsBlockCapitalTheDefinitionShouldStillBeUpdated()
         {
-            var newDefinition = "A cloud like fluffy animal";
+            var newDefinition = "Big and fluffy animal";
             var word = "SHEEP";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -194,14 +195,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         [Fact]
         public void WhenCapitalisationIsLowerTheDefinitionShouldBeUpdated()
         {
-            var newDefinition = "A cloud like fluffy animal";
+            var newDefinition = "Eats grass";
             var word = "sheep";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -218,14 +219,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         [Fact]
         public void WhenCapitalisationIsSentenceTheDefinitionShouldBeUpdated()
         {
-            var newDefinition = "A cloud like fluffy animal";
+            var newDefinition = "If clouds could baa they'd be sheep";
             var word = "Sheep";
 
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary
                 .Words
@@ -237,6 +238,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                     TemporaryDefinition = TempDefinition,
                     Status = WordStatus.Permanent
                 });
+        }
+
+        public void Dispose()
+        {
+            if(File.Exists(Filename))
+                File.Delete(Filename);
+            
+            WordDictionaryGetter.WordDictionary.Remove(Filename);
         }
     }
 }

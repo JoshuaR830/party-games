@@ -11,19 +11,16 @@ namespace Chat.Pixenary
     {
         private IFilenameHelper _fileNameHelper;
         private readonly IFileHelper _fileHelper;
-        private readonly Dictionary _dictionary;
-        
+
         public WordCategoryHelper(IFileHelper fileHelper, IFilenameHelper fileNameHelper)
         {
             _fileHelper = fileHelper;
             _fileNameHelper = fileNameHelper;
-            if(_dictionary == null)
-                _dictionary = _fileHelper.ReadDictionary(_fileNameHelper.GetDictionaryFilename());
         }
         
         public List<WordData> GetAllWordsWithCategories()
         {
-            return _dictionary
+            return _fileHelper.ReadDictionary(_fileNameHelper.GetDictionaryFilename())
                 .Words
                 .Where(x => x.Category != WordCategory.None)
                 .ToList();

@@ -12,7 +12,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsResponseShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -52,7 +52,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordDoesNotExistResponseShouldBeFalse()
         {
             var word = "Zebra";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -91,7 +91,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsButTheDefinitionIsCompletelyObsoleteResponseShouldBeFalse()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -131,7 +131,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordDefinitionIsObsoleteResponseShouldBeFalse()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -159,7 +159,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordDefinitionIsArchaicResponseShouldBeFalse()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -187,7 +187,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordDefinitionIsScottishResponseShouldBeFalse()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -215,7 +215,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordDefinitionIsIrishResponseShouldBeFalse()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -243,7 +243,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsButHasBadDataOnOneNewLineObsoleteResponseShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -271,7 +271,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsButHasBadDataInPartOfTheNumberedListResponseShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -299,7 +299,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsButHasBadDataInPartOfTheSemiColonListResponseShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -327,7 +327,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsButPermanentDefinitionHasNotBeenSetTheResponseShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -355,7 +355,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenBothPermanentDefinitionAndTemporaryDefinitionHaveNotBeenSetTheResponseShouldBeFalse()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {

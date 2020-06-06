@@ -22,7 +22,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly IWordHelper _wordHelper;
         private readonly IFilenameHelper _filenameHelper;
         private readonly FileHelper _fileHelper;
-        private Dictionary _dictionary;
+        private WordDictionary _wordDictionary;
 
         public AutomaticallyAddNewWordToDictionaryTests()
         {
@@ -32,7 +32,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
             _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
-            _fileHelper = new FileHelper();
+            _fileHelper = new FileHelper(_filenameHelper);
             
             
             if (File.Exists(Filename))
@@ -41,7 +41,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             TestFileHelper.Create(Filename);
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var json = TestFileHelper.Read(Filename);
-            _dictionary = _wordService.GetDictionary();
+            _wordDictionary = _wordService.GetDictionary();
         }
 
         [Fact]
@@ -50,13 +50,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var newWord = "news";
             var temporaryDefinition = "Something that has only just come into existence";
             
-            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
-            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_dictionary, newWord, temporaryDefinition);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper, _filenameHelper);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_wordDictionary, newWord, temporaryDefinition);
             _wordService.UpdateDictionaryFile();
 
             var response = TestFileHelper.Read(Filename);
 
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(response);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(response);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -73,13 +73,13 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var newWord = "news";
             var temporaryDefinition = "";
 
-            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
-            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_dictionary, newWord, temporaryDefinition);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper, _filenameHelper);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_wordDictionary, newWord, temporaryDefinition);
             _wordService.UpdateDictionaryFile();
 
             var response = TestFileHelper.Read(Filename);
 
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(response);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(response);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -94,6 +94,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             if(File.Exists(Filename))
                 File.Delete(Filename);
+            
+            WordDictionaryGetter.WordDictionary.Remove(Filename);
         }
     }
 }

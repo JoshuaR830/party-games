@@ -18,7 +18,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private IWordHelper _wordHelper;
         private ITemporaryDefinitionHelper _temporaryDefinitionHelper;
         private FileHelper _fileHelper;
-        private Dictionary _dictionary;
+        private WordDictionary _wordDictionary;
         private const string Filename = "./word-status-tests.json";
         
         public WordStatusTests()
@@ -38,10 +38,10 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordHelper = Substitute.For<IWordHelper>();
-            _fileHelper = new FileHelper();
+            _fileHelper = new FileHelper(_filenameHelper);
             
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            _dictionary = _wordService.GetDictionary();
+            _wordDictionary = _wordService.GetDictionary();
         }
         
         [Fact]
@@ -49,12 +49,12 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "pelicans";
             var temporaryDefinition = TestFileHelper.PelicanTemporaryDefinition;
-            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper);
-            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_dictionary, word, temporaryDefinition);
+            _temporaryDefinitionHelper = new TemporaryDefinitionHelper(_fileHelper, _filenameHelper);
+            _temporaryDefinitionHelper.AutomaticallySetTemporaryDefinitionForWord(_wordDictionary, word, temporaryDefinition);
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -76,7 +76,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -98,7 +98,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -119,7 +119,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -140,7 +140,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -161,7 +161,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -182,7 +182,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -203,7 +203,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -224,7 +224,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -245,7 +245,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -266,7 +266,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordService.UpdateDictionaryFile();
 
             var json = TestFileHelper.Read(Filename);
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(json);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(json);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -281,6 +281,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             if(File.Exists(Filename))
                 File.Delete(Filename);
+            
+            WordDictionaryGetter.WordDictionary.Remove(Filename);
         }
     }
 }

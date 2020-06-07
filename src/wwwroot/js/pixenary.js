@@ -3,13 +3,17 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 var connectionName = "GroupOfJoshua"
 
-var $table = document.querySelector('.js-pixenary-table');
+// var $table = document.querySelector('.js-pixenary-table');
 
 var $colorTable = document.querySelector('.js-color-container');
 var $setColoursButton = document.querySelector('.js-set-colors-button');
 
 var $colorModal = document.querySelector('.js-color-modal');
 var $colourCanvas = document.getElementById('colourWheel');
+
+var $pixelCanvas = document.getElementById('pixel-canvas');
+var previousTouchX = -20;
+var previousTouchY = -20;
 
 var $colorSelectorContainer = document.querySelector('.js-color-selectors');
 
@@ -20,16 +24,17 @@ var $wordToDraw = document.querySelector('.js-word-choice');
 var $resetButton = document.querySelector('.js-reset-button');
 
 var color = "dodgerblue";
+var size = 0;
 
 var coordinates = [[223, 134], [9, 153], [112, 121], [178, 218], [60, 243]];
 
-var ctx = $colourCanvas.getContext("2d");
+var colorContext = $colourCanvas.getContext("2d");
 var img = new Image();
 img.src = '/images/colourWheel.png';
 img.height = 300;
 img.width = 300;
 img.onload = function() {
-    ctx.drawImage(img, 0, 0, 300, 300);
+    colorContext.drawImage(img, 0, 0, 300, 300);
     img.style.display = 'none';
 }
 
@@ -45,51 +50,159 @@ document.querySelector('.js-login-button').addEventListener('click', function() 
 pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn) {
     let data = JSON.parse(grid);
     
-    let size = Math.sqrt(data.length)
+    size = Math.sqrt(data.length)
     
-    $table.innerHTML = "";
+    // $table.innerHTML = "";
+
+    let pixelsPerSide = $pixelCanvas.width/size;
+    let pixelCount = Math.pow(pixelsPerSide, 2);
+    let pixelSize = Math.floor($pixelCanvas.width/size);
+    let myPixelContext = $pixelCanvas.getContext("2d");
+
+    // for(let i = 0; i < pixelCount; i++)
+    // {
+    //     let gridY = Math.floor(i/size);
+    //     let gridX = i%size;
+    //     myPixelContext.beginPath();
+    //     colorContext.moveTo(gridX*pixelSize, gridY*pixelSize);
+    //     myPixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
+    //     myPixelContext.fillStyle = "white";
+    //     myPixelContext.fill();
+    // }
+
+    myPixelContext.beginPath();
+    colorContext.moveTo(0, 0);
+    myPixelContext.rect(0, 0, $pixelCanvas.width, $pixelCanvas.height);
+    myPixelContext.fillStyle = "white";
+    myPixelContext.fill();
     
-    for(let y = 0; y < data.length; y += size)
+    for(let j = 0; j < pixelsPerSide; j++ )
     {
-        let row = document.createElement('div');
-        row.className = "pixenary-row";
-        
-        for(let x = 0; x < size; x ++)
-        {
-            let cell = document.createElement('div');
-            cell.className = "pixenary-cell --not-selected";
-            cell.id = `cell-${x+y}`;
-            if(data[x + y]) {
-                cell.style.backgroundColor = data[x + y];
-                cell.classList.remove('--not-selected');
-            }
-            
-            console.log(isUsersTurn);
-            // if (isUsersTurn === true) {
-                cell.addEventListener('click', function() {
-                    cell.style.backgroundColor = color;
-                    cell.classList.remove('--not-selected');
-                    console.log(color);
-                    pixenaryConnection.invoke("UpdatePixelGrid", connectionName, x + y, color);
-                });
-            // }
-            row.appendChild(cell);
-        }
-        $table.appendChild(row);
+        console.log(j);
+        myPixelContext.beginPath();
+        myPixelContext.moveTo(j*pixelSize, 0);
+        myPixelContext.lineTo(j*pixelSize, pixelsPerSide*pixelSize);
+        myPixelContext.strokeStyle = 'rgba(219, 201, 226, 0.36)';
+        myPixelContext.stroke();
+        myPixelContext.beginPath();
+        myPixelContext.moveTo(0, j*pixelSize);
+        myPixelContext.lineTo(pixelsPerSide*pixelSize, j*pixelSize);
+        myPixelContext.strokeStyle = 'rgba(219, 201, 226, 0.36)';
+        myPixelContext.stroke();
     }
+    
+    // for(let y = 0; y < data.length; y += size)
+    // {
+    //     let row = document.createElement('div');
+    //     row.className = "pixenary-row";
+    //    
+    //     for(let x = 0; x < size; x ++)
+    //     {
+    //         let cell = document.createElement('div');
+    //         cell.className = "pixenary-cell --not-selected";
+    //         cell.id = `cell-${x+y}`;
+    //         if(data[x + y]) {
+    //             cell.style.backgroundColor = data[x + y];
+    //             cell.classList.remove('--not-selected');
+    //         }
+    //        
+    //         console.log(isUsersTurn);
+    //         // if (isUsersTurn === true) {
+    //             cell.addEventListener('click', function() {
+    //                 cell.style.backgroundColor = color;
+    //                 cell.classList.remove('--not-selected');
+    //                 console.log(color);
+    //                 pixenaryConnection.invoke("UpdatePixelGrid", connectionName, x + y, color);
+    //             });
+    //         // }
+    //         row.appendChild(cell);
+    //     }
+    //     $table.appendChild(row);
+    // }
 });
 
-pixenaryConnection.on("PixelGridUpdate", function(pixelPosition, pixelColor) {
-    let $selectedCell = document.querySelector(`#cell-${pixelPosition}`);
-    $selectedCell.style.backgroundColor = pixelColor;
-
-    $selectedCell.classList.remove("--eraser");
-
-    if(pixelColor === "white") {
-        $selectedCell.classList.add("--eraser");
+$pixelCanvas.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+    let touch = event.touches[0];
+    let canvasPosition = $pixelCanvas.getBoundingClientRect();
+    
+    let touchX = touch.clientX - canvasPosition.left;
+    let touchY = touch.clientY - canvasPosition.top;
+    
+    if (touchX > $pixelCanvas.width || touchX < 0) {
+        return;
     }
     
-    $selectedCell.classList.remove('--not-selected');
+    if (touchY > $pixelCanvas.height || touchY < 0) {
+        return;
+    }
+    
+    if(Math.abs(touchX - previousTouchX) > 10 ||  Math.abs(touchY - previousTouchY) > 10)
+    {
+        let pixelPosition = Math.floor((touchX)/($pixelCanvas.width/size)) + Math.floor((touchY/($pixelCanvas.width/size)))*size;
+        console.log(pixelPosition);
+        setCanvasColor(pixelPosition, color)
+        pixenaryConnection.invoke("UpdatePixelGrid", connectionName, pixelPosition, color);
+        previousTouchX = touch.clientX - canvasPosition.left;
+        previousTouchY = touch.clientY - canvasPosition.top;
+    }
+
+})
+
+$pixelCanvas.addEventListener('click', function(event) {
+    let pixelPosition = Math.floor(event.layerX/($pixelCanvas.width/size)) + Math.floor((event.layerY/($pixelCanvas.width/size)))*size;
+    pixenaryConnection.invoke("UpdatePixelGrid", connectionName, pixelPosition, color);
+
+    previousTouchX = event.layerX;
+    previousTouchY = event.layerY;
+})
+
+function setCanvasColor(pixelPosition, pixelColor)
+{
+    let gridY = Math.floor(pixelPosition/size);
+    let gridX = pixelPosition%size;
+
+    let pixelSize = Math.floor($pixelCanvas.width/size);
+
+    console.log($pixelCanvas.width/size);
+
+    var pixelContext = $pixelCanvas.getContext("2d");
+
+    pixelContext.beginPath();
+    colorContext.moveTo(gridX*pixelSize, gridY*pixelSize);
+    pixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
+    pixelContext.fillStyle = pixelColor;
+    pixelContext.fill();
+
+    if(pixelColor === 'white') {
+        pixelContext.beginPath();
+        pixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
+        pixelContext.lineWidth = 1;
+        pixelContext.strokeStyle = '#ffffff';
+        pixelContext.stroke();
+
+        pixelContext.beginPath();
+        pixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
+        pixelContext.lineWidth = 1;
+        pixelContext.strokeStyle = 'rgba(219, 201, 226, 0.36)';
+        pixelContext.stroke();
+    }
+}
+
+pixenaryConnection.on("PixelGridUpdate", function(pixelPosition, pixelColor) {
+
+    setCanvasColor(pixelPosition, pixelColor)
+
+    // let $selectedCell = document.querySelector(`#cell-${pixelPosition}`);
+    // $selectedCell.style.backgroundColor = pixelColor;
+    //
+    // $selectedCell.classList.remove("--eraser");
+    //
+    // if(pixelColor === "white") {
+    //     $selectedCell.classList.add("--eraser");
+    // }
+    //
+    // $selectedCell.classList.remove('--not-selected');
 });
 
 pixenaryConnection.on("PixelWord", function(word) {
@@ -98,12 +211,12 @@ pixenaryConnection.on("PixelWord", function(word) {
     $colorModal.classList.remove('popup-hidden');
     $wordToDraw.textContent = word.word;
 
-    ctx.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
-    ctx.drawImage(img, 0, 0, 300, 300);
+    colorContext.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
+    colorContext.drawImage(img, 0, 0, 300, 300);
    
     let $colorSelectorButtons = document.querySelector('.js-color-selectors').querySelectorAll('.color');
     $colorSelectorButtons.forEach(function ($el, index) {
-        let imageData = ctx.getImageData(coordinates[index][0], coordinates[index][1], 1, 1);
+        let imageData = colorContext.getImageData(coordinates[index][0], coordinates[index][1], 1, 1);
         let color = `rgb(${imageData.data[0]}, ${imageData.data[1]}, ${imageData.data[2]})`;
         colorList[index] = color;
         $el.style.backgroundColor = color;
@@ -203,7 +316,7 @@ $colourCanvas.addEventListener('mousedown', function(event){
             return;
         }
         
-        let colorData = ctx.getImageData(coordinates[index][0], coordinates[index][1], 1, 1);
+        let colorData = colorContext.getImageData(coordinates[index][0], coordinates[index][1], 1, 1);
         colorList[index] = `rgb(${colorData.data[0]}, ${colorData.data[1]}, ${colorData.data[2]})`;
     });
     
@@ -213,12 +326,12 @@ $colourCanvas.addEventListener('mousedown', function(event){
 
 function placeColorCrosshair(index)
 {
-    ctx.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
-    ctx.drawImage(img, 0, 0, 300, 300);
-    ctx.beginPath();
-    ctx.moveTo((coordinates[index][0] - 5), (coordinates[index][1] - 5));
-    ctx.lineTo((coordinates[index][0] + 5), (coordinates[index][1] + 5));
-    ctx.moveTo((coordinates[index][0] + 5), (coordinates[index][1] - 5));
-    ctx.lineTo((coordinates[index][0] - 5), (coordinates[index][1] + 5));
-    ctx.stroke();
+    colorContext.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
+    colorContext.drawImage(img, 0, 0, 300, 300);
+    colorContext.beginPath();
+    colorContext.moveTo((coordinates[index][0] - 5), (coordinates[index][1] - 5));
+    colorContext.lineTo((coordinates[index][0] + 5), (coordinates[index][1] + 5));
+    colorContext.moveTo((coordinates[index][0] + 5), (coordinates[index][1] - 5));
+    colorContext.lineTo((coordinates[index][0] - 5), (coordinates[index][1] + 5));
+    colorContext.stroke();
 }

@@ -11,14 +11,10 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     public class FileHelper : IFileHelper
     {
         private readonly IFilenameHelper _filenameHelper;
-        // public static readonly Dictionary<string, string> FileDataRead = new Dictionary<string, string>();
         
         public FileHelper(IFilenameHelper filenameHelper)
         {
             _filenameHelper = filenameHelper;
-            // ReadDictionary(_filenameHelper.GetDictionaryFilename());
-            // WordDictionaryGetter.AddToDictionary(_filenameHelper.GetDictionaryFilename(), ReadDictionary(_filenameHelper.GetDictionaryFilename()));
-
         }
         
         public WordDictionary ReadDictionary(string filename)
@@ -27,7 +23,6 @@ namespace Chat.WordGame.LocalDictionaryHelpers
             {
                 Console.WriteLine("Dictionary accessed but not read from file");
                 return WordDictionaryGetter.WordDictionary[_filenameHelper.GetDictionaryFilename()];
-                // return JsonConvert.DeserializeObject<WordDictionary>(FileDataRead.First(x => x.Key == filename).Value);
             }
             
             TextReader reader = null;
@@ -77,21 +72,11 @@ namespace Chat.WordGame.LocalDictionaryHelpers
 
         public void WriteFile(string filename, object data)
         {
-            // if (File.Exists(filename))
-            //     File.Delete(filename);
-
-            Console.WriteLine(data);
-            
             var json = JsonConvert.SerializeObject(data);
 
             try
             {
                 File.WriteAllText(filename, json);
-                // using (var writer = new StreamWriter(filename, false))
-                // {
-                //     var content = new UTF8Encoding(true).GetBytes(json);
-                //     writer.Write(content);
-                // }
             }
             catch (Exception e)
             {

@@ -53,3 +53,31 @@ connection.on("ReceiveMessage", function (user, friendlyName, message) {
         document.getElementById("scoresList").appendChild(scoreItem);
     }
 });
+
+function roomList(rooms) {
+    let roomList = document.querySelector('.js-rooms-list');
+    roomList.innerHTML = "";
+    
+    if(rooms.length === 1)
+    {
+        document.querySelector('#my-room').value = rooms[0];
+        document.querySelector('.js-login-button').textContent = `Join ${ rooms[0]}`;
+        document.querySelector('.js-login-button').classList.remove('hidden');
+        return;
+    }
+
+    rooms.forEach(function(room, index) {
+        let div = document.createElement('div');
+        div.innerText = rooms[index];
+        div.className = "room-name";
+        div.addEventListener('click', function(event) {
+            let roomName = event.currentTarget.textContent;
+
+            document.querySelector('#my-room').value = roomName;
+            document.querySelector('.js-login-button').textContent = `Join ${roomName}`;
+            document.querySelector('.js-login-button').classList.remove('hidden');
+        });
+
+        roomList.appendChild(div);
+    })
+}

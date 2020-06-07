@@ -234,6 +234,27 @@ namespace Chat.Hubs
 
             await Clients.Group(roomId).SendAsync("ReceiveMessage", Context.ConnectionId, roomId, message);
         }
+
+        public async Task GetRooms()
+        {
+            if (Rooms.RoomsList.Count == 0)
+                Rooms.RoomsList.Add("red-herring", new Room());
+
+            var rooms = Rooms.RoomsList.Select(x => x.Key);
+            await Clients.All.SendAsync("ReceiveRooms", rooms);
+        }
+
+        public async Task CreateNewRoom()
+        {
+            var rand = new Random();
+            var roomName = rand.Next().ToString();
+            Rooms.RoomsList.Add(roomName, new Room());
+            
+            var rooms = Rooms.RoomsList.Select(x => x.Key);
+
+            await Clients.All.SendAsync("ReceiveRooms", rooms);
+            await Clients.Caller.SendAsync("ReceiveNewRoom", roomName);
+        }
         
     }
 }

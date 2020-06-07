@@ -41,10 +41,27 @@ img.onload = function() {
 pixenaryConnection.start().then(function () {
 });
 
+connection.start().then(function() {
+    connection.invoke("GetRooms");
+});
+
+connection.on("ReceiveRooms", function(rooms) {
+    roomList(rooms);
+})
+
+document.querySelector('.js-create-room').addEventListener('click', function() {
+    connection.invoke("CreateNewRoom");
+})
+
+connection.on("ReceiveNewRoom", function(roomName) {
+    console.log(roomName);
+})
+
+
 document.querySelector('.js-login-button').addEventListener('click', function() {
     let name = document.querySelector('#my-name').value;
+    connectionName = document.querySelector('#my-room').value;
     pixenaryConnection.invoke("JoinPixenaryGame", connectionName, name, 2);
-
 });
 
 pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn) {

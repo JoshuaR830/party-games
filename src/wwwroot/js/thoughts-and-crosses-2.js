@@ -32,6 +32,9 @@ connection.on("ReceiveLetter", function(letter) {
 });
 
 document.querySelector('.js-login-button').addEventListener('click', function() {
+    document.getElementById("sendButton").disabled = false;
+    connection.invoke("AddToGroup", connectionName);
+    connectionName = document.querySelector('#my-room').value;
     connection.invoke("Startup", connectionName, document.querySelector('#my-name').value, 0);
     connection.invoke("SetupNewUser", connectionName, document.querySelector('#my-name').value);
 });
@@ -41,6 +44,7 @@ document.querySelector('#my-name').addEventListener('keydown', function(event) {
     if (event.keyCode === 13){
         console.log("Trigger events");
         let name = document.querySelector('#my-name').value;
+        connectionName = document.querySelector('#my-room').value;
         connection.invoke("Startup", connectionName, name, 0);
         connection.invoke("SetupNewUser", connectionName, name);
     }
@@ -52,12 +56,23 @@ var counter = 0;
 console.log(list);
 
 document.getElementById("container").classList.remove("hidden");
-connection.start().then(function () {
-    document.getElementById("sendButton").disabled = false;
-    connection.invoke("AddToGroup", connectionName);
-}).catch(function (err) {
-    return console.error((err.toString()));
+
+connection.start().then(function() {
+    connection.invoke("GetRooms");
 });
+
+connection.on("ReceiveRooms", function(rooms) {
+    console.log(rooms)
+    roomList(rooms);
+});
+
+document.querySelector('.js-create-room').addEventListener('click', function() {
+    connection.invoke("CreateNewRoom");
+})
+
+connection.on("ReceiveNewRoom", function(roomName) {
+    console.log(roomName);
+})
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
     calculateScore();

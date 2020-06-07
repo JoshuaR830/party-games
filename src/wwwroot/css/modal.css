@@ -25,7 +25,7 @@
 .login
 {
     width: 200px;
-    height: 200px;
+    height: 350px;
     border: 1px solid #55edbb;
     background-color: #55475c;
     text-align: center;
@@ -33,7 +33,7 @@
     border-radius: 8px;
     position: absolute;
     left: calc(50% - 100px);
-    top: calc(50% - 100px);
+    top: calc(50% - 175px);
 }
 
 
@@ -117,6 +117,22 @@
 }
 
 .view-other-score:hover
+{
+    cursor: pointer;
+    background-color: #55edba5b;
+    color: white;
+}
+
+.room-name
+{
+    text-align: center;
+    width: 100px;
+    border-radius: 24px;
+    margin: 4px auto;
+    border: 1px solid #55edbb;
+}
+
+.room-name:hover
 {
     cursor: pointer;
     background-color: #55edba5b;

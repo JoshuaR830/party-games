@@ -24,9 +24,22 @@ lettersConnection.start().then(function () {
     lettersConnection.invoke("AddToGroup", connectionName);
 });
 
-connection.start().then(function () {
-    connection.invoke("AddToGroup", connectionName);
+connection.start().then(function() {
+    connection.invoke("GetRooms");
+});
+
+document.querySelector('.js-create-room').addEventListener('click', function() {
+    connection.invoke("CreateNewRoom");
 })
+
+connection.on("ReceiveNewRoom", function(roomName) {
+    console.log(roomName);
+})
+
+connection.on("ReceiveRooms", function(rooms) {
+    console.log(rooms)
+    roomList(rooms);
+});
 
 window.addEventListener('load', function() {
     document.querySelector('#my-name').focus();
@@ -37,6 +50,7 @@ document.querySelector('#my-name').addEventListener('keydown', function(event) {
     if (event.keyCode === 13){
         console.log("Trigger events");
         let name = document.querySelector('#my-name').value;
+        connectionName = document.querySelector('#my-room').value;
         lettersConnection.invoke("Startup", connectionName, name, 1);
         lettersConnection.invoke("SetupNewUser", connectionName, name);
     }
@@ -44,7 +58,9 @@ document.querySelector('#my-name').addEventListener('keydown', function(event) {
 
 document.querySelector('.js-login-button').addEventListener('click', function() {
     console.log("Trigger events")
+    connection.invoke("AddToGroup", connectionName);
     let name = document.querySelector('#my-name').value;
+    connectionName = document.querySelector('#my-room').value;
     lettersConnection.invoke("Startup", connectionName, name, 1);
     lettersConnection.invoke("SetupNewUser", connectionName, name);
 });

@@ -60,6 +60,13 @@
     flex-wrap: nowrap;
 }
 
+.color-selectors
+{
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+}
+
 .color 
 {
     margin: 4px;

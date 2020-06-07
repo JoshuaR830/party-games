@@ -53,21 +53,22 @@
 
 .modal-title
 {
+    margin: 12px 0;
     font-size: 24px;
 }
 
 .color-modal
 {
-    width: 200px;
-    height: 320px;
+    width: 324px;
+    height: 524px;
     border: 1px solid #55edbb;
     background-color: #55475c;
     text-align: center;
     color: white;
     border-radius: 8px;
     position: absolute;
-    left: calc(50% - 100px);
-    top: calc(50% - 160px);
+    left: calc(50% - 162px);
+    top: calc(50% - 261px);
 }
 
 .color-input

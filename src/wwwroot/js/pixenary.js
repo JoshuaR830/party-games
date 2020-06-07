@@ -9,6 +9,7 @@ var $colorTable = document.querySelector('.js-color-container');
 var $setColoursButton = document.querySelector('.js-set-colors-button');
 
 var $colorModal = document.querySelector('.js-color-modal');
+var $colourCanvas = document.getElementById('colourWheel');
 
 var $colorSelectorContainer = document.querySelector('.js-color-selectors');
 
@@ -19,6 +20,18 @@ var $wordToDraw = document.querySelector('.js-word-choice');
 var $resetButton = document.querySelector('.js-reset-button');
 
 var color = "dodgerblue";
+
+var coordinates = [[223, 134], [9, 153], [112, 121], [178, 218], [60, 243]];
+
+var ctx = $colourCanvas.getContext("2d");
+var img = new Image();
+img.src = '/images/colourWheel.png';
+img.height = 300;
+img.width = 300;
+img.onload = function() {
+    ctx.drawImage(img, 0, 0, 300, 300);
+    img.style.display = 'none';
+}
 
 pixenaryConnection.start().then(function () {
 });
@@ -84,6 +97,19 @@ pixenaryConnection.on("PixelWord", function(word) {
     $colorModal.querySelector('.modal-title').textContent = `Word: ${word.word}`;
     $colorModal.classList.remove('popup-hidden');
     $wordToDraw.textContent = word.word;
+
+    ctx.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
+    ctx.drawImage(img, 0, 0, 300, 300);
+   
+    let $colorSelectorButtons = document.querySelector('.js-color-selectors').querySelectorAll('.color');
+    $colorSelectorButtons.forEach(function ($el, index) {
+        let imageData = ctx.getImageData(coordinates[index][0], coordinates[index][1], 1, 1);
+        let color = `rgb(${imageData.data[0]}, ${imageData.data[1]}, ${imageData.data[2]})`;
+        colorList[index] = color;
+        $el.style.backgroundColor = color;
+    });
+    
+    $colorSelectorButtons[0].click();
 });
 
 pixenaryConnection.on("ResetGame", function() {
@@ -133,20 +159,21 @@ colorList.forEach(function (itemColor, index) {
     if (itemColor === "white") {
         return;
     }
-    let $colorInput = document.createElement('input');
-    let $colorLabel = document.createElement('label');
-    $colorInput.type = "color";
-    $colorInput.className = "color-input";
-    $colorLabel.className = "color";
-    $colorLabel.style.backgroundColor = itemColor;
-    $colorInput.value = itemColor;
+    let $colorSelectorButton = document.createElement('div');
+    $colorSelectorButton.className = "color";
+    $colorSelectorButton.style.backgroundColor = itemColor;
+    $colorSelectorButton.setAttribute('data-number', `${index}`);
 
-    $colorInput.addEventListener('change', function() {
-        $colorInput.parentNode.style.backgroundColor = $colorInput.value;
-        colorList[index] = $colorInput.value;
+    $colorSelectorButton.addEventListener('click', function(event) {
+        $colorModal.querySelectorAll('.color').forEach(function($el) {
+            $el.classList.remove('--selected-color');
+        });
+        
+        event.currentTarget.classList.add('--selected-color')
+        placeColorCrosshair(index);
     })
-    $colorLabel.appendChild($colorInput);
-    $colorSelectorContainer.appendChild($colorLabel);
+
+    $colorSelectorContainer.appendChild($colorSelectorButton);
 })
 
 $setColoursButton.addEventListener('click', function() {
@@ -161,4 +188,37 @@ function selectColor($color) {
     });
     
     $color.classList.add('--selected-color')
+}
+
+
+
+$colourCanvas.addEventListener('mousedown', function(event){
+    let selectedColor = document.querySelector('.js-color-selectors').querySelector('.--selected-color');
+    let selectionIndex = selectedColor.getAttribute('data-number');
+    
+    coordinates[selectionIndex] = [event.layerX, event.layerY];
+    
+    colorList.forEach(function(currentColor, index) {
+        if(currentColor === 'white') {
+            return;
+        }
+        
+        let colorData = ctx.getImageData(coordinates[index][0], coordinates[index][1], 1, 1);
+        colorList[index] = `rgb(${colorData.data[0]}, ${colorData.data[1]}, ${colorData.data[2]})`;
+    });
+    
+    selectedColor.style.backgroundColor = colorList[selectionIndex];
+    placeColorCrosshair(selectionIndex);
+})
+
+function placeColorCrosshair(index)
+{
+    ctx.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
+    ctx.drawImage(img, 0, 0, 300, 300);
+    ctx.beginPath();
+    ctx.moveTo((coordinates[index][0] - 5), (coordinates[index][1] - 5));
+    ctx.lineTo((coordinates[index][0] + 5), (coordinates[index][1] + 5));
+    ctx.moveTo((coordinates[index][0] + 5), (coordinates[index][1] - 5));
+    ctx.lineTo((coordinates[index][0] - 5), (coordinates[index][1] + 5));
+    ctx.stroke();
 }

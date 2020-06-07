@@ -46,7 +46,7 @@ namespace PartyGamesTests.Pixenary.WordCategoryHelperTests
         {
             var categories = _wordCategoryHelper.GetCategoryNames();
 
-            categories.Should().BeEquivalentTo(new List<string> {"Animal", "Vehicle", "Plant"});
+            categories.Should().BeEquivalentTo(new List<string> {"Animal", "Vehicle", "Plant", "Object"});
         }
     }
 }

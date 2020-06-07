@@ -12,8 +12,7 @@ namespace Chat.WordGame.WordHelpers
         private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IFileHelper _fileHelper;
         private readonly IFilenameHelper _filenameHelper;
-
-        private readonly Dictionary _dictionary;
+        
         private readonly GuessedWords _guessedWords;
 
         public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, IFilenameHelper filenameHelper)
@@ -23,12 +22,6 @@ namespace Chat.WordGame.WordHelpers
             _wordDefinitionHelper = wordDefinitionHelper;
             _fileHelper = fileHelper;
             _filenameHelper = filenameHelper;
-
-            if (_dictionary == null)
-            {
-                Console.WriteLine("Hello");
-                _dictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
-            }
 
             if (_guessedWords == null)
             {
@@ -45,8 +38,9 @@ namespace Chat.WordGame.WordHelpers
             
             if (wordExists)
                 return true;
-            
-            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(_dictionary, word);
+
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(wordDictionary, word);
 
             return wordExists;
         }
@@ -62,15 +56,19 @@ namespace Chat.WordGame.WordHelpers
         public WordCategory GetCategory(string filename, string word)
         {
             if (GetWordStatus(filename, word))
-                return _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList()[0].Category;
+            {
+                var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+                return wordDictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList()[0].Category;
+            }
 
             return WordCategory.None;
         }
 
         public void AmendDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None)
         {
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
 
-            if (_dictionary.Words.Any(x => x.Word.ToLower() == word.ToLower()))
+            if (wordDictionary.Words.Any(x => x.Word.ToLower() == word.ToLower()))
             {
                 UpdateExistingWord(filename, word, definition, category);
             }
@@ -83,7 +81,9 @@ namespace Chat.WordGame.WordHelpers
 
         public void AddNewWordToDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None)
         {
-            _dictionary.Words.Add(new WordData
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+
+            wordDictionary.Words.Add(new WordData
             {
                 Word = word,
                 PermanentDefinition = definition,
@@ -97,54 +97,62 @@ namespace Chat.WordGame.WordHelpers
         {
             if (word == "" || definition == "")
                 return;
-            
-            var wordList = _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+         
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+
+            var wordList = wordDictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
 
             if (!wordList.Any())
                 return;
 
-            var item = _dictionary.Words.IndexOf(wordList.First());
-            _dictionary.Words[item].PermanentDefinition = definition;
-            _dictionary.Words[item].Status = WordStatus.Permanent;
-            _dictionary.Words[item].Category = category;
+            var item = wordDictionary.Words.IndexOf(wordList.First());
+            wordDictionary.Words[item].PermanentDefinition = definition;
+            wordDictionary.Words[item].Status = WordStatus.Permanent;
+            wordDictionary.Words[item].Category = category;
         }
 
         public void UpdateCategory(string filename, string word, WordCategory category)
         {
-            var wordList = _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+
+            var wordList = wordDictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
 
             if (!wordList.Any())
                 return;
 
-            var item = _dictionary.Words.IndexOf(wordList.First());
-            _dictionary.Words[item].Category = category;
+            var item = wordDictionary.Words.IndexOf(wordList.First());
+            wordDictionary.Words[item].Category = category;
         }
 
         public void ToggleIsWordInDictionary(string filename, string word, bool expectedNewStatus)
         {
-            var items = _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+
+            var items = wordDictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
 
             if (!items.Any())
                 return;
 
             var item = items.First();
 
-            var index = _dictionary.Words.IndexOf(item);
+            var index = wordDictionary.Words.IndexOf(item);
 
             if (expectedNewStatus == false)
             {
-                _dictionary.Words[index].Status = WordStatus.DoesNotExist;
+                wordDictionary.Words[index].Status = WordStatus.DoesNotExist;
                 return;
             }
             
-            Console.WriteLine(JsonConvert.SerializeObject(_dictionary.Words[index]));
-            _dictionary.Words[index].Status = item.PermanentDefinition != null ? WordStatus.Permanent : WordStatus.Temporary;
-            Console.WriteLine(JsonConvert.SerializeObject(_dictionary.Words[index]));
+            Console.WriteLine(JsonConvert.SerializeObject(wordDictionary.Words[index]));
+            wordDictionary.Words[index].Status = item.PermanentDefinition != null ? WordStatus.Permanent : WordStatus.Temporary;
+            Console.WriteLine(JsonConvert.SerializeObject(wordDictionary.Words[index]));
         }
 
         public void AddWordToGuessedWords(string dictionaryFilename, string guessedWordsFilename, string word)
         {
-            var items = _dictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+
+            var items = wordDictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
             
             var guessed = _guessedWords.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList();
             
@@ -162,7 +170,8 @@ namespace Chat.WordGame.WordHelpers
         
         public void UpdateDictionaryFile()
         {
-            _fileHelper.WriteFile(_filenameHelper.GetDictionaryFilename(), _dictionary);
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+            _fileHelper.WriteFile(_filenameHelper.GetDictionaryFilename(), wordDictionary);
         }
 
         public void UpdateGuessedWordsFile()
@@ -170,9 +179,10 @@ namespace Chat.WordGame.WordHelpers
             _fileHelper.WriteFile(_filenameHelper.GetGuessedWordsFilename(), _guessedWords);
         }
 
-        public Dictionary GetDictionary()
+        public WordDictionary GetDictionary()
         {
-            return _dictionary;
+            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
+            return wordDictionary;
         }
     }
 }

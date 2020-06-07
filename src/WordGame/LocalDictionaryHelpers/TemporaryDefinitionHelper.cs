@@ -5,15 +5,16 @@ namespace Chat.WordGame.LocalDictionaryHelpers
     public class TemporaryDefinitionHelper : ITemporaryDefinitionHelper
     {
         readonly IFileHelper _fileHelper;
-
-        public TemporaryDefinitionHelper(IFileHelper fileHelper)
+        readonly IFilenameHelper _filenameHelper;
+        public TemporaryDefinitionHelper(IFileHelper fileHelper, IFilenameHelper filenameHelper)
         {
             _fileHelper = fileHelper;
+            _filenameHelper = filenameHelper;
         }
         
-        public void AutomaticallySetTemporaryDefinitionForWord(Dictionary dictionary, string word, string temporaryDefinition)
+        public void AutomaticallySetTemporaryDefinitionForWord(WordDictionary wordDictionary, string word, string temporaryDefinition)
         {
-            dictionary.Words.Add(new WordData
+            _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename()).Words.Add(new WordData
             {
                 Word = word,
                 PermanentDefinition = null,

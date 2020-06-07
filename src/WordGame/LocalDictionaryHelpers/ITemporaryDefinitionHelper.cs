@@ -2,6 +2,6 @@
 {
     public interface ITemporaryDefinitionHelper
     {
-        void AutomaticallySetTemporaryDefinitionForWord(Dictionary dictionary, string word, string temporaryDefinition);
+        void AutomaticallySetTemporaryDefinitionForWord(WordDictionary wordDictionary, string word, string temporaryDefinition);
     }
 }

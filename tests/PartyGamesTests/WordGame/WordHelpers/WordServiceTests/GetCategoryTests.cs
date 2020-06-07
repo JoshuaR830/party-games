@@ -20,8 +20,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private readonly IWordHelper _wordHelper;
         private readonly IFilenameHelper _filenameHelper;
         private readonly FileHelper _fileHelper;
-        private Dictionary _dictionary;
-        private Dictionary _categoriesDictionary;
+        private WordDictionary _wordDictionary;
+        private WordDictionary _categoriesWordDictionary;
 
         public GetCategoryTests()
         {
@@ -31,14 +31,14 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
             _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
-            _fileHelper = new FileHelper();
+            _fileHelper = new FileHelper(_filenameHelper);
             
             _wordExistenceHelper.DoesWordExist(Arg.Any<string>()).Returns(true);
             
             if (File.Exists(Filename))
                 File.Delete(Filename);
             
-            _categoriesDictionary = new Dictionary
+            _categoriesWordDictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -66,11 +66,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             };
             
             
-            TestFileHelper.CreateCustomFile(Filename, _categoriesDictionary);
+            TestFileHelper.CreateCustomFile(Filename, _categoriesWordDictionary);
 
             _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
             var json = TestFileHelper.Read(Filename);
-            _dictionary = _wordService.GetDictionary();
+            _wordDictionary = _wordService.GetDictionary();
         }
         
         [Fact]
@@ -106,6 +106,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             if (File.Exists(Filename))
                 File.Delete(Filename);
+            
+            WordDictionaryGetter.WordDictionary.Remove(Filename);
         }
     }
 }

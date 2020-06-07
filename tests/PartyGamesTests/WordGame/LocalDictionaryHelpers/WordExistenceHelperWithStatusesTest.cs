@@ -15,7 +15,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsInDictionaryWithStatusPermanentThenExistenceShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -44,7 +44,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsInDictionaryWithStatusTemporaryThenExistenceShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -73,7 +73,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsInDictionaryWithStatusSuffixThenExistenceShouldBeTrue()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -102,7 +102,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
         public void WhenWordExistsInDictionaryWithStatusDoesNotExistThenExistenceShouldBeFalse()
         {
             var word = "Sheep";
-            var dictionary = new Dictionary
+            var dictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {

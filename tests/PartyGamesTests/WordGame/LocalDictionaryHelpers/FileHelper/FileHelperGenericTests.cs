@@ -6,6 +6,7 @@ using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using Newtonsoft.Json;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
@@ -17,7 +18,13 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
         
         public FileHelperGenericTests()
         {
-            FileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
+            var filenameHelper = Substitute.For<IFilenameHelper>();
+            
+            filenameHelper
+                .GetDictionaryFilename()
+                .Returns(Filename);
+            
+            FileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper(filenameHelper);
         }
 
         [Fact]

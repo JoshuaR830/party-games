@@ -7,6 +7,7 @@ using FluentAssertions;
 using FluentAssertions.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NSubstitute;
 using Xunit;
 
 namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
@@ -15,29 +16,33 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
     {
         private readonly string _filename;
         private readonly string _filenameToCreate;
+        private readonly IFilenameHelper _filenameHelper;
 
         public FileHelperTests()
         {
             _filename = "test-dictionary.json";
             _filenameToCreate = "created-new-file.json";
 
+            _filenameHelper = Substitute.For<IFilenameHelper>();
+            _filenameHelper.GetDictionaryFilename().Returns(_filename);
+            
             TestFileHelper.Create(_filename);
         }
         
         [Fact]
         public void ReadingAFileShouldReturnAnObject()
         {
-            var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
+            var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper(_filenameHelper);
             
             var response = fileHelper.ReadDictionary(_filename);
             
-            response.Should().BeOfType<Dictionary>();
+            response.Should().BeOfType<WordDictionary>();
         }
 
         [Fact]
         public void ReadingAFileShouldReturnTheFileContent()
         {
-            var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
+            var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper(_filenameHelper);
 
             var json = TestFileHelper.Read(_filename);
             
@@ -59,18 +64,18 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
         [Fact]
         public void WhenWritingToAFileIfItDoesNotExistItShouldBeCreated()
         {
-	        var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
+	        var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper(_filenameHelper);
 	        File.Exists(_filenameToCreate).Should().BeFalse();
-			fileHelper.WriteDictionary(_filenameToCreate, new Dictionary());
+			fileHelper.WriteDictionary(_filenameToCreate, new WordDictionary());
 			File.Exists(_filenameToCreate).Should().BeTrue();
         }
 
 		[Fact]
         public void WhenWritingContentTheContentShouldActuallyBeDeserializableToDictionary()
         {
-			var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper();
+			var fileHelper = new Chat.WordGame.LocalDictionaryHelpers.FileHelper(_filenameHelper);
 
-			var dictionary = new Dictionary
+			var dictionary = new WordDictionary
 			{
 				Words = new List<WordData>
 				{
@@ -96,8 +101,8 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers.FileHelper
 			using (StreamReader r = new StreamReader(_filename))
 			{
 				string json = r.ReadToEnd();
-				var dictionaryContent = JsonConvert.DeserializeObject<Dictionary>(json);
-				dictionaryContent.Should().BeOfType<Dictionary>();
+				var dictionaryContent = JsonConvert.DeserializeObject<WordDictionary>(json);
+				dictionaryContent.Should().BeOfType<WordDictionary>();
 				JToken.Parse(JsonConvert.SerializeObject(dictionaryContent)).Should().BeEquivalentTo($@"
 				{{
 					""Words"": [

@@ -12,11 +12,11 @@ namespace Chat.WordGame.LocalDictionaryHelpers
         public WordCategory Category { get; set; }
     }
 
-    public class Dictionary
+    public class WordDictionary
     {
         public List<WordData> Words { get; set; }
 
-        public Dictionary()
+        public WordDictionary()
         {
             Words = new List<WordData>();
         }

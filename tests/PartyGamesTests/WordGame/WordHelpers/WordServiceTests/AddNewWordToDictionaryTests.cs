@@ -27,10 +27,10 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
             _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
             _wordHelper = Substitute.For<IWordHelper>();
-            _fileHelper = new FileHelper();
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
             _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
+            _fileHelper = new FileHelper(_filenameHelper);
 
             if (File.Exists(Filename))
                 File.Delete(Filename);
@@ -50,7 +50,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 
             var response = TestFileHelper.Read(Filename);
 
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(response);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(response);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -73,7 +73,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 
             var response = TestFileHelper.Read(Filename);
 
-            var dictionary = JsonConvert.DeserializeObject<Dictionary>(response);
+            var dictionary = JsonConvert.DeserializeObject<WordDictionary>(response);
 
             dictionary.Words.Should().ContainEquivalentOf(new WordData
             {
@@ -88,6 +88,8 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             if(File.Exists(Filename))
                 File.Delete(Filename);
+            
+            WordDictionaryGetter.WordDictionary.Remove(Filename);
         }
     }
 }

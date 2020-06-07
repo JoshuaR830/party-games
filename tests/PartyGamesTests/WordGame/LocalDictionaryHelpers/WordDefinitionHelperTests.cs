@@ -8,11 +8,11 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
 {
     public class WordDefinitionHelperTests
     {
-        readonly Dictionary _dictionary;
+        readonly WordDictionary _wordDictionary;
 
         public WordDefinitionHelperTests()
         {
-            _dictionary = new Dictionary
+            _wordDictionary = new WordDictionary
             {
                 Words = new List<WordData>
                 {
@@ -52,7 +52,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
             var fileHelper = Substitute.For<IFileHelper>();
             fileHelper
                 .ReadDictionary(Arg.Any<string>())
-                .Returns(_dictionary);
+                .Returns(_wordDictionary);
             
             var wordDefinitionHelper = new WordDefinitionHelper(fileHelper);
             var definitionResponse = wordDefinitionHelper.GetDefinitionForWord(word);
@@ -67,7 +67,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
             var fileHelper = Substitute.For<IFileHelper>();
             fileHelper
                 .ReadDictionary(Arg.Any<string>())
-                .Returns(_dictionary);
+                .Returns(_wordDictionary);
             
             var wordDefinitionHelper = new WordDefinitionHelper(fileHelper);
             var definitionResponse = wordDefinitionHelper.GetDefinitionForWord(word);
@@ -82,7 +82,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
             var fileHelper = Substitute.For<IFileHelper>();
             fileHelper
                 .ReadDictionary(Arg.Any<string>())
-                .Returns(_dictionary);
+                .Returns(_wordDictionary);
             
             var wordDefinitionHelper = new WordDefinitionHelper(fileHelper);
             var definitionResponse = wordDefinitionHelper.GetDefinitionForWord(word);
@@ -97,7 +97,7 @@ namespace PartyGamesTests.WordGame.LocalDictionaryHelpers
             var fileHelper = Substitute.For<IFileHelper>();
             fileHelper
                 .ReadDictionary(Arg.Any<string>())
-                .Returns(_dictionary);
+                .Returns(_wordDictionary);
             
             var wordDefinitionHelper = new WordDefinitionHelper(fileHelper);
             var definitionResponse = wordDefinitionHelper.GetDefinitionForWord(word);

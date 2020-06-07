@@ -52,6 +52,12 @@
     transform: rotate(30deg);
 }
 
+.pixel-canvas-container
+{
+    text-align: center;
+    margin: auto;
+}
+
 .color-container
 {
     margin-top: 32px;

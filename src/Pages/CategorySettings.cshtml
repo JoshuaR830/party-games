@@ -7,19 +7,37 @@
     ViewData["Title"] = "Categories";
 }
 
-<input type="text" class="js-word-input"/>
-<div class="button js-submit-button">Submit</div>
+<div class="title">Put words into categories</div>
 
-<div>
+<div class="sub-title">Select the category for the words you want to add</div>
+
+<div style="display: block; text-align: center; color:  white;">
     <label for="animal">Animal</label>
     <input type="radio" id="animal" name="word-category" value="1">
+    <br/>
     <label for="plant">Plant</label>
     <input type="radio" id="plant" name="word-category" value="3">
+    <br/>
     <label for="vehicle">Vehicle</label>
     <input type="radio" id="vehicle" name="word-category" value="2">
+    <br/>
+    <label for="vehicle">Object</label>
+    <input type="radio" id="object" name="word-category" value="4">
+    <br/>
     <label for="none">None</label>
     <input type="radio" id="none" name="word-category" value="0" checked>
 </div>
+
+<div class="sub-title">Enter a word</div>
+
+<div style="text-align: center; margin: auto;">
+    <input type="text" class="js-word-input"/>
+</div>
+<br/>
+
+<div class="sub-title">Press submit to put the word into that category</div>
+
+<div class="button js-submit-button">Submit</div>
 
 <script src="~/lib/signalr/dist/browser/signalr.js"></script>
 <script src="~/js/category-settings.js"></script>

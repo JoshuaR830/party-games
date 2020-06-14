@@ -116,6 +116,12 @@ namespace Chat.Hubs
             await Clients.Group(roomId).SendAsync("ReceiveColors", colorList);
         }
 
+        public async Task SetBackgroundColor(string roomId, string color)
+        {
+            Console.WriteLine(color);
+            await Clients.Group(roomId).SendAsync("BackgroundColor", color);
+        }
+
         // Need to be able to reset the round
         // Need to be able to update the list
         // Need to be able to send the changed item and colours to all players

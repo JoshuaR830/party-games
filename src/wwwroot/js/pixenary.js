@@ -41,8 +41,12 @@ img.onload = function() {
 pixenaryConnection.start().then(function () {
 });
 
+connection.start().then(function () {
+});
+
 document.querySelector('.js-login-button').addEventListener('click', function() {
     let name = document.querySelector('#my-name').value;
+    connection.invoke("Startup", connectionName, name, 2);
     pixenaryConnection.invoke("JoinPixenaryGame", connectionName, name, 2);
 
 });

@@ -6,17 +6,20 @@
 }
 
 <div class="button js-reset-button">Start</div>
-<div class="button js-score-test">Test score</div>
+<div id="view-score-option" class="button hidden">View scores</div>
+
+<div class="button js-score-test hidden">Complete</div>
 <div class="title">Pixenary</div>
 <div class="word-choice js-word-choice"></div>
 
-<div class="top-score-fab js-score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+<div class="score-fab js-score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+<div class="timer-fab hidden"></div>
 
 
 <div class="js-score-user-selector"></div>
 
 @* <div class="pixenary-table js-pixenary-table"></div> *@
-<div class="pixel-canvas-container">
+<div class="pixel-canvas-container js-pixel-canvas-container">
     <canvas id="pixel-canvas" width="300" height="300" class="pixel-canvas"></canvas>
 </div>
 

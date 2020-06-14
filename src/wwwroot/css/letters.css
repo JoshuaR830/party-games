@@ -137,12 +137,6 @@
     margin-left: auto;
     margin-right: auto;
 }
-
-.hidden
-{
-    display: none;
-}
-
 .definition-input
 {
     margin-top: 16px;
@@ -222,6 +216,11 @@
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+}
+
+.hidden
+{
+    display: none;
 }
 
 @keyframes animateImage {

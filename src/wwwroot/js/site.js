@@ -1,6 +1,8 @@
 ﻿var gameRoundNumber = 0;
 var scores = {};
 
+var $scoreNamesContainer = document.querySelector('.js-score-user-selector');
+
 document.querySelector('.login-button').addEventListener('click', userLogin);
 
 function userLogin() {
@@ -44,7 +46,7 @@ connection.on("ReceiveMessage", function (user, friendlyName, message) {
 
     document.getElementById("scoresList").innerHTML = "";
 
-    for(var key in scores) {
+    for(var key in scores) {C
         console.log(key);
         var scoreItem = document.createElement("div");
         scoreItem.className = "score-list-item";
@@ -60,10 +62,11 @@ connection.on("DisplayScores", function(names, gameId)
     usersToScore.innerHTML = "";
     names.forEach(function(name) {
         var $el = document.createElement('div');
-
+        $el.className = "button";
         $el.addEventListener('click', function() {
             let myName = document.getElementById('my-name').value;
-            connection.invoke("UpdateManualScore", connectionName, myName, name, gameId)            
+            connection.invoke("UpdateManualScore", connectionName, myName, name, gameId) ;
+            $scoreNamesContainer.classList.add('hidden');
         });
         
         $el.textContent = name;

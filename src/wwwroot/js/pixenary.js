@@ -22,6 +22,8 @@ var colorList = ["#1E90FF", "#ff0000", "#ffff00", "#228B22", "#8B4513", "white"]
 var $wordToDraw = document.querySelector('.js-word-choice');
 
 var $resetButton = document.querySelector('.js-reset-button');
+var $scoreNamesContainer = document.querySelector('.js-score-user-selector');
+var $scoreButton = document.querySelector('.js-score-test');
 
 var color = "dodgerblue";
 var size = 0;
@@ -51,9 +53,9 @@ document.querySelector('.js-login-button').addEventListener('click', function() 
 
 });
 
-pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn) {
+pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn, score) {
+    document.getElementById('score').textContent = score;
     let data = JSON.parse(grid);
-    
     size = Math.sqrt(data.length)
     
     // $table.innerHTML = "";
@@ -157,6 +159,9 @@ pixenaryConnection.on("PixelGridUpdate", function(pixelPosition, pixelColor) {
 
 pixenaryConnection.on("PixelWord", function(word) {
     console.log(word);
+    $scoreButton.classList.remove("hidden");
+    document.querySelector('.js-pixel-canvas-container').classList.remove('hidden');
+    document.querySelector('.js-color-container').classList.remove('hidden');
     $colorModal.querySelector('.modal-title').textContent = `Word: ${word.word}`;
     $colorModal.classList.remove('popup-hidden');
     $wordToDraw.textContent = word.word;
@@ -178,6 +183,8 @@ pixenaryConnection.on("PixelWord", function(word) {
 pixenaryConnection.on("ResetGame", function() {
     $wordToDraw.textContent = "";
     $resetButton.textContent = "Next round";
+    $resetButton.classList.add('hidden');
+    $scoreNamesContainer.classList.add('hidden');
 });
 
 $resetButton.addEventListener('click', function() {

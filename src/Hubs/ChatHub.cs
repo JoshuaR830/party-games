@@ -8,6 +8,7 @@ using Chat.RoomManager;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Newtonsoft.Json;
 using System.Reflection;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Chat.Hubs
 {
@@ -245,6 +246,11 @@ namespace Chat.Hubs
             var users = new List<User>();
             users.Add(Rooms.RoomsList[roomId].Users[name]);
             users.Add(Rooms.RoomsList[roomId].Users[myName]);
+
+            Console.WriteLine(name);
+            Console.WriteLine(users[0].PixenaryGame.Score);
+            Console.WriteLine(myName);
+            Console.WriteLine(users[1].PixenaryGame.Score);
 
             foreach (var user in users)
             {

@@ -128,3 +128,8 @@
 {
     background-color: lightslategrey;
 }
+
+.hidden
+{
+    display: none;
+}

@@ -35,6 +35,9 @@ namespace Chat.Hubs
             // await SendDirectMessage("my group", "user", message);
             Console.WriteLine("Indirect");
 
+            Console.WriteLine(user);
+            Console.WriteLine(message);
+
             await Clients.Group(user).SendAsync("ReceiveMessage", Context.ConnectionId, user, message);
         }
 

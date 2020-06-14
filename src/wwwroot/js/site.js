@@ -46,7 +46,7 @@ connection.on("ReceiveMessage", function (user, friendlyName, message) {
 
     document.getElementById("scoresList").innerHTML = "";
 
-    for(var key in scores) {C
+    for(var key in scores) {
         console.log(key);
         var scoreItem = document.createElement("div");
         scoreItem.className = "score-list-item";

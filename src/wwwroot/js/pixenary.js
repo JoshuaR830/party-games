@@ -65,6 +65,9 @@ pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn, score) {
     let pixelSize = Math.floor($pixelCanvas.width/size);
     let myPixelContext = $pixelCanvas.getContext("2d");
 
+    // let myPixelContext = $pixelCanvas.getContext("2d");
+    myPixelContext.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
+    
     $pixelCanvas.style.backgroundColor = "white";
     
     for(let j = 0; j < pixelsPerSide; j++ )
@@ -309,6 +312,10 @@ connection.on("ManuallyIncrementedScore", function(score) {
     $scoreButton.classList.add("hidden");
     $resetButton.classList.remove('hidden');
     document.getElementById('score').textContent = score;
+    let name = document.querySelector('#my-name').value;
+    console.log(name);
+    console.log(score);
+    // connection.invoke("SendMessage", name, score);
 })
 
 pixenaryConnection.on("BackgroundColor", function(backgroundColor){

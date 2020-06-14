@@ -53,3 +53,21 @@ connection.on("ReceiveMessage", function (user, friendlyName, message) {
         document.getElementById("scoresList").appendChild(scoreItem);
     }
 });
+
+connection.on("DisplayScores", function(names, gameId)
+{
+    var usersToScore = document.querySelector('.js-score-user-selector');
+    usersToScore.innerHTML = "";
+    names.forEach(function(name) {
+        var $el = document.createElement('div');
+
+        $el.addEventListener('click', function() {
+            let myName = document.getElementById('my-name').value;
+            connection.invoke("UpdateManualScore", connectionName, myName, name, gameId)            
+        });
+        
+        $el.textContent = name;
+        
+        usersToScore.appendChild($el);
+    })
+})

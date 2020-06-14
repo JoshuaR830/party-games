@@ -40,7 +40,7 @@ namespace Chat.GameManager
                     ThoughtsAndCrosses(roomId, userId);
                     SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
                     break;
-                case GameType.WordGame:
+                case GameType.Word:
                     WordGame(roomId, userId);
                     SetUpNewWordGameUser(roomId, userId, Rooms.RoomsList[roomId].WordGame);
                     break;

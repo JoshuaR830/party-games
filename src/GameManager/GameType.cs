@@ -3,7 +3,7 @@
     public enum GameType
     {
         ThoughtsAndCrosses = 0,
-        WordGame = 1,
+        Word = 1,
         Pixenary = 2
     }
 }

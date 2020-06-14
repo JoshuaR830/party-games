@@ -3,6 +3,8 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 var connectionName = "GroupOfJoshua"
 
+// var $table = document.querySelector('.js-pixenary-table');
+
 var $colorTable = document.querySelector('.js-color-container');
 var $setColoursButton = document.querySelector('.js-set-colors-button');
 

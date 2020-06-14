@@ -6,6 +6,7 @@ using Chat.GameManager;
 using Chat.RoomManager;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace Chat.Hubs
 {
@@ -234,6 +235,33 @@ namespace Chat.Hubs
 
             await Clients.Group(roomId).SendAsync("ReceiveMessage", Context.ConnectionId, roomId, message);
         }
-        
+
+        public async Task UpdateManualScore(string roomId, string name, GameType gameType)
+        {
+            var game = gameType.ToString();
+            var user = Rooms.RoomsList[roomId].Users[name];
+            if (user == null)
+                return;
+            
+            var gameState = user.GetType()?.GetProperty($"{game}Game")?.GetValue(user);
+
+            var method = gameState?.GetType().GetMethod("SetScore");
+            method?.Invoke(gameState, new object[] {1});
+
+            var gameObject = user.GetType()?.GetProperty($"{game}Game")?.GetValue(user);
+            var score = gameObject?.GetType().GetProperty("Score")?.GetValue(gameObject);
+
+            Console.WriteLine(score);
+
+            await Clients.Group(name).SendAsync("ManuallyIncrementedScore", score);
+        }
+
+        public async Task DisplayScores(string roomId)
+        {
+            var users = Rooms.RoomsList[roomId].Users;
+            var names = users.Select(x => x.Key);
+            var gameId = 2;
+            await Clients.Caller.SendAsync("DisplayScores", names, gameId);
+        }
     }
 }

@@ -23,7 +23,7 @@ namespace PartyGamesTests.Pixenary.PixenaryManagerTests
             room.AddUser("Lydia");
 
             var roomName = Guid.NewGuid().ToString();
-            Rooms.RoomsList.TryAdd(roomName, room);
+            Rooms.RoomsList.Add(roomName, room);
 
             var shuffleStringHelper = Substitute.For<IShuffleHelper<string>>();
             shuffleStringHelper

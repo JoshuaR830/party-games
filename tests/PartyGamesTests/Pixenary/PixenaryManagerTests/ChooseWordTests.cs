@@ -18,7 +18,7 @@ namespace PartyGamesTests.Pixenary.PixenaryManagerTests
         public ChooseWordTests()
         {
             var roomName = Guid.NewGuid().ToString();
-            Rooms.RoomsList.TryAdd(roomName, new Room());
+            Rooms.RoomsList.Add(roomName, new Room());
 
             _wordList = new List<WordData>
             {

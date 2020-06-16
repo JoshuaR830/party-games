@@ -3,8 +3,6 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 var connectionName = "GroupOfJoshua"
 
-// var $table = document.querySelector('.js-pixenary-table');
-
 var $colorTable = document.querySelector('.js-color-container');
 var $setColoursButton = document.querySelector('.js-set-colors-button');
 
@@ -59,22 +57,7 @@ pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn) {
     let pixelSize = Math.floor($pixelCanvas.width/size);
     let myPixelContext = $pixelCanvas.getContext("2d");
 
-    // for(let i = 0; i < pixelCount; i++)
-    // {
-    //     let gridY = Math.floor(i/size);
-    //     let gridX = i%size;
-    //     myPixelContext.beginPath();
-    //     colorContext.moveTo(gridX*pixelSize, gridY*pixelSize);
-    //     myPixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
-    //     myPixelContext.fillStyle = "white";
-    //     myPixelContext.fill();
-    // }
-
-    myPixelContext.beginPath();
-    colorContext.moveTo(0, 0);
-    myPixelContext.rect(0, 0, $pixelCanvas.width, $pixelCanvas.height);
-    myPixelContext.fillStyle = "white";
-    myPixelContext.fill();
+    $pixelCanvas.style.backgroundColor = "white";
     
     for(let j = 0; j < pixelsPerSide; j++ )
     {
@@ -90,35 +73,6 @@ pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn) {
         myPixelContext.strokeStyle = 'rgba(219, 201, 226, 0.36)';
         myPixelContext.stroke();
     }
-    
-    // for(let y = 0; y < data.length; y += size)
-    // {
-    //     let row = document.createElement('div');
-    //     row.className = "pixenary-row";
-    //    
-    //     for(let x = 0; x < size; x ++)
-    //     {
-    //         let cell = document.createElement('div');
-    //         cell.className = "pixenary-cell --not-selected";
-    //         cell.id = `cell-${x+y}`;
-    //         if(data[x + y]) {
-    //             cell.style.backgroundColor = data[x + y];
-    //             cell.classList.remove('--not-selected');
-    //         }
-    //        
-    //         console.log(isUsersTurn);
-    //         // if (isUsersTurn === true) {
-    //             cell.addEventListener('click', function() {
-    //                 cell.style.backgroundColor = color;
-    //                 cell.classList.remove('--not-selected');
-    //                 console.log(color);
-    //                 pixenaryConnection.invoke("UpdatePixelGrid", connectionName, x + y, color);
-    //             });
-    //         // }
-    //         row.appendChild(cell);
-    //     }
-    //     $table.appendChild(row);
-    // }
 });
 
 $pixelCanvas.addEventListener('touchmove', function(event) {
@@ -175,34 +129,24 @@ function setCanvasColor(pixelPosition, pixelColor)
     pixelContext.fill();
 
     if(pixelColor === 'white') {
-        pixelContext.beginPath();
         pixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
-        pixelContext.lineWidth = 1;
-        pixelContext.strokeStyle = '#ffffff';
-        pixelContext.stroke();
+        pixelContext.fillStyle = '#ffffff';
+        pixelContext.fill();
+        pixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
+        pixelContext.fillStyle = 'rgba(219, 201, 226, 0.36)';
+        pixelContext.fill();
 
         pixelContext.beginPath();
-        pixelContext.rect(gridX*pixelSize, gridY*pixelSize, pixelSize, pixelSize);
-        pixelContext.lineWidth = 1;
-        pixelContext.strokeStyle = 'rgba(219, 201, 226, 0.36)';
-        pixelContext.stroke();
+        pixelContext.rect(gridX*pixelSize + 1, gridY*pixelSize + 1, pixelSize - 2, pixelSize - 2);
+        pixelContext.fillStyle = '#ffffff';
+        pixelContext.fill();
+
     }
 }
 
 pixenaryConnection.on("PixelGridUpdate", function(pixelPosition, pixelColor) {
 
     setCanvasColor(pixelPosition, pixelColor)
-
-    // let $selectedCell = document.querySelector(`#cell-${pixelPosition}`);
-    // $selectedCell.style.backgroundColor = pixelColor;
-    //
-    // $selectedCell.classList.remove("--eraser");
-    //
-    // if(pixelColor === "white") {
-    //     $selectedCell.classList.add("--eraser");
-    // }
-    //
-    // $selectedCell.classList.remove('--not-selected');
 });
 
 pixenaryConnection.on("PixelWord", function(word) {
@@ -303,8 +247,6 @@ function selectColor($color) {
     $color.classList.add('--selected-color')
 }
 
-
-
 $colourCanvas.addEventListener('mousedown', function(event){
     let selectedColor = document.querySelector('.js-color-selectors').querySelector('.--selected-color');
     let selectionIndex = selectedColor.getAttribute('data-number');
@@ -335,3 +277,35 @@ function placeColorCrosshair(index)
     colorContext.lineTo((coordinates[index][0] - 5), (coordinates[index][1] + 5));
     colorContext.stroke();
 }
+
+$scoreButton.addEventListener('click', function() {
+    console.log("Clicked");
+    document.querySelector('.js-word-choice').innerText = "Select the player who guessed correctly"
+    document.querySelector('.js-pixel-canvas-container').classList.add('hidden');
+    document.querySelector('.js-color-container').classList.add('hidden');
+    let name = document.querySelector('#my-name').value;
+    $scoreNamesContainer.classList.remove('hidden');
+    $scoreButton.classList.add('hidden');
+    connection.invoke('DisplayScores', connectionName, name);
+});
+
+connection.on("ManuallyIncrementedScore", function(score) {
+    console.log(score);
+    document.querySelector('.js-word-choice').innerText = "";
+    document.querySelector('.js-pixel-canvas-container').classList.remove('hidden');
+    $scoreButton.classList.add("hidden");
+    $resetButton.classList.remove('hidden');
+    document.getElementById('score').textContent = score;
+})
+
+pixenaryConnection.on("BackgroundColor", function(backgroundColor){
+    console.log("Hello");
+    console.log(backgroundColor);
+
+    $pixelCanvas.style.backgroundColor = backgroundColor;
+});
+
+document.querySelector('.js-fill-button').addEventListener('click', function() {
+    console.log("Hello");
+    pixenaryConnection.invoke("SetBackgroundColor", connectionName, color);
+});

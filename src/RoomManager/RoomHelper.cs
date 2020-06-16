@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 
 namespace Chat.RoomManager
 {
     public class RoomHelper: IRoomHelper
     {
-        private readonly Dictionary<string, Room> _rooms;
+        private readonly ConcurrentDictionary<string, Room> _rooms;
 
         private readonly string _name;
         private readonly string _roomId;
@@ -18,7 +18,12 @@ namespace Chat.RoomManager
 
         public void AddToScore(int scoreToAdd)
         {
-            var score = _rooms[_roomId].Users[_name].Score + scoreToAdd;
+            var isRoomAvailable = _rooms.TryGetValue(_roomId, out var room);
+
+            if (!isRoomAvailable)
+                return;
+            
+            var score = room.Users[_name].Score + scoreToAdd;
             SetScore(score);
         }
 

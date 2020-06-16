@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
 
 namespace Chat.RoomManager
 {
     public class Rooms
     {
         private static readonly Rooms RoomsInstance = new Rooms();
-        public static Dictionary<string, Room> RoomsList { get; private set; }
+        public static ConcurrentDictionary<string, Room> RoomsList { get; private set; }
 
         private Rooms()
         {
-            RoomsList = new Dictionary<string, Room>();
+            RoomsList = new ConcurrentDictionary<string, Room>();
         }
 
         public static Rooms GetRooms()
@@ -19,12 +20,13 @@ namespace Chat.RoomManager
 
         public static void CreateRoom(string name, string roomId)
         {
-            RoomsList.Add(roomId, new Room());
+            Console.WriteLine($">>>{RoomsList}");
+            RoomsList.TryAdd(roomId, new Room());
         }
 
         public static void DeleteRoom(string roomId)
         {
-            RoomsList.Remove(roomId);
+            RoomsList.TryRemove(roomId, out var room);
         }
     }
 }

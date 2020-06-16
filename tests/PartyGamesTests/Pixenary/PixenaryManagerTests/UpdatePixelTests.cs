@@ -17,7 +17,7 @@ namespace PartyGamesTests.Pixenary.PixenaryManagerTests
         public UpdatePixelTests()
         {
             var roomName = Guid.NewGuid().ToString();
-            Rooms.RoomsList.Add(roomName, new Room());
+            Rooms.RoomsList.TryAdd(roomName, new Room());
             var shuffleHelper = Substitute.For<IShuffleHelper<string>>();
             
             

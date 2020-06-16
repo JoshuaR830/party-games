@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using Chat.Pixenary;
 
 namespace Chat.RoomManager
 {
     public class Room
     {
-        public Dictionary<string, User> Users { get; }
+        public ConcurrentDictionary<string, User> Users { get; }
         public GameThoughtsAndCrosses ThoughtsAndCrosses { get; private set; }
         public GameWordGame WordGame { get; private set; }
         public PixenaryManager PixenaryGame { get; private set; }
@@ -13,12 +13,12 @@ namespace Chat.RoomManager
 
         public Room()
         {
-            Users = new Dictionary<string, User>();
+            Users = new ConcurrentDictionary<string, User>();
         }
 
         public void AddUser(string name)
         {
-            Users.Add(name, new User(name));
+            Users.TryAdd(name, new User(name));
         }
 
         public void SetThoughtsAndCrosses(GameThoughtsAndCrosses game)

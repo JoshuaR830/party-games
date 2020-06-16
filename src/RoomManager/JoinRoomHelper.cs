@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 
 namespace Chat.RoomManager
 {
     public class JoinRoomHelper : IJoinRoomHelper
     {
-        private readonly Dictionary<string, Room> _rooms;
+        private readonly ConcurrentDictionary<string, Room> _rooms;
 
         private readonly string _name;
         private readonly string _roomId;

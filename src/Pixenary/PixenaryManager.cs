@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
+using Newtonsoft.Json;
 
 namespace Chat.Pixenary
 {
@@ -65,6 +66,7 @@ namespace Chat.Pixenary
             }
 
             ActivePlayer = Players[PlayerTurns];
+            Console.WriteLine($">>> {JsonConvert.SerializeObject(Players)}");
             PlayerTurns++;
         }
 

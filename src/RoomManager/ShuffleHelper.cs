@@ -10,7 +10,7 @@ namespace Chat.RoomManager
         {
             var rand = new Random();
             
-            if (list.Count == 1)
+            if (list.Count <= 1)
                 return list;
             
             var shuffledList = new List<T>();

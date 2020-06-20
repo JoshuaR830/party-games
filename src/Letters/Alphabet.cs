@@ -43,11 +43,11 @@ namespace Chat.Letters
         }
 
         public class LetterData {
-            public string Letter { get; }
+            public string Letter { get;  private set;}
             public double Frequency { get; }
             public bool Repeatable { get; }
             public bool AlreadyUsed { get; private set; }
-            public int Score { get; }
+            public int Score { get;  private set;}
             public int CurrentCount { get; set; }
             public int MaxCount { get; }
 
@@ -63,6 +63,12 @@ namespace Chat.Letters
             public void SetUsed()
             {
                 this.AlreadyUsed = true;
+            }
+
+            public void UpdateScore(string letter, int score)
+            {
+                Letter = letter;
+                Score = score;
             }
         }
     }

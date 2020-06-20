@@ -48,7 +48,7 @@ connection.start().then(function () {
 
 document.querySelector('.js-login-button').addEventListener('click', function() {
     let name = document.querySelector('#my-name').value;
-    connection.invoke("Startup", connectionName, name, 2);
+    connection.invoke("JoinForScores", connectionName, name);
     pixenaryConnection.invoke("JoinPixenaryGame", connectionName, name, 2);
 
 });
@@ -163,6 +163,7 @@ pixenaryConnection.on("PixelGridUpdate", function(pixelPosition, pixelColor) {
 pixenaryConnection.on("PixelWord", function(word) {
     console.log(word);
     $scoreButton.classList.remove("hidden");
+    document.querySelector('.js-fill-button').classList.remove("hidden");
     document.querySelector('.js-pixel-canvas-container').classList.remove('hidden');
     document.querySelector('.js-color-container').classList.remove('hidden');
     $colorModal.querySelector('.modal-title').textContent = `Word: ${word.word}`;
@@ -188,6 +189,7 @@ pixenaryConnection.on("ResetGame", function() {
     $resetButton.textContent = "Next round";
     $resetButton.classList.add('hidden');
     $scoreNamesContainer.classList.add('hidden');
+    document.querySelector('.js-color-container').classList.remove('hidden');
 });
 
 $resetButton.addEventListener('click', function() {
@@ -302,6 +304,7 @@ $scoreButton.addEventListener('click', function() {
     let name = document.querySelector('#my-name').value;
     $scoreNamesContainer.classList.remove('hidden');
     $scoreButton.classList.add('hidden');
+    document.querySelector('.js-fill-button').classList.add("hidden");
     connection.invoke('DisplayScores', connectionName, name);
 });
 
@@ -310,6 +313,7 @@ connection.on("ManuallyIncrementedScore", function(score) {
     document.querySelector('.js-word-choice').innerText = "";
     document.querySelector('.js-pixel-canvas-container').classList.remove('hidden');
     $scoreButton.classList.add("hidden");
+    document.querySelector('.js-fill-button').classList.add("hidden");
     $resetButton.classList.remove('hidden');
     document.getElementById('score').textContent = score;
     let name = document.querySelector('#my-name').value;

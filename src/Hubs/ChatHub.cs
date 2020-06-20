@@ -136,6 +136,7 @@ namespace Chat.Hubs
 
             if (!Rooms.RoomsList.ContainsKey(roomId))
             {
+                // The problem here is that this is getting invoked to build pixenary - but this requires a ThoughtsAndCrosses game to be made
                 Console.WriteLine("New room 2");
                 _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
                 Rooms.RoomsList[roomId].ThoughtsAndCrosses.SetLetter();
@@ -295,6 +296,12 @@ namespace Chat.Hubs
             var names = users.Select(x => x.Key).Where(y => y != name);
             var gameId = 2;
             await Clients.Caller.SendAsync("DisplayScores", names, gameId);
+        }
+
+        public async Task JoinForScores(string roomId, string name)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, name);
         }
     }
 }

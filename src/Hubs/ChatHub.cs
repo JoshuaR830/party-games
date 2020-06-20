@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
@@ -6,6 +7,8 @@ using Chat.GameManager;
 using Chat.RoomManager;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Newtonsoft.Json;
+using System.Reflection;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Chat.Hubs
 {
@@ -31,6 +34,9 @@ namespace Chat.Hubs
         {
             // await SendDirectMessage("my group", "user", message);
             Console.WriteLine("Indirect");
+
+            Console.WriteLine(user);
+            Console.WriteLine(message);
 
             await Clients.Group(user).SendAsync("ReceiveMessage", Context.ConnectionId, user, message);
         }
@@ -234,6 +240,47 @@ namespace Chat.Hubs
 
             await Clients.Group(roomId).SendAsync("ReceiveMessage", Context.ConnectionId, roomId, message);
         }
-        
+
+        public async Task UpdateManualScore(string roomId, string myName, string name, GameType gameType)
+        {
+            // This was just a prototype
+            // ToDo: put this in a function and test it
+            var game = gameType.ToString();
+            var users = new List<User>();
+            users.Add(Rooms.RoomsList[roomId].Users[name]);
+            users.Add(Rooms.RoomsList[roomId].Users[myName]);
+
+            Console.WriteLine(name);
+            Console.WriteLine(users[0].PixenaryGame.Score);
+            Console.WriteLine(myName);
+            Console.WriteLine(users[1].PixenaryGame.Score);
+
+            foreach (var user in users)
+            {
+                if (user == null)
+                    return;
+                            
+                var gameState = user.GetType()?.GetProperty($"{game}Game")?.GetValue(user);
+    
+                var method = gameState?.GetType().GetMethod("SetScore");
+                method?.Invoke(gameState, new object[] {1});
+    
+                var gameObject = user.GetType()?.GetProperty($"{game}Game")?.GetValue(user);
+                var score = gameObject?.GetType().GetProperty("Score")?.GetValue(gameObject);
+    
+                Console.WriteLine(score);
+    
+                await Clients.Group(user.Name).SendAsync("ManuallyIncrementedScore", score);
+            }
+            
+        }
+
+        public async Task DisplayScores(string roomId, string name)
+        {
+            var users = Rooms.RoomsList[roomId].Users;
+            var names = users.Select(x => x.Key).Where(y => y != name);
+            var gameId = 2;
+            await Clients.Caller.SendAsync("DisplayScores", names, gameId);
+        }
     }
 }

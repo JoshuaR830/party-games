@@ -40,7 +40,7 @@ namespace Chat.GameManager
                     ThoughtsAndCrosses(roomId, userId);
                     SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
                     break;
-                case GameType.WordGame:
+                case GameType.Word:
                     WordGame(roomId, userId);
                     SetUpNewWordGameUser(roomId, userId, Rooms.RoomsList[roomId].WordGame);
                     break;
@@ -101,7 +101,11 @@ namespace Chat.GameManager
         public void SetUpNewPixenaryUser(string roomId, string userId, PixenaryManager game)
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
-            var userPixenaryGame = new UserPixenaryGame();
+
+            var userPixenaryGame = Rooms.RoomsList[roomId].Users[userId].PixenaryGame;
+            if(userPixenaryGame == null)
+                userPixenaryGame = new UserPixenaryGame();
+            
             Rooms.RoomsList[roomId].Users[userId].SetUserPixenaryGame(userPixenaryGame);
         }
 

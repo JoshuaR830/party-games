@@ -67,7 +67,7 @@ namespace Chat.Hubs
                 
                 
                 var playerTurn = Rooms.RoomsList[roomId].PixenaryGame.ActivePlayer;
-                await Clients.Group(userId).SendAsync("PixelGridResponse", JsonConvert.SerializeObject(game.Grid), playerTurn == userId);
+                await Clients.Group(userId).SendAsync("PixelGridResponse", JsonConvert.SerializeObject(game.Grid), playerTurn == userId, user.Value.PixenaryGame.Score);
                 // Rooms.RoomsList[roomId].PixenaryGame.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList());
 
                 Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList()));

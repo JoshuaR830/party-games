@@ -1,6 +1,8 @@
 ﻿var gameRoundNumber = 0;
 var scores = {};
 
+var $scoreNamesContainer = document.querySelector('.js-score-user-selector');
+
 document.querySelector('.login-button').addEventListener('click', userLogin);
 
 function userLogin() {
@@ -53,3 +55,22 @@ connection.on("ReceiveMessage", function (user, friendlyName, message) {
         document.getElementById("scoresList").appendChild(scoreItem);
     }
 });
+
+connection.on("DisplayScores", function(names, gameId)
+{
+    var usersToScore = document.querySelector('.js-score-user-selector');
+    usersToScore.innerHTML = "";
+    names.forEach(function(name) {
+        var $el = document.createElement('div');
+        $el.className = "button";
+        $el.addEventListener('click', function() {
+            let myName = document.getElementById('my-name').value;
+            connection.invoke("UpdateManualScore", connectionName, myName, name, gameId) ;
+            $scoreNamesContainer.classList.add('hidden');
+        });
+        
+        $el.textContent = name;
+        
+        usersToScore.appendChild($el);
+    })
+})

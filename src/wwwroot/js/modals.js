@@ -3,6 +3,7 @@ document.querySelector('.timer-fab').addEventListener('click', function(event) {
 })
 
 document.querySelector('.js-score-fab').addEventListener('click', function(event) {
+    console.log("Scores");
     document.querySelector('.js-scores-modal').classList.remove('popup-hidden');
     document.querySelector('.js-scores-breakdown-modal').classList.add('popup-hidden');
 })

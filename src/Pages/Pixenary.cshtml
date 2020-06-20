@@ -5,26 +5,40 @@
     ViewData["Title"] = "Pixenary";
 }
 
-<div class="button js-reset-button">Start</div>
-<div id="view-score-option" class="button hidden">View scores</div>
-
-<div class="button js-score-test hidden">Complete</div>
-<div class="title">Pixenary</div>
-<div class="word-choice js-word-choice"></div>
-
-<div class="score-fab js-score-fab fab"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
-<div class="timer-fab hidden"></div>
-
-
-<div class="js-score-user-selector"></div>
-
-@* <div class="pixenary-table js-pixenary-table"></div> *@
-<div class="pixel-canvas-container js-pixel-canvas-container">
-    <canvas id="pixel-canvas" width="300" height="300" class="pixel-canvas"></canvas>
+<div class="top-bar-container">
+    <div class="top-bar">
+        <div class="pixenary-title">Pixenary</div>
+        <div class="pixenary-score"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+    </div>
 </div>
 
-<div class="color-container js-color-container"></div>
-<div class="button fill-button js-fill-button hidden">Fill background</div>
+<div class="content-container">
+    <div class="pixenary-action-button js-reset-button">Start</div>
+    <div id="view-score-option" class="button hidden">View scores</div>
+
+    <div class="pixenary-action-button js-score-test hidden">Complete</div>
+    <div class="word-choice js-word-choice"></div>
+
+    @* <div class="title"></div> *@
+    <div class="top-score-fab js-score-fab fab hidden"></div>
+    <div class="timer-fab hidden"></div>
+
+
+    <div class="js-score-user-selector"></div>
+
+    <div class="pixel-canvas-container js-pixel-canvas-container">
+        <canvas id="pixel-canvas" width="300" height="300" class="pixel-canvas"></canvas>
+    </div>
+
+    <div class="color-container js-color-container"></div>
+
+
+    <div class="tool-bar js-tool-bar hidden">
+        <div class="color fill-button js-fill-button"><span class="">filter_hdr</span></div>
+    </div>
+
+</div>
+
 
 <div class="popup-modal js-login-modal">
     @await Html.PartialAsync("LoginPopup")

@@ -3,15 +3,19 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.IO;
+using Chat.RoomManager;
+using Microsoft.EntityFrameworkCore;
 
 namespace Chat.Letters {
-    public class LettersHelper
+    public class LettersHelper : ILettersHelper
     {
+        private readonly ShuffleHelper<Alphabet.LetterData> _shuffleHelper;
         public List<LetterScore> Letters { get; }
 
         public LettersHelper()
         {
-            this.Letters = GetLetters();
+            _shuffleHelper = new ShuffleHelper<Alphabet.LetterData>();
+            Letters = GetLetters();
         }
 
         public List<LetterScore> GetLetters()
@@ -27,8 +31,6 @@ namespace Chat.Letters {
             
             var rand = new Random();
 
-            var pos = 0;
-
             for (var i = 0; i < 8; i++)
             {
                 if (i < 3) 
@@ -36,6 +38,7 @@ namespace Chat.Letters {
                     temp = alphabet.LettersList
                         .Where(x => x.Frequency > 7)
                         .Where(x => x.CurrentCount < x.MaxCount)
+                        .Where(x => !x.AlreadyUsed)
                         .ToList();
                 }
                 else if (i < 6)
@@ -44,27 +47,34 @@ namespace Chat.Letters {
                         .Where(x => x.Frequency > 3)
                         .Where(x => x.Frequency < 7)
                         .Where(x => x.CurrentCount < x.MaxCount)
+                        .Where(x => !x.AlreadyUsed)
                         .ToList();
                 }
                 else 
                 {
-                    temp = alphabet.LettersList;
+                    temp = alphabet.LettersList
+                        .Where(x => x.CurrentCount < x.MaxCount)
+                        .Where(x => !x.AlreadyUsed)
+                        .ToList();
                 }
 
-                do
-                {
-                    System.Console.WriteLine("Do");
-                    System.Console.WriteLine(temp[pos].Letter);
-                    pos = rand.Next(0, temp.Count);
-                } while(temp[pos].AlreadyUsed == true);
+                temp = _shuffleHelper.ShuffleList(temp);
+                
+                var chosenLetter = temp.FirstOrDefault();
 
-                temp[pos].CurrentCount ++;
-                if(temp[pos].Repeatable == false)
+                if (chosenLetter == null)
                 {
-                    temp[pos].SetUsed();
+                    i--;
+                    continue;
                 }
 
-                alphabetList.Add(new LetterScore(temp[pos].Letter, temp[pos].Score));
+                chosenLetter.CurrentCount ++;
+                if(chosenLetter.Repeatable == false)
+                {
+                    chosenLetter.SetUsed();
+                }
+
+                alphabetList.Add(new LetterScore(chosenLetter.Letter, chosenLetter.Score));
             }
 
             // alphabetList = new List<LetterScore>();
@@ -76,7 +86,13 @@ namespace Chat.Letters {
             // alphabetList.Add(new LetterScore("N", 1));
             // alphabetList.Add(new LetterScore("A", 1));
             // alphabetList.Add(new LetterScore("S", 1));
-
+            
+            if (alphabetList.Any(x => x.Letter == "Q"))
+            {
+                var num = rand.Next(0, 5);
+                var letterU = alphabet.LettersList.First(x => x.Letter == "U");
+                alphabetList[num].UpdateLetter(letterU.Letter, letterU.Score);
+            }
 
             return alphabetList;
         }
@@ -84,10 +100,16 @@ namespace Chat.Letters {
 
     public class LetterScore
     {
-        public string Letter {get; }
-        public int Score { get; }
+        public string Letter {get; private set; }
+        public int Score { get; private set; }
 
         public LetterScore(string letter, int score)
+        {
+            this.Letter = letter;
+            this.Score = score;
+        }
+
+        public void UpdateLetter(string letter, int score)
         {
             this.Letter = letter;
             this.Score = score;

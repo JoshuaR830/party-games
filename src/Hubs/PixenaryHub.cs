@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Chat.GameManager;
 using Chat.RoomManager;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Newtonsoft.Json;
 
 namespace Chat.Hubs
@@ -58,7 +59,18 @@ namespace Chat.Hubs
 
         public async Task StartPixenary(string roomId)
         {
-            
+            if (!Rooms.RoomsList.ContainsKey(roomId))
+            {
+                Console.WriteLine("That user is not available in the room");
+                return;
+            }
+
+            if (Rooms.RoomsList[roomId].PixenaryGame == null)
+            {
+                Console.WriteLine("Does not contain a definition for pixenary");
+                return;
+            }
+
             var game = Rooms.RoomsList[roomId].PixenaryGame;
             Rooms.RoomsList[roomId].PixenaryGame.ChooseActivePlayer();
             foreach (var user in Rooms.RoomsList[roomId].Users)

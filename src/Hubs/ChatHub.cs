@@ -228,6 +228,20 @@ namespace Chat.Hubs
                 _gameManager.ResetThoughtsAndCrosssesForUser(roomId, user.Value.Name, game);
             }
             
+            foreach (var user in Rooms.RoomsList[roomId].Users)
+            {
+                if (user.Value.WordGame == null)
+                {
+                    Console.WriteLine($"No thoughts and crosses game for {user.Key}");
+                    SetupNewUser(roomId, user.Key);
+                }
+                else
+                {
+                    Console.WriteLine($"Yes there is a thoughts and crosses game for {user.Key}");
+                    _gameManager.ResetThoughtsAndCrosssesForUser(roomId, user.Value.Name, game);
+                }
+            }
+            
             await JoinRoom(roomId, name, gameId);
         }
         

@@ -121,8 +121,10 @@ namespace Chat.Hubs
                 Console.WriteLine(name);
             }
 
+            Console.WriteLine("Word game 1");
             if (Rooms.RoomsList[roomId].WordGame == null)
             {
+                Console.WriteLine("Word game 2");
                 _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
                 if (Rooms.RoomsList[roomId].WordGame == null)
                     return;
@@ -175,9 +177,19 @@ namespace Chat.Hubs
         {
             var game = Rooms.RoomsList[roomId].WordGame;
             _gameManager.ResetWordGame(roomId);
+            
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
-                _gameManager.ResetWordGameForUser(roomId, user.Value.Name);
+                if (user.Value.WordGame == null)
+                {
+                    Console.WriteLine($"No word game for {user.Key}");
+                    SetupNewUser(roomId, user.Key);
+                }
+                else
+                {
+                    Console.WriteLine($"Yes there is a word game for {user.Key}");
+                    _gameManager.ResetWordGameForUser(roomId, user.Value.Name);
+                }
             }
         }
 

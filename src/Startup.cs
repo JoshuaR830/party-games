@@ -89,6 +89,7 @@ namespace Chat
                 routes.MapHub<ChatHub>("/chatHub");
                 routes.MapHub<LettersHub>("/lettersHub");
                 routes.MapHub<PixenaryHub>("/pixenaryHub");
+                routes.MapHub<BalderdashHub>("/balderdashHub");
             });
 
             app.UseMvc();

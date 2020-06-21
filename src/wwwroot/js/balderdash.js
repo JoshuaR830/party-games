@@ -1,0 +1,1 @@
+﻿var lettersConnection = new signalR.HubConnectionBuilder().withUrl("/balderdashHub").build();

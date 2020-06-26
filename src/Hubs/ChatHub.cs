@@ -164,7 +164,7 @@ namespace Chat.Hubs
                 Console.WriteLine(name);
             }
             
-            if (Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses == null)
+            if (Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame == null)
             {
                 var game = Rooms.RoomsList[roomId].ThoughtsAndCrosses;
                 _gameManager.SetupNewThoughtsAndCrossesUser(roomId, name, game);
@@ -189,34 +189,34 @@ namespace Chat.Hubs
 
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
-                Console.WriteLine(user.Value.ThoughtsAndCrosses.WordsGrid);
+                Console.WriteLine(user.Value.ThoughtsAndCrossesGame.WordsGrid);
                 Console.WriteLine(user.Value.Name);
-                await Clients.Group(user.Value.Name).SendAsync("ReceiveWordGrid", user.Value.ThoughtsAndCrosses.WordsGrid);
+                await Clients.Group(user.Value.Name).SendAsync("ReceiveWordGrid", user.Value.ThoughtsAndCrossesGame.WordsGrid);
             }
         }
 
         public async Task SetGuessForCategory(string roomId, string name, string category, string userGuess)
         {
             Console.WriteLine(userGuess);
-            Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.ManageGuess(category, userGuess);   
+            Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.ManageGuess(category, userGuess);   
         }
         
         public async Task SetIsValidForCategory(string roomId, string name, string category, bool isValid)
         {
             if (isValid)
             {
-                Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.CheckWord(category);
+                Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.CheckWord(category);
             }
             else
             {
-                Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.UncheckWord(category);
+                Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.UncheckWord(category);
             }
         }
 
         public async Task CalculateScore(string roomId, string name)
         {
-            Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.CalculateScore();
-            var score = Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.Score;
+            Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.CalculateScore();
+            var score = Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.Score;
             await Clients.Group(name).SendAsync("ScoreCalculated", score);
         }
 
@@ -226,7 +226,7 @@ namespace Chat.Hubs
             _gameManager.ResetThoughtsAndCrosses(roomId, game);
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
-                _gameManager.ResetThoughtsAndCrosssesForUser(roomId, user.Value.Name, game);
+                _gameManager.ResetThoughtsAndCrossesForUser(roomId, user.Value.Name, game);
             }
             
             foreach (var user in Rooms.RoomsList[roomId].Users)
@@ -239,7 +239,7 @@ namespace Chat.Hubs
                 else
                 {
                     Console.WriteLine($"Yes there is a thoughts and crosses game for {user.Key}");
-                    _gameManager.ResetThoughtsAndCrosssesForUser(roomId, user.Value.Name, game);
+                    _gameManager.ResetThoughtsAndCrossesForUser(roomId, user.Value.Name, game);
                 }
             }
             
@@ -248,7 +248,7 @@ namespace Chat.Hubs
         
         public async Task UpdateScoreBoard(string roomId, string name)
         {
-            var score = Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrosses.Score;
+            var score = Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.Score;
             var message = $"{name}: {score}";
             // await SendDirectMessage("my group", "user", message);
             Console.WriteLine("Indirect");
@@ -265,10 +265,10 @@ namespace Chat.Hubs
             users.Add(Rooms.RoomsList[roomId].Users[name]);
             users.Add(Rooms.RoomsList[roomId].Users[myName]);
 
-            Console.WriteLine(name);
-            Console.WriteLine(users[0].PixenaryGame.Score);
-            Console.WriteLine(myName);
-            Console.WriteLine(users[1].PixenaryGame.Score);
+            // Console.WriteLine(name);
+            // Console.WriteLine(users[0].PixenaryGame.Score);
+            // Console.WriteLine(myName);
+            // Console.WriteLine(users[1].PixenaryGame.Score);
 
             foreach (var user in users)
             {

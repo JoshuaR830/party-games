@@ -1,0 +1,80 @@
+﻿@page
+@model Chat.Pages.Balderdash
+
+@{
+    ViewData["Title"] = "Balderdash";
+}
+
+
+<div class="top-bar-container">
+    <div class="top-bar">
+        <div class="pixenary-title">Balderdash</div>
+        <div class="pixenary-score"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
+    </div>
+</div>
+
+<div class="content-container">
+    <div class="pixenary-action-button js-reset-button">Start</div>
+    <div id="view-score-option" class="button hidden">View scores</div>
+
+    <div class="button js-score-test hidden">Complete</div>
+    <div class="word-choice js-word-choice"></div>
+
+    @* <div class="title"></div> *@
+    <div class="top-score-fab js-score-fab fab hidden"></div>
+    <div class="timer-fab hidden"></div>
+
+
+    <div class="answer-container hidden">
+        <textarea class="balderdash-answer js-answer-entry-box"></textarea>
+        <div class="button js-submit-answer">Submit</div>
+    </div>
+   
+    <div class="js-card-container">
+        <div class="carousel js-carousel"></div>
+
+        <div class="arrow-container">
+            <div class="arrow --previous js-previous-card --disabled"><span class="material-icons">navigate_before</span></div>
+            <div class="score-title">Who guessed it</div>
+            <div class="arrow --next js-next-card"><span class="material-icons">navigate_next</span></div>
+        </div>
+
+        
+        <div class="js-score-user-selector">
+            <div class="button">Joshua</div>
+            <div class="button">Andrew</div>
+            <div class="button">Kerry</div>
+            <div class="button">Lydia</div>
+        </div>
+    </div>
+</div>
+
+<div class="popup-modal js-login-modal">
+    @await Html.PartialAsync("LoginPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-timer-modal">
+    @await Html.PartialAsync("TimerPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-modal">
+    @await Html.PartialAsync("ScoresPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-scores-breakdown-modal">
+    @await Html.PartialAsync("ScoresBreakDownPopup")
+</div>
+
+<div class="popup-modal popup-hidden js-times-up">
+    @await Html.PartialAsync("GameOver");
+</div>
+
+<div class="popup-modal popup-hidden js-color-modal">
+    @await Html.PartialAsync("ColorPopup");
+</div>
+
+<script src="~/js/balderdash.js"></script>
+
+
+
+

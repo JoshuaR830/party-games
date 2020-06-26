@@ -9,7 +9,7 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
     public class CreateGridTests
     {
         private readonly IShuffleHelper<string> _shuffleHelper;
-        private readonly UserThoughtsAndCrosses _userThoughtsAndCrosses;
+        private readonly UserThoughtsAndCrossesGame _userThoughtsAndCrossesGame;
         private readonly List<string> _categoriesInitial;
         private readonly List<string> _categoriesShuffled1;
         private readonly List<string> _categoriesShuffled2;
@@ -32,7 +32,7 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
                 .Returns(_categoriesShuffled2);
             
             var scoreHelper = new ScoreHelper();
-            _userThoughtsAndCrosses = new UserThoughtsAndCrosses(scoreHelper, _shuffleHelper);
+            _userThoughtsAndCrossesGame = new UserThoughtsAndCrossesGame(scoreHelper, _shuffleHelper);
         }
         
         [Fact]
@@ -42,9 +42,9 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
                 .ShuffleList(_categoriesInitial)
                 .Returns(_categoriesShuffled1);
             
-            _userThoughtsAndCrosses.CreateGrid(_categoriesInitial);
+            _userThoughtsAndCrossesGame.CreateGrid(_categoriesInitial);
             
-            _userThoughtsAndCrosses.WordsGrid.Should().BeEquivalentTo(new List<(string category, string userGuess, bool isAccepted)>
+            _userThoughtsAndCrossesGame.WordsGrid.Should().BeEquivalentTo(new List<(string category, string userGuess, bool isAccepted)>
             {
                 (_categoriesShuffled1[0], "", false),
                 (_categoriesShuffled1[1], "", false),
@@ -61,11 +61,11 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         [Fact]
         public void Creating2WithSameCategoriesListsShouldCreateDifferentGrids()
         {
-            _userThoughtsAndCrosses.CreateGrid(_categoriesShuffled1);
-            var firstGrid = _userThoughtsAndCrosses.WordsGrid;
+            _userThoughtsAndCrossesGame.CreateGrid(_categoriesShuffled1);
+            var firstGrid = _userThoughtsAndCrossesGame.WordsGrid;
             
-            _userThoughtsAndCrosses.CreateGrid(_categoriesShuffled2);
-            var secondGrid = _userThoughtsAndCrosses.WordsGrid;
+            _userThoughtsAndCrossesGame.CreateGrid(_categoriesShuffled2);
+            var secondGrid = _userThoughtsAndCrossesGame.WordsGrid;
 
             firstGrid.Should().NotEqual(secondGrid);
         }

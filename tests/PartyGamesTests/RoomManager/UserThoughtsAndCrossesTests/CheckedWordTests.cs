@@ -11,7 +11,7 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
     {
         private IShuffleHelper<string> _shuffleHelper;
         private IScoreHelper _scoreHelper;
-        private readonly UserThoughtsAndCrosses _userThoughtsAndCrosses;
+        private readonly UserThoughtsAndCrossesGame _userThoughtsAndCrossesGame;
         private readonly List<string> _categoriesInitial;
         private List<string> _categoriesShuffled;
 
@@ -27,25 +27,25 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
                 .ShuffleList(_categoriesInitial)
                 .Returns(_categoriesShuffled);
             
-            _userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleHelper);    
+            _userThoughtsAndCrossesGame = new UserThoughtsAndCrossesGame(_scoreHelper, _shuffleHelper);    
         }
         
         [Fact]
         public void WhenAllCategoriesAreCheckedEveryIsAcceptedShouldBeTrue()
         {
-            _userThoughtsAndCrosses.CreateGrid(_categoriesInitial);
+            _userThoughtsAndCrossesGame.CreateGrid(_categoriesInitial);
             
-            _userThoughtsAndCrosses.CheckWord("News");
-            _userThoughtsAndCrosses.CheckWord("Food");
-            _userThoughtsAndCrosses.CheckWord("Fruit");
-            _userThoughtsAndCrosses.CheckWord("Bird");
-            _userThoughtsAndCrosses.CheckWord("Car");
-            _userThoughtsAndCrosses.CheckWord("Animal");
-            _userThoughtsAndCrosses.CheckWord("Boat");
-            _userThoughtsAndCrosses.CheckWord("Plane");
-            _userThoughtsAndCrosses.CheckWord("Colour");
+            _userThoughtsAndCrossesGame.CheckWord("News");
+            _userThoughtsAndCrossesGame.CheckWord("Food");
+            _userThoughtsAndCrossesGame.CheckWord("Fruit");
+            _userThoughtsAndCrossesGame.CheckWord("Bird");
+            _userThoughtsAndCrossesGame.CheckWord("Car");
+            _userThoughtsAndCrossesGame.CheckWord("Animal");
+            _userThoughtsAndCrossesGame.CheckWord("Boat");
+            _userThoughtsAndCrossesGame.CheckWord("Plane");
+            _userThoughtsAndCrossesGame.CheckWord("Colour");
 
-            _userThoughtsAndCrosses
+            _userThoughtsAndCrossesGame
                 .WordsGrid.Count(x => x.isAccepted)
                 .Should()
                 .Be(9);
@@ -54,23 +54,23 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         [Fact]
         public void WhenAllCategoriesAreCheckedButOneEveryIsAcceptedShouldBeTrueExceptThatOne()
         {
-            _userThoughtsAndCrosses.CreateGrid(_categoriesInitial);
+            _userThoughtsAndCrossesGame.CreateGrid(_categoriesInitial);
             
-            _userThoughtsAndCrosses.CheckWord("News");
-            _userThoughtsAndCrosses.CheckWord("Food");
-            _userThoughtsAndCrosses.CheckWord("Bird");
-            _userThoughtsAndCrosses.CheckWord("Car");
-            _userThoughtsAndCrosses.CheckWord("Animal");
-            _userThoughtsAndCrosses.CheckWord("Boat");
-            _userThoughtsAndCrosses.CheckWord("Plane");
-            _userThoughtsAndCrosses.CheckWord("Colour");
+            _userThoughtsAndCrossesGame.CheckWord("News");
+            _userThoughtsAndCrossesGame.CheckWord("Food");
+            _userThoughtsAndCrossesGame.CheckWord("Bird");
+            _userThoughtsAndCrossesGame.CheckWord("Car");
+            _userThoughtsAndCrossesGame.CheckWord("Animal");
+            _userThoughtsAndCrossesGame.CheckWord("Boat");
+            _userThoughtsAndCrossesGame.CheckWord("Plane");
+            _userThoughtsAndCrossesGame.CheckWord("Colour");
 
-            _userThoughtsAndCrosses
+            _userThoughtsAndCrossesGame
                 .WordsGrid.Count(x => x.isAccepted)
                 .Should()
                 .Be(8);
 
-            _userThoughtsAndCrosses
+            _userThoughtsAndCrossesGame
                 .WordsGrid[1]
                 .isAccepted
                 .Should()
@@ -80,16 +80,16 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         [Fact]
         public void WhenOnlyOneCategoryIsCheckedButOneEveryIsNotAcceptedThenEveryCategoryShouldBeFalseExceptThatOne()
         {
-            _userThoughtsAndCrosses.CreateGrid(_categoriesInitial);
+            _userThoughtsAndCrossesGame.CreateGrid(_categoriesInitial);
             
-            _userThoughtsAndCrosses.CheckWord("News");
+            _userThoughtsAndCrossesGame.CheckWord("News");
 
-            _userThoughtsAndCrosses
+            _userThoughtsAndCrossesGame
                 .WordsGrid.Count(x => x.isAccepted == false)
                 .Should()
                 .Be(8);
 
-            _userThoughtsAndCrosses
+            _userThoughtsAndCrossesGame
                 .WordsGrid[8]
                 .isAccepted
                 .Should()

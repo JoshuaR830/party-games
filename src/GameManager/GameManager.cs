@@ -1,9 +1,9 @@
-﻿using System;
+﻿using System.Reflection;
+using Chat.Balderdash;
 using Chat.Pixenary;
 using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
-using Newtonsoft.Json;
 
 namespace Chat.GameManager
 {
@@ -33,26 +33,38 @@ namespace Chat.GameManager
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
             ActiveGameType = game;
+            
+            // ToDo: use reflection here
+            var thing = this.GetType();
+            var gameThing = game.ToString();
+            var gameMethod2 = thing.GetMethod(gameThing);
+            var gameMethod3 = thing.GetMethods();
+            var somethingElse = thing.GetMethod("Word");
+            var gameMethod = this.GetType().GetMethod($"{game.ToString()}");
+            gameMethod?.Invoke(this, new object[] {roomId, userId});
+            var userMethod = this.GetType().GetMethod($"SetUpNew{game.ToString()}User");
+            var gameType = Rooms.RoomsList[roomId].GetType().GetProperty(game.ToString());
+            userMethod?.Invoke(this, new object[] {roomId, userId, gameType});
 
-            switch (ActiveGameType)
-            {
-                case GameType.ThoughtsAndCrosses:
-                    ThoughtsAndCrosses(roomId, userId);
-                    SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
-                    break;
-                case GameType.Word:
-                    WordGame(roomId, userId);
-                    SetUpNewWordGameUser(roomId, userId, Rooms.RoomsList[roomId].WordGame);
-                    break;
-                case GameType.Pixenary:
-                    PixenaryGame(roomId, userId);
-                    SetUpNewPixenaryUser(roomId, userId, Rooms.RoomsList[roomId].PixenaryGame);
-                    break;
-                default:
-                    ThoughtsAndCrosses(roomId, userId);
-                    SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
-                    break;
-            }
+            // switch (ActiveGameType)
+            // {
+            //     case GameType.ThoughtsAndCrosses:
+            //         ThoughtsAndCrosses(roomId, userId);
+            //         SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
+            //         break;
+            //     case GameType.Word:
+            //         Word(roomId, userId);
+            //         SetUpNewWordUser(roomId, userId, Rooms.RoomsList[roomId].Word);
+            //         break;
+            //     case GameType.Pixenary:
+            //         PixenaryGame(roomId, userId);
+            //         SetUpNewPixenaryUser(roomId, userId, Rooms.RoomsList[roomId].PixenaryGame);
+            //         break;
+            //     default:
+            //         ThoughtsAndCrosses(roomId, userId);
+            //         SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
+            //         break;
+            // }
         }
         
         public void ResetThoughtsAndCrosses(string roomId, GameThoughtsAndCrosses game)
@@ -61,20 +73,20 @@ namespace Chat.GameManager
             Rooms.RoomsList[roomId].ThoughtsAndCrosses.CalculateTopics();
         }
 
-        public void ResetThoughtsAndCrosssesForUser(string roomId, string userId, GameThoughtsAndCrosses game)
+        public void ResetThoughtsAndCrossesForUser(string roomId, string userId, GameThoughtsAndCrosses game)
         {
             var topics = Rooms.RoomsList[roomId].ThoughtsAndCrosses.Topics.ChosenTopics;
 
-            Rooms.RoomsList[roomId].Users[userId].ThoughtsAndCrosses.CreateGrid(topics);
-            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleStringHelper);
+            Rooms.RoomsList[roomId].Users[userId].ThoughtsAndCrossesGame.CreateGrid(topics);
+            var userThoughtsAndCrosses = new UserThoughtsAndCrossesGame(_scoreHelper, _shuffleStringHelper);
             userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
             
-            Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
+            Rooms.RoomsList[roomId].Users[userId].SetUpGame(userThoughtsAndCrosses);
         }
 
         public void ResetWordGame(string roomId)
         {
-            Rooms.RoomsList[roomId].WordGame.GetLetters();
+            Rooms.RoomsList[roomId].Word.GetLetters();
         }
         
         public void ResetWordGameForUser(string roomId, string userId)
@@ -85,17 +97,17 @@ namespace Chat.GameManager
         public void SetupNewThoughtsAndCrossesUser(string roomId, string userId, GameThoughtsAndCrosses game)
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
-            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleStringHelper);
+            var userThoughtsAndCrosses = new UserThoughtsAndCrossesGame(_scoreHelper, _shuffleStringHelper);
             userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
             
-            Rooms.RoomsList[roomId].Users[userId].SetUserThoughtsAndCrosses(userThoughtsAndCrosses);
+            Rooms.RoomsList[roomId].Users[userId].SetUpGame(userThoughtsAndCrosses);
         }
 
-        public void SetUpNewWordGameUser(string roomId, string userId, GameWordGame game)
+        public void SetUpNewWordUser(string roomId, string userId, GameWordGame game)
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
             var userWordGame = new UserWordGame(_wordService, _filenameHelper);
-            Rooms.RoomsList[roomId].Users[userId].SetUserWordGame(userWordGame);
+            Rooms.RoomsList[roomId].Users[userId].SetUpGame(userWordGame);
         }
 
         public void SetUpNewPixenaryUser(string roomId, string userId, PixenaryManager game)
@@ -106,19 +118,31 @@ namespace Chat.GameManager
             if(userPixenaryGame == null)
                 userPixenaryGame = new UserPixenaryGame();
             
-            Rooms.RoomsList[roomId].Users[userId].SetUserPixenaryGame(userPixenaryGame);
+            Rooms.RoomsList[roomId].Users[userId].SetUpGame(userPixenaryGame);
         }
 
-        void ThoughtsAndCrosses(string roomId, string userId)
+        public void SetUpNewBalderdashUser(string roomId, string userId, BalderdashManager game)
+        {
+            _joinRoomHelper.CreateRoom(userId, roomId);
+
+            var userBalderdashGame = Rooms.RoomsList[roomId].Users[userId].BalderdashGame;
+
+            if (userBalderdashGame == null)
+                userBalderdashGame = new UserBalderdashGame();
+            
+            Rooms.RoomsList[roomId].Users[userId].SetUpGame(userBalderdashGame);
+        }
+
+        public void ThoughtsAndCrosses(string roomId, string userId)
         {
             var gameThoughtsAndCrosses = new GameThoughtsAndCrosses(_shuffleStringHelper);
             gameThoughtsAndCrosses.CalculateTopics();
             gameThoughtsAndCrosses.SetLetter();
             
-            Rooms.RoomsList[roomId].SetThoughtsAndCrosses(gameThoughtsAndCrosses);
+            Rooms.RoomsList[roomId].SetThoughtsAndCrossesGame(gameThoughtsAndCrosses);
         }
         
-        void WordGame(string roomId, string userId)
+        public void Word(string roomId, string userId)
         {
             var wordGame = new GameWordGame();
             wordGame.GetLetters();
@@ -126,9 +150,9 @@ namespace Chat.GameManager
             Rooms.RoomsList[roomId].SetWordGame(wordGame);
         }
 
-        void PixenaryGame(string roomId, string userId)
+        public void Pixenary(string roomId, string userId)
         {
-            var pixenaryGame = Rooms.RoomsList[roomId].PixenaryGame;
+            var pixenaryGame = Rooms.RoomsList[roomId].Pixenary;
             
             if(pixenaryGame == null)
                 pixenaryGame = new PixenaryManager(_shuffleStringHelper, _shuffleWordDataHelper, _wordCategoryHelper, roomId);
@@ -137,6 +161,16 @@ namespace Chat.GameManager
             pixenaryGame.CreateNewList(15);
             
             Rooms.RoomsList[roomId].SetPixenaryGame(pixenaryGame);
+        }
+
+        public void Balderdash(string roomId, string userId)
+        {
+            var balderdashGame = Rooms.RoomsList[roomId].Balderdash;
+
+            if (balderdashGame == null)
+                balderdashGame = new BalderdashManager();
+
+            Rooms.RoomsList[roomId].SetBalderdashGame(balderdashGame);
         }
     }
 }

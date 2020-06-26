@@ -1,4 +1,6 @@
-﻿using Chat.Pixenary;
+﻿using System.Reflection;
+using Chat.Balderdash;
+using Chat.Pixenary;
 
 namespace Chat.RoomManager
 {
@@ -7,9 +9,10 @@ namespace Chat.RoomManager
         public string Name { get; }
         public int Score { get; private set; }
 
-        public UserThoughtsAndCrosses ThoughtsAndCrosses { get; private set; }
+        public UserThoughtsAndCrossesGame ThoughtsAndCrossesGame { get; private set; }
         public UserWordGame WordGame { get; private set; }
         public UserPixenaryGame PixenaryGame { get; private set; }
+        public UserBalderdashGame BalderdashGame { get; private set; }
 
         public User(string name)
         {
@@ -22,19 +25,12 @@ namespace Chat.RoomManager
             Score = score;
         }
 
-        public void SetUserThoughtsAndCrosses(UserThoughtsAndCrosses game)
+        public void SetUpGame<T>(T game)
         {
-            ThoughtsAndCrosses = game;
-        }
-        
-        public void SetUserWordGame(UserWordGame game)
-        {
-            WordGame = game;
-        }
-        
-        public void SetUserPixenaryGame(UserPixenaryGame game)
-        {
-            PixenaryGame = game;
+            var type = game.GetType().Name;
+            type = type.Replace("User", "");
+            var propertyInfo = GetType().GetProperty(type);
+            propertyInfo?.SetValue(this, game);
         }
     }
 }

@@ -117,19 +117,19 @@ namespace Chat.Hubs
             {
                 Console.WriteLine("New room 2");
                 _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
-                Rooms.RoomsList[roomId].WordGame.GetLetters();
+                Rooms.RoomsList[roomId].Word.GetLetters();
                 Console.WriteLine(name);
             }
 
             Console.WriteLine("Word game 1");
-            if (Rooms.RoomsList[roomId].WordGame == null)
+            if (Rooms.RoomsList[roomId].Word == null)
             {
                 Console.WriteLine("Word game 2");
                 _gameManager.SetupNewGame(roomId, name, (GameType) gameId);
-                if (Rooms.RoomsList[roomId].WordGame == null)
+                if (Rooms.RoomsList[roomId].Word == null)
                     return;
                 
-                Rooms.RoomsList[roomId].WordGame.GetLetters();
+                Rooms.RoomsList[roomId].Word.GetLetters();
             }
         }
 
@@ -138,15 +138,15 @@ namespace Chat.Hubs
             Console.WriteLine("New user");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
-                var game = Rooms.RoomsList[roomId].WordGame;
-                _gameManager.SetUpNewWordGameUser(roomId, name, game);
+                var game = Rooms.RoomsList[roomId].Word;
+                _gameManager.SetUpNewWordUser(roomId, name, game);
                 Console.WriteLine(name);
             }
 
             if (Rooms.RoomsList[roomId].Users[name].WordGame == null)
             {
-                var game = Rooms.RoomsList[roomId].WordGame;
-                _gameManager.SetUpNewWordGameUser(roomId, name, game);
+                var game = Rooms.RoomsList[roomId].Word;
+                _gameManager.SetUpNewWordUser(roomId, name, game);
             }
         }
         
@@ -164,7 +164,7 @@ namespace Chat.Hubs
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
                 Console.WriteLine("Get user data");
-                var letters = Rooms.RoomsList[roomId].WordGame.Letters;
+                var letters = Rooms.RoomsList[roomId].Word.Letters;
                 var words = Rooms.RoomsList[roomId].Users[user.Value.Name].WordGame.WordList.Values;
                 var serializedLetters = JsonConvert.SerializeObject(letters);
                 var serializedWords = JsonConvert.SerializeObject(words);
@@ -175,7 +175,7 @@ namespace Chat.Hubs
 
         public async Task ResetGame(string roomId, string word, int gameId)
         {
-            var game = Rooms.RoomsList[roomId].WordGame;
+            var game = Rooms.RoomsList[roomId].Word;
             _gameManager.ResetWordGame(roomId);
             
             foreach (var user in Rooms.RoomsList[roomId].Users)

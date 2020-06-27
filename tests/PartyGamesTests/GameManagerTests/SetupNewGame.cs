@@ -74,5 +74,12 @@ namespace PartyGamesTests.GameManagerTests
             Rooms.RoomsList[roomId].Pixenary.Should().NotBeNull();
         }
         
+        [Fact]
+        public void WhenTheTypeIsBalderdashThenBaderdashGameShouldNotBeNull()
+        {
+            _gameManager.SetupNewGame(roomId, userId, GameType.Balderdash);
+            Rooms.RoomsList[roomId].Balderdash.Should().NotBeNull();
+        }
+        
     }
 }

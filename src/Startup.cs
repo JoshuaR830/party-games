@@ -1,3 +1,4 @@
+using Chat.Balderdash;
 using Chat.GameManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,7 +44,9 @@ namespace Chat
             services.AddSingleton<IJoinRoomHelper, JoinRoomHelper>();
             services.AddSingleton<IShuffleHelper<string>, ShuffleHelper<string>>();
             services.AddSingleton<IShuffleHelper<WordData>, ShuffleHelper<WordData>>();
+            services.AddSingleton<IShuffleHelper<BalderdashHub.GuessMade>, ShuffleHelper<BalderdashHub.GuessMade>>();
             services.AddSingleton<IWordCategoryHelper, WordCategoryHelper>();
+            services.AddSingleton<IBalderdashScoreCalculator, BalderdashScoreCalculator>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

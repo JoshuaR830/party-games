@@ -4,6 +4,7 @@
     {
         ThoughtsAndCrosses = 0,
         Word = 1,
-        Pixenary = 2
+        Pixenary = 2,
+        Balderdash = 3
     }
 }

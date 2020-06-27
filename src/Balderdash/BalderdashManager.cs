@@ -9,6 +9,7 @@ namespace Chat.Balderdash
         readonly IShuffleHelper<string> _shuffleHelper;
         public List<string> PlayerOrder { get; private set; }
         public string SelectedPlayer { get; private set; }
+        public bool IsDasherGuessed { get; private set; }
 
         public BalderdashManager(IShuffleHelper<string> shuffleHelper)
         {
@@ -41,6 +42,11 @@ namespace Chat.Balderdash
             SelectedPlayer = PlayerOrder[_playerIndex];
 
             _playerIndex ++;
+        }
+
+        public void SetIsDasherGuessed(bool isGuessed)
+        {
+            IsDasherGuessed = isGuessed;
         }
     }
 }

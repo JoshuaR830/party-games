@@ -168,7 +168,7 @@ namespace Chat.GameManager
             var balderdashGame = Rooms.RoomsList[roomId].Balderdash;
 
             if (balderdashGame == null)
-                balderdashGame = new BalderdashManager();
+                balderdashGame = new BalderdashManager(_shuffleStringHelper);
 
             Rooms.RoomsList[roomId].SetBalderdashGame(balderdashGame);
         }

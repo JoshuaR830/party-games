@@ -44,34 +44,42 @@ namespace Chat.Hubs
             // Todo: This is the wrong game type  
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
-                var game = Rooms.RoomsList[roomId].Balderdash;
-                _gameManager.SetUpNewBalderdashUser(roomId, name, game);
-                Rooms.RoomsList[roomId].Balderdash.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Select(x => x.Key));
-                Console.WriteLine(name);
+                SetUpUser(roomId, name);
             }
             
             // ToDo: add the game to the server and set up anything that needs to be set
             // ToDo: Trigger off the back of login
         }
 
-        public async Task SetUpUser()
+        public void SetUpUser(string roomId, string userId)
         {
             // ToDo: connect user name to server
             // ToDO: connect user to group server for group updates
             
             // ToDo: add user to the game list
+            var game = Rooms.RoomsList[roomId].Balderdash;
+            _gameManager.SetUpNewBalderdashUser(roomId, userId, game);
+            Rooms.RoomsList[roomId].Balderdash.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Select(x => x.Key));
+            Console.WriteLine(userId);
         }
 
         public async Task BalderdashScores(string roomId, string playerWhoGuessed, string playerWhoProposed)
         {
-            // ToDo: need to take who is giving answer and who they chose
-            // ToDo: server needs to work out the scores
+            var room = Rooms.RoomsList[roomId];
+            var users = room.Users;
+            var balderdash = room.Balderdash;
+
+            users[playerWhoGuessed].BalderdashGame.MadeGuessThisRound();
+            
             _balderdashScoreCalculator.CalculateGuesser(roomId, playerWhoGuessed, playerWhoProposed);
             _balderdashScoreCalculator.CalculateProposer(roomId, playerWhoGuessed, playerWhoProposed);
 
-            var users = Rooms.RoomsList[roomId].Users;
-            // users[playerWhoGuessed].BalderdashGame.SetScore(guesserScore);
-            // users[playerWhoProposed].BalderdashGame.SetScore(proposerScore);
+            var shouldDasherGetPoint = users
+                .Where(x => x.Key != balderdash.SelectedPlayer)
+                .All(x => x.Value.BalderdashGame.HasMadeGuessThisRound);
+            
+            if (shouldDasherGetPoint)
+                _balderdashScoreCalculator.CalculateDasherScore(roomId, Rooms.RoomsList[roomId].Balderdash.SelectedPlayer);
         }
 
         public async Task BalderdashDiscardSimilar()
@@ -83,10 +91,22 @@ namespace Chat.Hubs
             // ToDo: update score if user gets theirs discarded
         }
 
-        public async Task ResetGame()
+        public async Task ResetGame(string roomId)
         {
-            // ToDo: keep scores, keep player order but update dasher and clear screens
-            // ToDo: reset teh discarded number
+            var room = Rooms.RoomsList[roomId];
+            var users = room.Users;
+
+            foreach (var user in users)
+            {
+                if (user.Value.BalderdashGame == null)
+                    SetUpUser(roomId, user.Key);
+
+                user.Value.BalderdashGame?.Reset();
+
+                room.Balderdash.Reset();
+            }
+            
+            // ToDo: synchronise deletion by sending update to all devices
         }
 
         public async Task PassToDasher(string roomId, string name)

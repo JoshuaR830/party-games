@@ -48,5 +48,11 @@ namespace Chat.Balderdash
         {
             IsDasherGuessed = isGuessed;
         }
+
+        public void Reset()
+        {
+            IsDasherGuessed = false;
+            SelectPlayer();
+        }
     }
 }

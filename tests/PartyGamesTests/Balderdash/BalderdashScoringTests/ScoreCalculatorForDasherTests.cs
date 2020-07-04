@@ -48,7 +48,7 @@ namespace PartyGamesTests.Balderdash.BalderdashScoringTests
             Rooms.RoomsList["ScoreCalculator"].Balderdash.SetIsDasherGuessed(false);
             _scoreCalculator.CalculateDasherScore("ScoreCalculator", _dasher);
 
-            Rooms.RoomsList["ScoreCalculator"].Users[_dasher].BalderdashGame.Score.Should().Be(1);
+            Rooms.RoomsList["ScoreCalculator"].Users[_dasher].BalderdashGame.Score.Should().Be(2);
         }
 
         [Fact]

@@ -22,7 +22,7 @@ namespace Chat.Balderdash
         public void CalculateDasherScore(string roomId, string dasher)
         {
             if (!Rooms.RoomsList[roomId].Balderdash.IsDasherGuessed)
-                Rooms.RoomsList[roomId].Users[dasher].BalderdashGame.SetScore(1);
+                Rooms.RoomsList[roomId].Users[dasher].BalderdashGame.SetScore(2);
             // ToDo: If everyone has guessed (except dasher)
             // ToDo: has anyone guessed dasher?
             // ToDo: Have a bool for is dasher guessed - when scores submitted if false then give dasher a point

@@ -37,7 +37,7 @@ namespace PartyGamesTests.GameManagerTests
             wordCategoryHelper = Substitute.For<IWordCategoryHelper>();
 
             this.userId = "Joshua";
-            this.roomId = "GroupOfJoshua";
+            this.roomId = "SomeCrazyGroup";
             
             _joinRoomHelper.CreateRoom(userId, roomId);
 

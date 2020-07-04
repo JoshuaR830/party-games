@@ -318,7 +318,7 @@ $scoreButton.addEventListener('click', function() {
     $scoreNamesContainer.classList.remove('hidden');
     $scoreButton.classList.add('hidden');
     document.querySelector('.js-tool-bar').classList.add("hidden");
-    connection.invoke('DisplayScores', connectionName, name);
+    connection.invoke('DisplayScores', connectionName, name, 2);
 });
 
 connection.on("ManuallyIncrementedScore", function(score) {

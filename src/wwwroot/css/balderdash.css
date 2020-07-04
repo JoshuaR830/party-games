@@ -80,3 +80,11 @@
     border-color: rgba(85, 237, 187, 0.25);
     color: #4e555b;
 }
+
+.extra-info
+{
+    padding-top: 16px;
+    color: #ffffff;
+    text-align: center;
+    font-size: 24px;
+}

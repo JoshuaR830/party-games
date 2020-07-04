@@ -26,6 +26,8 @@ namespace Chat.Hubs
 
         public async Task StartUp(string roomId, string name, int gameId)
         {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, name);
             Console.WriteLine("Hi");
             Console.WriteLine(roomId);
             Console.WriteLine(name);
@@ -46,7 +48,10 @@ namespace Chat.Hubs
             {
                 SetUpUser(roomId, name);
             }
-            
+
+            Rooms.RoomsList[roomId].Balderdash.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Keys);
+            Rooms.RoomsList[roomId].Balderdash.Reset();
+
             // ToDo: add the game to the server and set up anything that needs to be set
             // ToDo: Trigger off the back of login
         }
@@ -61,6 +66,14 @@ namespace Chat.Hubs
             _gameManager.SetUpNewBalderdashUser(roomId, userId, game);
             Rooms.RoomsList[roomId].Balderdash.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Select(x => x.Key));
             Console.WriteLine(userId);
+
+            Rooms.RoomsList[roomId].Balderdash.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Keys);
+            Rooms.RoomsList[roomId].Balderdash.SetPlayerOrder();
+        }
+
+        public async Task BeginBalderdash(string roomId)
+        {
+            await ResetGame(roomId);
         }
 
         public async Task BalderdashScores(string roomId, string playerWhoGuessed, string playerWhoProposed)
@@ -103,31 +116,62 @@ namespace Chat.Hubs
 
                 user.Value.BalderdashGame?.Reset();
 
-                room.Balderdash.Reset();
             }
+            
+            room.Balderdash.Reset();
+            await Clients.Group(roomId).SendAsync("Reset");
+
+            var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
+            await Clients.Group(roomId).SendAsync("DasherSelected", dasher);
             
             // ToDo: synchronise deletion by sending update to all devices
         }
-
-        public async Task PassToDasher(string roomId, string name)
+        
+        public async Task DisplayBalderdashScores(string roomId, string name)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            await Groups.AddToGroupAsync(Context.ConnectionId, name);
+            var users = Rooms.RoomsList[roomId].Users;
+            var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
+            var names = users.Select(x => x.Key).Where(y => y != dasher);
+            await Clients.Group(roomId).SendAsync("DisplayBalderdashScores", names);
+        }
+
+        public async Task GetScoresForAllUsers(string roomId)
+        {
+            var users = Rooms.RoomsList[roomId].Users;
+
+            foreach (var user in users)
+            {
+                var score = user.Value.BalderdashGame.Score;
+                await Clients.Group(user.Key).SendAsync("UpdateUserScore", score);
+            }
+        }
+
+        public async Task PassToDasher(string roomId, string name, string guess)
+        {
+            Rooms.RoomsList[roomId].Users[name].BalderdashGame.SetGuess(guess);
 
             
             // ToDo: remove fake setup
-            FakeSetup(roomId);
+            // FakeSetup(roomId);
             
             
             var guesses = new List<GuessMade>();
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
-                guesses.Add(new GuessMade(user.Value.BalderdashGame.Guess, user.Key));
+                guesses.Add(new GuessMade(user.Key, user.Value.BalderdashGame.Guess));
             }
 
             guesses = _shuffleGameOrder.ShuffleList(guesses);
 
-            await Clients.Group(name).SendAsync("ReceivedGuesses", guesses);
+            var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
+            await Clients.Group(name).SendAsync("ReceivedGuess", dasher);
+                
+            if(Rooms.RoomsList[roomId].Users.All(x => x.Value.BalderdashGame.HasMadeGuessThisRound))
+                return;
+
+            var guessesMade = Rooms.RoomsList[roomId].Users.Select(x => new GuessMade(x.Key, x.Value.BalderdashGame.Guess));
+            Console.WriteLine(JsonConvert.SerializeObject(guessesMade));
+            await Clients.Group(dasher).SendAsync("RevealCardsToDasher", guessesMade);
             
             
 

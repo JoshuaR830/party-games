@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Chat.Balderdash;
+﻿using Chat.Balderdash;
 using Chat.Pixenary;
 using Chat.RoomManager;
 using Chat.WordGame.LocalDictionaryHelpers;
@@ -34,17 +33,13 @@ namespace Chat.GameManager
             _joinRoomHelper.CreateRoom(userId, roomId);
             ActiveGameType = game;
             
-            // ToDo: use reflection here
-            var thing = this.GetType();
-            var gameThing = game.ToString();
-            var gameMethod2 = thing.GetMethod(gameThing);
-            var gameMethod3 = thing.GetMethods();
-            var somethingElse = thing.GetMethod("Word");
-            var gameMethod = this.GetType().GetMethod($"{game.ToString()}");
+            var gameMethod = GetType().GetMethod($"{game.ToString()}");
             gameMethod?.Invoke(this, new object[] {roomId, userId});
-            var userMethod = this.GetType().GetMethod($"SetUpNew{game.ToString()}User");
+            
+            var userMethod = GetType().GetMethod($"SetUpNew{game.ToString()}User");
             var gameType = Rooms.RoomsList[roomId].GetType().GetProperty(game.ToString());
-            userMethod?.Invoke(this, new object[] {roomId, userId, gameType});
+            var gameValue = gameType?.GetValue(Rooms.RoomsList[roomId]);
+            userMethod?.Invoke(this, new object[] {roomId, userId, gameValue});
 
             // switch (ActiveGameType)
             // {

@@ -290,11 +290,10 @@ namespace Chat.Hubs
             
         }
 
-        public async Task DisplayScores(string roomId, string name)
+        public async Task DisplayScores(string roomId, string name, int gameId)
         {
             var users = Rooms.RoomsList[roomId].Users;
             var names = users.Select(x => x.Key).Where(y => y != name);
-            var gameId = 2;
             await Clients.Caller.SendAsync("DisplayScores", names, gameId);
         }
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using Chat.Balderdash;
 using Chat.RoomManager;
+using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -32,6 +33,10 @@ namespace PartyGamesTests.Balderdash.BalderdashScoringTests
             Rooms.RoomsList["ScoreCalculator"].Balderdash.SetPlayerOrder();
             Rooms.RoomsList["ScoreCalculator"].Balderdash.SelectPlayer();
             
+            Rooms.RoomsList["ScoreCalculator"].Users["Bob"].SetUpGame(new UserBalderdashGame());
+            Rooms.RoomsList["ScoreCalculator"].Users["Fred"].SetUpGame(new UserBalderdashGame());
+            Rooms.RoomsList["ScoreCalculator"].Users["John"].SetUpGame(new UserBalderdashGame());
+            
             var players = Rooms.RoomsList["ScoreCalculator"].Balderdash.PlayerOrder;
             _dasher = Rooms.RoomsList["ScoreCalculator"].Balderdash.SelectedPlayer;
             _notDashers = players.Where(x => x != _dasher).ToList();
@@ -42,13 +47,17 @@ namespace PartyGamesTests.Balderdash.BalderdashScoringTests
         {
             Rooms.RoomsList["ScoreCalculator"].Balderdash.SetIsDasherGuessed(false);
             _scoreCalculator.CalculateDasherScore("ScoreCalculator", _dasher);
+
+            Rooms.RoomsList["ScoreCalculator"].Users[_dasher].BalderdashGame.Score.Should().Be(1);
         }
 
         [Fact]
         public void IfDasherIsGuessedThenDasherShouldNotGetAScore()
         {
             Rooms.RoomsList["ScoreCalculator"].Balderdash.SetIsDasherGuessed(true);
-            _scoreCalculator.CalculateDasherScore("ScoreCalculator", _dasher);   
+            _scoreCalculator.CalculateDasherScore("ScoreCalculator", _dasher);
+            
+            Rooms.RoomsList["ScoreCalculator"].Users[_dasher].BalderdashGame.Score.Should().Be(0);
         }
     }
 }

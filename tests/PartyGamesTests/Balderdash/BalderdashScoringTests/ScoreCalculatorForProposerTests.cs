@@ -32,6 +32,10 @@ namespace PartyGamesTests.Balderdash.BalderdashScoringTests
             Rooms.RoomsList["ScoreCalculator"].Balderdash.SetPlayerOrder();
             Rooms.RoomsList["ScoreCalculator"].Balderdash.SelectPlayer();
             
+            Rooms.RoomsList["ScoreCalculator"].Users["Bob"].SetUpGame(new UserBalderdashGame());
+            Rooms.RoomsList["ScoreCalculator"].Users["Fred"].SetUpGame(new UserBalderdashGame());
+            Rooms.RoomsList["ScoreCalculator"].Users["John"].SetUpGame(new UserBalderdashGame());
+            
             var players = Rooms.RoomsList["ScoreCalculator"].Balderdash.PlayerOrder;
             _dasher = Rooms.RoomsList["ScoreCalculator"].Balderdash.SelectedPlayer;
             _notDashers = players.Where(x => x != _dasher).ToList();
@@ -41,14 +45,14 @@ namespace PartyGamesTests.Balderdash.BalderdashScoringTests
         public void WhenAGuessIsMadeForAFalseProposer()
         {
             _scoreCalculator.CalculateProposer("ScoreCalculator", _notDashers[0], _notDashers[1]);
-            Rooms.RoomsList["ScoreCalculator"].Users[_notDashers[1]].Score.Should().Be(1);
+            Rooms.RoomsList["ScoreCalculator"].Users[_notDashers[1]].BalderdashGame.Score.Should().Be(1);
         }
 
         [Fact]
         public void WhenAGuessIsMadeForTheDasher()
         {
             _scoreCalculator.CalculateProposer("ScoreCalculator", _notDashers[0], _dasher);
-            Rooms.RoomsList["ScoreCalculator"].Users[_dasher].Score.Should().Be(0);
+            Rooms.RoomsList["ScoreCalculator"].Users[_dasher].BalderdashGame.Score.Should().Be(0);
         }
     }
 }

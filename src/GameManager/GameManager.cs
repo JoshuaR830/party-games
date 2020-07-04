@@ -135,6 +135,7 @@ namespace Chat.GameManager
             gameThoughtsAndCrosses.SetLetter();
             
             Rooms.RoomsList[roomId].SetThoughtsAndCrossesGame(gameThoughtsAndCrosses);
+            SetupNewThoughtsAndCrossesUser(roomId, userId, Rooms.RoomsList[roomId].ThoughtsAndCrosses);
         }
         
         public void Word(string roomId, string userId)

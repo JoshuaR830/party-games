@@ -75,7 +75,7 @@ namespace PartyGamesTests.GameManagerTests
         }
         
         [Fact]
-        public void WhenTheTypeIsBalderdashThenBaderdashGameShouldNotBeNull()
+        public void WhenTheTypeIsBalderdashThenBalderdashGameShouldNotBeNull()
         {
             _gameManager.SetupNewGame(roomId, userId, GameType.Balderdash);
             Rooms.RoomsList[roomId].Balderdash.Should().NotBeNull();

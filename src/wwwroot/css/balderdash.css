@@ -1,3 +1,9 @@
+.balderdash-background
+{
+    background: rgb(118,9,121);
+    background: linear-gradient(180deg, rgba(118,9,121,1) 0%, rgb(255, 98, 0) 100%);
+}
+
 .balderdash-card
 {
     color: white;

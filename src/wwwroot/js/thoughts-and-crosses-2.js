@@ -3,6 +3,9 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 var connectionName = "GroupOfJoshua";
 var list = Array.from(Array(3), () => new Array(3));
 
+var $loggedInUserContainer = document.querySelector('.js-logged-in-container');
+var $loggedInUserItemsContainer = document.querySelector('.js-logged-in-items-container');
+
 document.getElementById("sendButton").disabled = true;
 
 window.addEventListener('load', function() {
@@ -21,6 +24,7 @@ connection.on("CompletedScores", function() {
 connection.on('StartNewRound', function() {
     gameRoundNumber ++;
     document.querySelector('.js-word-continue').classList.add('hidden');
+    $loggedInUserContainer.classList.add('hidden');
     document.getElementById('startGame').classList.add('hidden');
     document.getElementById('playAgainFab').classList.add('hidden');
     document.getElementById("table").classList.remove('hidden');
@@ -223,3 +227,17 @@ for (var x = 0; x < 3; x++) {
         counter ++;
     }
 }
+
+connection.on("LoggedInUsers", function(users) {
+    $loggedInUserItemsContainer.innerHTML = "";
+
+    users.forEach(function(user) {
+        let loggedInUserItem  = document.createElement('div');
+        loggedInUserItem.className = 'logged-in-item';
+        loggedInUserItem.textContent = user;
+        $loggedInUserItemsContainer.appendChild(loggedInUserItem);
+    });
+
+    console.log(users);
+    console.log('logged-in');
+});

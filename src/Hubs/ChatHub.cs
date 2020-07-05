@@ -152,6 +152,9 @@ namespace Chat.Hubs
                 Rooms.RoomsList[roomId].ThoughtsAndCrosses.CalculateTopics();
                 Rooms.RoomsList[roomId].ThoughtsAndCrosses.SetLetter();
             }
+            
+            var loggedInUsers = Rooms.RoomsList[roomId].Users.Select(x => x.Key).ToList().OrderBy(x => x); 
+            await Clients.Group(roomId).SendAsync("LoggedInUsers", loggedInUsers);
         }
 
         public void SetupNewUser(string roomId, string name)

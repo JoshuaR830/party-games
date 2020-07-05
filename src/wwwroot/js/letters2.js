@@ -14,6 +14,9 @@ var wordToDefine = document.querySelector('.js-word-to-define');
 var letterInputRow = document.querySelector('.js-letter-input-row');
 var definitionSubmitButton = document.querySelector('.js-submit-new-definition');
 
+var $loggedInUserContainer = document.querySelector('.js-logged-in-container');
+var $loggedInUserItemsContainer = document.querySelector('.js-logged-in-items-container');
+
 var connectionName = "GroupOfJoshua";
 
 window.addEventListener('load', function(){
@@ -436,4 +439,18 @@ document.querySelector('#completeRoundButton').addEventListener('click', functio
 
 document.querySelectorAll('.word-list-item').forEach(function($el) {
     $el.addEventListener()
-})
+});
+
+lettersConnection.on("LoggedInUsers", function(users) {
+    $loggedInUserItemsContainer.innerHTML = "";
+
+    users.forEach(function(user) {
+        let loggedInUserItem  = document.createElement('div');
+        loggedInUserItem.className = 'logged-in-item';
+        loggedInUserItem.textContent = user;
+        $loggedInUserItemsContainer.appendChild(loggedInUserItem);
+    });
+
+    console.log(users);
+    console.log('logged-in');
+});

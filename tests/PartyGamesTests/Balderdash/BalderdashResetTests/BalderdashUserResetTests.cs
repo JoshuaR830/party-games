@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Chat.Balderdash;
 using Chat.RoomManager;
 using FluentAssertions;
@@ -13,27 +14,26 @@ namespace PartyGamesTests.Balderdash.BalderdashResetTests
 
         public BalderdashUserResetTests()
         {
+            var name = $"Joshua";
             var shuffleHelper = Substitute.For<IShuffleHelper<string>>();
-            shuffleHelper.ShuffleList(Arg.Any<List<string>>()).Returns(new List<string> {"Joshua"});
-            
-            Rooms.RoomsList.Clear();
+            shuffleHelper.ShuffleList(Arg.Any<List<string>>()).Returns(new List<string> {name});
             
             var room = new Room();
             var game = new BalderdashManager(shuffleHelper);
             room.SetBalderdashGame(game);
             Rooms.RoomsList.TryAdd("UserReset", room);
 
-            room.Users.TryAdd("Joshua", new User("Joshua"));
+            room.Users.TryAdd(name, new User(name));
             var userGame = new UserBalderdashGame();
-            Rooms.RoomsList["UserReset"].Users["Joshua"].SetUpGame(userGame);
+            Rooms.RoomsList["UserReset"].Users[name].SetUpGame(userGame);
 
-            _userBalderdash = Rooms.RoomsList["UserReset"].Users["Joshua"].BalderdashGame;
+            _userBalderdash = Rooms.RoomsList["UserReset"].Users[name].BalderdashGame;
                 
             _userBalderdash.SetGuess("Some guess has been made");
             _userBalderdash.SetScore(10);
             _userBalderdash.MadeGuessThisRound();
             
-            Rooms.RoomsList["UserReset"].Users["Joshua"].BalderdashGame.Reset();
+            Rooms.RoomsList["UserReset"].Users[name].BalderdashGame.Reset();
         }
 
         [Fact]

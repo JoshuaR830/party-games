@@ -7,58 +7,58 @@ using Xunit;
 
 namespace PartyGamesTests.Balderdash.BalderdashResetTests
 {
-    public class BalderdashGameResetTests
+    public class BalderdashGamePlayerResetTests
     {
         private readonly BalderdashManager _balderdashGame;
         private readonly IShuffleHelper<string> _shuffleHelper;
+        private readonly List<string> _listOfNames;
 
-        public BalderdashGameResetTests()
+        public BalderdashGamePlayerResetTests()
         {
+            this._listOfNames = new List<string> {"Bill", "Bob", "Fred"};
             _shuffleHelper = Substitute.For<IShuffleHelper<string>>();
-            _shuffleHelper.ShuffleList(Arg.Any<List<string>>()).Returns(new List<string> {"Bill", "Bob", "Fred"});
-            
-            Rooms.RoomsList.Clear();
+            _shuffleHelper.ShuffleList(Arg.Any<List<string>>()).Returns(new List<string> {this._listOfNames[0], this._listOfNames[1], this._listOfNames[2]});
             
             var room = new Room();
             var game = new BalderdashManager(_shuffleHelper);
             room.SetBalderdashGame(game);
-            Rooms.RoomsList.TryAdd("GameReset", room);
+            Rooms.RoomsList.TryAdd("GamePlayerReset", room);
 
-            _balderdashGame = Rooms.RoomsList["GameReset"].Balderdash;
+            _balderdashGame = Rooms.RoomsList["GamePlayerReset"].Balderdash;
             
-            room.Users.TryAdd("Bill", new User("Bill"));
-            room.Users.TryAdd("Bob", new User("Bob"));
-            room.Users.TryAdd("Fred", new User("Fred"));
+            room.Users.TryAdd(this._listOfNames[0], new User(this._listOfNames[0]));
+            room.Users.TryAdd(this._listOfNames[1], new User(this._listOfNames[1]));
+            room.Users.TryAdd(this._listOfNames[2], new User(this._listOfNames[2]));
             
             var userGame = new UserBalderdashGame();
-            Rooms.RoomsList["GameReset"].Users["Bill"].SetUpGame(userGame);
-            Rooms.RoomsList["GameReset"].Users["Bob"].SetUpGame(userGame);
-            Rooms.RoomsList["GameReset"].Users["Fred"].SetUpGame(userGame);
+            Rooms.RoomsList["GamePlayerReset"].Users[this._listOfNames[0]].SetUpGame(userGame);
+            Rooms.RoomsList["GamePlayerReset"].Users[this._listOfNames[1]].SetUpGame(userGame);
+            Rooms.RoomsList["GamePlayerReset"].Users[this._listOfNames[2]].SetUpGame(userGame);
             
             _balderdashGame.SetPlayerOrder();
             _balderdashGame.SelectPlayer();
             _balderdashGame.SetIsDasherGuessed(true);
 
             _shuffleHelper.ClearReceivedCalls();
-            Rooms.RoomsList["GameReset"].Balderdash.Reset();
+            Rooms.RoomsList["GamePlayerReset"].Balderdash.Reset();
         }
         
         [Fact]
-        public void AfterGameResetThenPlayersShouldNotBeShuffled()
+        public void AfterGamePlayerResetThenPlayersShouldNotBeShuffled()
         {
             _shuffleHelper.DidNotReceive().ShuffleList(Arg.Any<List<string>>());
         }
 
         [Fact]
-        public void AfterGameResetThenIsDasherSetShouldBeFalse()
+        public void AfterGamePlayerResetThenIsDasherSetShouldBeFalse()
         {
             _balderdashGame.IsDasherGuessed.Should().BeFalse();
         }
 
         [Fact]
-        public void AfterGameResetThenADifferentPlayerShouldBeChosen()
+        public void AfterGamePlayerResetThenADifferentPlayerShouldBeChosen()
         {
-            _balderdashGame.SelectedPlayer.Should().Be("Bob");
+            _balderdashGame.SelectedPlayer.Should().Be(_listOfNames[1]);
         }
     }
 }

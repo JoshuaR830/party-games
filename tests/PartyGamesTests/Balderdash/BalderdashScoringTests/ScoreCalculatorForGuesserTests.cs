@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Chat.Balderdash;
 using Chat.RoomManager;
@@ -16,43 +17,44 @@ namespace PartyGamesTests.Balderdash.BalderdashScoringTests
 
         public ScoreCalculatorForGuesserTests()
         {
+            var listOfNames = new List<string> {"Bill", "Bob", "Fred"};
+
             _scoreCalculator = new BalderdashScoreCalculator();
             var shuffleHelper = Substitute.For<IShuffleHelper<string>>();
-            shuffleHelper.ShuffleList(Arg.Any<List<string>>()).Returns(new List<string> {"Bob", "Fred", "John"});
+            shuffleHelper.ShuffleList(Arg.Any<List<string>>()).Returns(listOfNames);
             
             var room = new Room();
             room.SetBalderdashGame(new BalderdashManager(shuffleHelper));
-            Rooms.RoomsList.Clear();
-            Rooms.RoomsList.TryAdd("ScoreCalculator", room);
-            Rooms.RoomsList["ScoreCalculator"].Users.TryAdd("Bob", new User("Bob"));
-            Rooms.RoomsList["ScoreCalculator"].Users.TryAdd("Fred", new User("Fred"));
-            Rooms.RoomsList["ScoreCalculator"].Users.TryAdd("John", new User("John"));
-            Rooms.RoomsList["ScoreCalculator"].SetBalderdashGame(new BalderdashManager(shuffleHelper));
-            Rooms.RoomsList["ScoreCalculator"].Balderdash.AddPlayersToGame(new List<string> {"Bob", "Fred", "John"});
-            Rooms.RoomsList["ScoreCalculator"].Balderdash.SetPlayerOrder();
-            Rooms.RoomsList["ScoreCalculator"].Balderdash.SelectPlayer();
+            Rooms.RoomsList.TryAdd("ScoreCalculatorGuesser", room);
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users.TryAdd(listOfNames[0], new User(listOfNames[0]));
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users.TryAdd(listOfNames[1], new User(listOfNames[1]));
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users.TryAdd(listOfNames[2], new User(listOfNames[2]));
+            Rooms.RoomsList["ScoreCalculatorGuesser"].SetBalderdashGame(new BalderdashManager(shuffleHelper));
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Balderdash.AddPlayersToGame(listOfNames);
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Balderdash.SetPlayerOrder();
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Balderdash.SelectPlayer();
             
-            Rooms.RoomsList["ScoreCalculator"].Users["Bob"].SetUpGame(new UserBalderdashGame());
-            Rooms.RoomsList["ScoreCalculator"].Users["Fred"].SetUpGame(new UserBalderdashGame());
-            Rooms.RoomsList["ScoreCalculator"].Users["John"].SetUpGame(new UserBalderdashGame());
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users[listOfNames[0]].SetUpGame(new UserBalderdashGame());
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users[listOfNames[1]].SetUpGame(new UserBalderdashGame());
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users[listOfNames[2]].SetUpGame(new UserBalderdashGame());
             
-            var players = Rooms.RoomsList["ScoreCalculator"].Balderdash.PlayerOrder;
-            _dasher = Rooms.RoomsList["ScoreCalculator"].Balderdash.SelectedPlayer;
+            var players = Rooms.RoomsList["ScoreCalculatorGuesser"].Balderdash.PlayerOrder;
+            _dasher = Rooms.RoomsList["ScoreCalculatorGuesser"].Balderdash.SelectedPlayer;
             _notDashers = players.Where(x => x != _dasher).ToList();
         }
         
         [Fact]
         public void WhenGuesserIsCorrect()
         {
-            _scoreCalculator.CalculateGuesser("ScoreCalculator", _notDashers[0], _dasher);
-            Rooms.RoomsList["ScoreCalculator"].Users[_notDashers[0]].BalderdashGame.Score.Should().Be(1);
+            _scoreCalculator.CalculateGuesser("ScoreCalculatorGuesser", _notDashers[0], _dasher);
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users[_notDashers[0]].BalderdashGame.Score.Should().Be(1);
         }
 
         [Fact]
         public void WhenGuesserIsIncorrect()
         {
-            _scoreCalculator.CalculateGuesser("ScoreCalculator", _notDashers[0], _notDashers[1]);
-            Rooms.RoomsList["ScoreCalculator"].Users[_notDashers[0]].BalderdashGame.Score.Should().Be(0);
+            _scoreCalculator.CalculateGuesser("ScoreCalculatorGuesser", _notDashers[0], _notDashers[1]);
+            Rooms.RoomsList["ScoreCalculatorGuesser"].Users[_notDashers[0]].BalderdashGame.Score.Should().Be(0);
         }
     }
 }

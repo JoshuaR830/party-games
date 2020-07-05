@@ -226,10 +226,15 @@
     width: 100%;
 }
 
+
+.title-container
+{
+    display: flex;
+    
+}
 .pixenary-title
 {
     color: #ffffff;
-    margin-left: 16px;
     user-select: none;
 }
 
@@ -243,6 +248,24 @@
     flex-direction: column;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+.app-page-icon
+{
+    color: #ffffff;
+    margin-left: 16px;
+    width: 48px;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.app-page-icon:hover
+{
+    text-decoration: none;
+    color: #55edbb;
 }
 
 #score

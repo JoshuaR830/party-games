@@ -12,7 +12,8 @@
 {
     display: block;
     width: calc(100% - 32px);
-    height: 260px;
+    height: 140px;
+    max-width: 350px;
     margin: 16px auto;
     padding: 8px;
     border-radius: 8px;
@@ -87,4 +88,9 @@
     color: #ffffff;
     text-align: center;
     font-size: 24px;
+}
+
+.error
+{
+    box-shadow: 0 0 10px #ff0000;
 }

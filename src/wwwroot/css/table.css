@@ -355,6 +355,11 @@ h1 {
     display: block;
 }
 
+.error
+{
+    box-shadow: 0 0 10px #ff0000;
+}
+
 .hidden
 {
     display: none;

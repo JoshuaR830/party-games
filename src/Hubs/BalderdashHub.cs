@@ -168,10 +168,11 @@ namespace Chat.Hubs
             var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
             await Clients.Group(name).SendAsync("ReceivedGuess", dasher);
                 
-            if(Rooms.RoomsList[roomId].Users.All(x => x.Value.BalderdashGame.HasMadeGuessThisRound))
+            if(Rooms.RoomsList[roomId].Users.Any(x => x.Value.BalderdashGame.Guess == ""))
                 return;
 
-            var guessesMade = Rooms.RoomsList[roomId].Users.Select(x => new GuessMade(x.Key, x.Value.BalderdashGame.Guess));
+            var guessesMade = Rooms.RoomsList[roomId].Users.Select(x => new GuessMade(x.Key, x.Value.BalderdashGame.Guess)).ToList();
+            guessesMade = _shuffleGameOrder.ShuffleList(guessesMade);
             Console.WriteLine(JsonConvert.SerializeObject(guessesMade));
             await Clients.Group(dasher).SendAsync("RevealCardsToDasher", guessesMade);
             

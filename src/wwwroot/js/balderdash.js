@@ -125,18 +125,30 @@ $submitAnswer.addEventListener('click', function() {
 
 balderdashConnection.on("ReceivedGuess", function(dasher) {
     console.log(dasher);
-    $currentDasher.textContent = dasher;
+    let name = document.getElementById('my-name').value;
+
+    if (name === dasher) {
+        $currentDasher.textContent = `Waiting for other players to submit their answers`;
+    } else {
+        $currentDasher.textContent = `${dasher} has got your answer`;
+    }
+    
+    $waitingForPlayersContainer.classList.remove('hidden');
     $answerContainer.classList.add('hidden');
 });
 
 balderdashConnection.on("RevealCardsToDasher", function(guesses) {
     console.log("Here is the stuff");
-    $waitingForPlayersContainer.classList.remove('hidden');
+    $waitingForPlayersContainer.classList.add('hidden');
     $cardContainer.classList.remove('hidden');
     console.log(guesses.length);
-    
+
+    $previousArrow.classList.add('--disabled');
+
     if (guesses.length === 1) {
         $nextArrow.classList.add('--disabled');
+    } else {
+        $nextArrow.classList.remove('--disabled');
     }
 
     console.log(guesses);
@@ -173,7 +185,8 @@ balderdashConnection.on("DasherSelected", function(dasher) {
 
 balderdashConnection.on("Reset", function() {
     let name = document.querySelector('#my-name').value;
-
+    $contextTitle.textContent = "";
+    
     balderdashConnection.invoke('DisplayBalderdashScores', connectionName, name);
     $loggedInUserContainer.classList.add('hidden');
     $waitingForPlayersContainer.classList.add('hidden');

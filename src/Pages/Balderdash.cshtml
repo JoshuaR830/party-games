@@ -1,18 +1,17 @@
 ﻿@page
-@model Chat.Pages.Pixenary
+@model Chat.Pages.Balderdash
 
 @{
-    ViewData["Title"] = "Pixenary";
+    ViewData["Title"] = "Balderdash";
 }
 
 <div class="top-bar-container">
     <div class="top-bar">
         <div class="title-container">
             <a href="/" class="app-page-icon"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">apps</span></a>
-            <div class="pixenary-title">Pixenary</div>
+            <div class="pixenary-title">Balderdash</div>
         </div>
         <div class="pixenary-score"><span class="material-icons" style="margin-right: 4px; margin-left: 4px;">emoji_events</span><span id="score"></span></div>
-
     </div>
 </div>
 
@@ -20,29 +19,36 @@
     <div class="pixenary-action-button js-reset-button">Start</div>
     <div id="view-score-option" class="button hidden">View scores</div>
 
-    <div class="pixenary-action-button js-score-test hidden">Complete</div>
+    <div class="js-waiting-for-players hidden">
+        <div class="extra-info"><span class="js-current-dasher"></span> has got your answer</div>
+    </div>
+    
+    <div class="button js-score-test hidden">Complete</div>
     <div class="word-choice js-word-choice"></div>
 
-    @* <div class="title"></div> *@
     <div class="top-score-fab js-score-fab fab hidden"></div>
     <div class="timer-fab hidden"></div>
-
-
-    <div class="js-score-user-selector"></div>
-
-    <div class="pixel-canvas-container js-pixel-canvas-container">
-        <canvas id="pixel-canvas" width="300" height="300" class="pixel-canvas"></canvas>
+    
+    
+    <div class="answer-container hidden js-answer-container">
+        <div class="extra-info js-answer-title"></div>
+        <textarea class="balderdash-answer js-answer-entry-box"></textarea>
+        <div class="button js-submit-answer">Submit</div>
     </div>
+    
+   
+    <div class="hidden js-card-container">
+        <div class="carousel js-carousel"></div>
 
-    <div class="color-container js-color-container"></div>
-
-
-    <div class="tool-bar js-tool-bar hidden">
-        <div class="color fill-button js-fill-button"><span class="">filter_hdr</span></div>
+        <div class="arrow-container">
+            <div class="arrow --previous js-previous-card --disabled"><span class="material-icons">navigate_before</span></div>
+            <div class="score-title">Who guessed it</div>
+            <div class="arrow --next js-next-card"><span class="material-icons">navigate_next</span></div>
+        </div>
+        
+        <div class="js-score-user-selector"></div>
     </div>
-
 </div>
-
 
 <div class="popup-modal js-login-modal">
     @await Html.PartialAsync("LoginPopup")
@@ -68,5 +74,8 @@
     @await Html.PartialAsync("ColorPopup");
 </div>
 
-<script src="~/js/pixenary.js"></script>
+<script src="~/js/balderdash.js"></script>
+
+
+
 

@@ -15,6 +15,7 @@ namespace Chat.Pages
             Games = new GamesLibrary(new List<Game>
             {
                 new Game("Pixenary", "/pixenary", "Can you guess what picture the pixel master is piecing together? The first person to work out what the picture is takes the victory - for now at least!"),
+                new Game("Balderdash Manager", "/balderdash", "Got Balderdash and find passing the paper around in secret nightmarish? Just a tree hugger and don't want to see more get the chop? - either way, don't worry, we've got you covered!"),
                 new Game("Thoughts and crosses", "/thoughtsandcrosses2", "9 categories, 1 starting letter - mission: ensure each answer is unique to win big" ),
                 new Game("The word game", "/letters2", "A bunch of random letters, a short amount of time - mission: come up with as many words as possible before you're out of time")
             });

@@ -44,7 +44,7 @@ namespace PartyGamesTests.Pixenary.PixenaryManagerTests
         [InlineData(10, 100)]
         [InlineData(20, 400)]
         [InlineData(100, 10000)]
-        public void WhenTheListIsCreatedThereShouldBeTehCorrectNumberOfElements(int gridSize, int expectedCellNumber)
+        public void WhenTheListIsCreatedThereShouldBeTheCorrectNumberOfElements(int gridSize, int expectedCellNumber)
         {
             _pixenaryManager.CreateNewList(gridSize);
             var actualCellNumber = _pixenaryManager.Grid.Count;

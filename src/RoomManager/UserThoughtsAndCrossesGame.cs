@@ -5,14 +5,14 @@ using Newtonsoft.Json;
 
 namespace Chat.RoomManager
 {
-    public class UserThoughtsAndCrosses : IUserThoughtsAndCrosses
+    public class UserThoughtsAndCrossesGame : IUserThoughtsAndCrosses
     {
         private readonly IScoreHelper _scoreHelper;
         private IShuffleHelper<string> _shuffleHelper;
         public List<(string category, string userGuess, bool isAccepted)> WordsGrid { get; private set; }
         public int Score { get; private set; }
 
-        public UserThoughtsAndCrosses(IScoreHelper scoreHelper, IShuffleHelper<string> shuffleHelper)
+        public UserThoughtsAndCrossesGame(IScoreHelper scoreHelper, IShuffleHelper<string> shuffleHelper)
         {
             _scoreHelper = scoreHelper;
             _shuffleHelper = shuffleHelper;

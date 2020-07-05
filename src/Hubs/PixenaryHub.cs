@@ -26,14 +26,14 @@ namespace Chat.Hubs
                 _gameManager.SetupNewGame(roomId, userId, (GameType) gameId);
             }
 
-            if (Rooms.RoomsList[roomId].PixenaryGame == null)
+            if (Rooms.RoomsList[roomId].Pixenary == null)
             {
                 _gameManager.SetupNewGame(roomId, userId, (GameType) gameId);
             }
             
             Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList()));
 
-            var game = Rooms.RoomsList[roomId].PixenaryGame;
+            var game = Rooms.RoomsList[roomId].Pixenary;
 
             if (game == null)
                 return;
@@ -44,7 +44,7 @@ namespace Chat.Hubs
             if (Rooms.RoomsList[roomId].Users[userId].PixenaryGame == null)
                 _gameManager.SetUpNewPixenaryUser(roomId, userId, game);
             
-            Rooms.RoomsList[roomId].PixenaryGame.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList());
+            Rooms.RoomsList[roomId].Pixenary.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList());
             
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
             await Groups.AddToGroupAsync(Context.ConnectionId, userId);
@@ -65,40 +65,40 @@ namespace Chat.Hubs
                 return;
             }
 
-            if (Rooms.RoomsList[roomId].PixenaryGame == null)
+            if (Rooms.RoomsList[roomId].Pixenary == null)
             {
                 Console.WriteLine("Does not contain a definition for pixenary");
                 return;
             }
 
-            var game = Rooms.RoomsList[roomId].PixenaryGame;
-            Rooms.RoomsList[roomId].PixenaryGame.ChooseActivePlayer();
+            var game = Rooms.RoomsList[roomId].Pixenary;
+            Rooms.RoomsList[roomId].Pixenary.ChooseActivePlayer();
             foreach (var user in Rooms.RoomsList[roomId].Users)
             {
                 var userId = user.Value.Name;
                 
                 
-                var playerTurn = Rooms.RoomsList[roomId].PixenaryGame.ActivePlayer;
-                await Clients.Group(userId).SendAsync("PixelGridResponse", JsonConvert.SerializeObject(game.Grid), playerTurn == userId, user.Value.PixenaryGame.Score);
+                var playerTurn = Rooms.RoomsList[roomId].Pixenary.ActivePlayer;
+                await Clients.Group(userId).SendAsync("PixelGridResponse", JsonConvert.SerializeObject(game.Grid), playerTurn == userId, user.Value.PixenaryGame.Score, playerTurn);
                 // Rooms.RoomsList[roomId].PixenaryGame.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList());
 
                 Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList()));
 
-                Console.WriteLine(Rooms.RoomsList[roomId].PixenaryGame.ActivePlayer);
+                Console.WriteLine(Rooms.RoomsList[roomId].Pixenary.ActivePlayer);
             }
             
-            await Clients.Group(Rooms.RoomsList[roomId].PixenaryGame.ActivePlayer).SendAsync("PixelWord", Rooms.RoomsList[roomId].PixenaryGame.Word);
+            await Clients.Group(Rooms.RoomsList[roomId].Pixenary.ActivePlayer).SendAsync("PixelWord", Rooms.RoomsList[roomId].Pixenary.Word);
         }
 
         public async Task UpdatePixelGrid(string roomId, int pixelPosition, string pixelColor)
         {
-            Rooms.RoomsList[roomId].PixenaryGame.UpdatePixel(pixelPosition, pixelColor);
+            Rooms.RoomsList[roomId].Pixenary.UpdatePixel(pixelPosition, pixelColor);
             await Clients.Group(roomId).SendAsync("PixelGridUpdate", pixelPosition, pixelColor);
         }
 
         public async Task ResetPixenary(string roomId)
         {
-            Rooms.RoomsList[roomId].PixenaryGame.ResetGame();
+            Rooms.RoomsList[roomId].Pixenary.ResetGame();
             
             await Clients.Group(roomId).SendAsync("ResetGame");
 
@@ -118,7 +118,7 @@ namespace Chat.Hubs
             
             _gameManager.SetupNewGame(roomId, Rooms.RoomsList[roomId].Users.First().Key, GameType.Pixenary);
 
-            Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].PixenaryGame.WordsWithCategories.Select(x => x.Word)));
+            Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Pixenary.WordsWithCategories.Select(x => x.Word)));
             
             await StartPixenary(roomId);
         }

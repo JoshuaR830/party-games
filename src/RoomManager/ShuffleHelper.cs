@@ -10,10 +10,13 @@ namespace Chat.RoomManager
         {
             var rand = new Random();
             
+            if (list == null)
+                return null;
+            
             if (list.Count <= 1)
                 return list;
             
-            var shuffledList = new List<T>();
+            List<T> shuffledList;
             do
             {
                 shuffledList = list.OrderBy(x => rand.Next()).ToList();

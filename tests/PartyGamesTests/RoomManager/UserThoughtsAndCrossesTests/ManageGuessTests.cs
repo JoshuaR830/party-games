@@ -12,7 +12,7 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
         private IScoreHelper _scoreHelper;
         private List<string> _categoriesInitial;
         private List<string> _categoriesShuffled;
-        private UserThoughtsAndCrosses _userThoughtsAndCrosses;
+        private UserThoughtsAndCrossesGame _userThoughtsAndCrossesGame;
 
         public ManageGuessTests()
         {
@@ -26,46 +26,46 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
                 .ShuffleList(_categoriesInitial)
                 .Returns(_categoriesShuffled);
             
-            _userThoughtsAndCrosses = new UserThoughtsAndCrosses(_scoreHelper, _shuffleHelper);    
+            _userThoughtsAndCrossesGame = new UserThoughtsAndCrossesGame(_scoreHelper, _shuffleHelper);    
             
-            _userThoughtsAndCrosses.CreateGrid(_categoriesInitial);
+            _userThoughtsAndCrossesGame.CreateGrid(_categoriesInitial);
         }
 
         [Fact]
         public void WhenUserMakesAGuessUpdateTheCategoryWithTheGuess()
         {
-            _userThoughtsAndCrosses.ManageGuess("News", "BBC news");
-            _userThoughtsAndCrosses.ManageGuess("Food", "Banana bread");
-            _userThoughtsAndCrosses.ManageGuess("Fruit", "Banana");
-            _userThoughtsAndCrosses.ManageGuess("Bird", "Blue tit");
-            _userThoughtsAndCrosses.ManageGuess("Car", "Bugatti Chiron");
-            _userThoughtsAndCrosses.ManageGuess("Animal", "Baboon");
-            _userThoughtsAndCrosses.ManageGuess("Boat", "Barge");
-            _userThoughtsAndCrosses.ManageGuess("Plane", "Boeing 747");
-            _userThoughtsAndCrosses.ManageGuess("Colour", "Blue");
+            _userThoughtsAndCrossesGame.ManageGuess("News", "BBC news");
+            _userThoughtsAndCrossesGame.ManageGuess("Food", "Banana bread");
+            _userThoughtsAndCrossesGame.ManageGuess("Fruit", "Banana");
+            _userThoughtsAndCrossesGame.ManageGuess("Bird", "Blue tit");
+            _userThoughtsAndCrossesGame.ManageGuess("Car", "Bugatti Chiron");
+            _userThoughtsAndCrossesGame.ManageGuess("Animal", "Baboon");
+            _userThoughtsAndCrossesGame.ManageGuess("Boat", "Barge");
+            _userThoughtsAndCrossesGame.ManageGuess("Plane", "Boeing 747");
+            _userThoughtsAndCrossesGame.ManageGuess("Colour", "Blue");
 
-            _userThoughtsAndCrosses.WordsGrid[0].userGuess.Should().Be("Banana bread");
-            _userThoughtsAndCrosses.WordsGrid[1].userGuess.Should().Be("Banana");
-            _userThoughtsAndCrosses.WordsGrid[2].userGuess.Should().Be("Blue");
-            _userThoughtsAndCrosses.WordsGrid[3].userGuess.Should().Be("Bugatti Chiron");
-            _userThoughtsAndCrosses.WordsGrid[4].userGuess.Should().Be("Baboon");
-            _userThoughtsAndCrosses.WordsGrid[5].userGuess.Should().Be("Boeing 747");
-            _userThoughtsAndCrosses.WordsGrid[6].userGuess.Should().Be("Barge");
-            _userThoughtsAndCrosses.WordsGrid[7].userGuess.Should().Be("Blue tit");
-            _userThoughtsAndCrosses.WordsGrid[8].userGuess.Should().Be("BBC news");
+            _userThoughtsAndCrossesGame.WordsGrid[0].userGuess.Should().Be("Banana bread");
+            _userThoughtsAndCrossesGame.WordsGrid[1].userGuess.Should().Be("Banana");
+            _userThoughtsAndCrossesGame.WordsGrid[2].userGuess.Should().Be("Blue");
+            _userThoughtsAndCrossesGame.WordsGrid[3].userGuess.Should().Be("Bugatti Chiron");
+            _userThoughtsAndCrossesGame.WordsGrid[4].userGuess.Should().Be("Baboon");
+            _userThoughtsAndCrossesGame.WordsGrid[5].userGuess.Should().Be("Boeing 747");
+            _userThoughtsAndCrossesGame.WordsGrid[6].userGuess.Should().Be("Barge");
+            _userThoughtsAndCrossesGame.WordsGrid[7].userGuess.Should().Be("Blue tit");
+            _userThoughtsAndCrossesGame.WordsGrid[8].userGuess.Should().Be("BBC news");
         }
 
         [Fact]
         public void WhenAUserChangesTheirGuessValueShouldBeUpdated()
         {
-            _userThoughtsAndCrosses.ManageGuess("Food", "Banana");
-            _userThoughtsAndCrosses.WordsGrid[0].userGuess.Should().Be("Banana");
+            _userThoughtsAndCrossesGame.ManageGuess("Food", "Banana");
+            _userThoughtsAndCrossesGame.WordsGrid[0].userGuess.Should().Be("Banana");
 
-            _userThoughtsAndCrosses.ManageGuess("Food", "Banana bread");
-            _userThoughtsAndCrosses.WordsGrid[0].userGuess.Should().Be("Banana bread");
+            _userThoughtsAndCrossesGame.ManageGuess("Food", "Banana bread");
+            _userThoughtsAndCrossesGame.WordsGrid[0].userGuess.Should().Be("Banana bread");
 
-            _userThoughtsAndCrosses.ManageGuess("Food", "Bun");
-            _userThoughtsAndCrosses.WordsGrid[0].userGuess.Should().Be("Bun");
+            _userThoughtsAndCrossesGame.ManageGuess("Food", "Bun");
+            _userThoughtsAndCrossesGame.WordsGrid[0].userGuess.Should().Be("Bun");
         }
     }
 }

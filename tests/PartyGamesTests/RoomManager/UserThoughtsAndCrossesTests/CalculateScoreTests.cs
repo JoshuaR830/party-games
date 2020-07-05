@@ -22,7 +22,7 @@ namespace PartyGamesTests.RoomManager.UserThoughtsAndCrossesTests
                 .ShuffleList(categories)
                 .Returns(categories);
             
-            var userThoughtsAndCrosses = new UserThoughtsAndCrosses(scoreHelper, _shuffleHelper);
+            var userThoughtsAndCrosses = new UserThoughtsAndCrossesGame(scoreHelper, _shuffleHelper);
             userThoughtsAndCrosses.CreateGrid(categories);
             userThoughtsAndCrosses.CalculateScore();
             var initialScore = userThoughtsAndCrosses.Score;

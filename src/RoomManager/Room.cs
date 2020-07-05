@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Chat.Balderdash;
 using Chat.Pixenary;
 
 namespace Chat.RoomManager
@@ -7,9 +8,10 @@ namespace Chat.RoomManager
     {
         public ConcurrentDictionary<string, User> Users { get; }
         public GameThoughtsAndCrosses ThoughtsAndCrosses { get; private set; }
-        public GameWordGame WordGame { get; private set; }
-        public PixenaryManager PixenaryGame { get; private set; }
+        public GameWordGame Word { get; private set; }
+        public PixenaryManager Pixenary { get; private set; }
 
+        public BalderdashManager Balderdash { get; private set; }
 
         public Room()
         {
@@ -21,19 +23,24 @@ namespace Chat.RoomManager
             Users.TryAdd(name, new User(name));
         }
 
-        public void SetThoughtsAndCrosses(GameThoughtsAndCrosses game)
+        public void SetThoughtsAndCrossesGame(GameThoughtsAndCrosses game)
         {
             ThoughtsAndCrosses = game;
         }
 
         public void SetWordGame(GameWordGame game)
         {
-            WordGame = game;
+            Word = game;
         }
 
         public void SetPixenaryGame(PixenaryManager game)
         {
-            PixenaryGame = game;
+            Pixenary = game;
+        }
+
+        public void SetBalderdashGame(BalderdashManager game)
+        {
+            Balderdash = game;
         }
     }
 }

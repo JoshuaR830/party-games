@@ -34,7 +34,7 @@ namespace PartyGamesTests.GameManagerTests
                 .Should()
                 .ContainKey("Joshua")
                 .WhichValue
-                .ThoughtsAndCrosses
+                .ThoughtsAndCrossesGame
                 .Should()
                 .NotBeNull();
 
@@ -71,7 +71,7 @@ namespace PartyGamesTests.GameManagerTests
                 .Should()
                 .ContainKey("Joshua")
                 .WhichValue
-                .ThoughtsAndCrosses
+                .ThoughtsAndCrossesGame
                 .WordsGrid
                 .Should()
                 .NotBeNull();
@@ -82,7 +82,7 @@ namespace PartyGamesTests.GameManagerTests
                 .Should()
                 .ContainKey("Lydia")
                 .WhichValue
-                .ThoughtsAndCrosses
+                .ThoughtsAndCrossesGame
                 .WordsGrid
                 .Should()
                 .NotBeNull();
@@ -93,7 +93,7 @@ namespace PartyGamesTests.GameManagerTests
                 .Should()
                 .ContainKey("Kerry")
                 .WhichValue
-                .ThoughtsAndCrosses
+                .ThoughtsAndCrossesGame
                 .WordsGrid
                 .Should()
                 .NotBeNull();
@@ -104,7 +104,7 @@ namespace PartyGamesTests.GameManagerTests
                 .Should()
                 .ContainKey("Andrew")
                 .WhichValue
-                .ThoughtsAndCrosses
+                .ThoughtsAndCrossesGame
                 .WordsGrid
                 .Should()
                 .NotBeNull();

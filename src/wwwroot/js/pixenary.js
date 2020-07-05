@@ -53,11 +53,14 @@ document.querySelector('.js-login-button').addEventListener('click', function() 
 
 });
 
-pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn, score) {
+pixenaryConnection.on("PixelGridResponse", function(grid, isUsersTurn, score, nameOfCurrentPlayer) {
     document.getElementById('score').textContent = score;
     let data = JSON.parse(grid);
     size = Math.sqrt(data.length)
     
+    if (!isUsersTurn) {
+        document.querySelector('.js-word-choice').innerText = `It's ${nameOfCurrentPlayer}'s turn`;
+    }
     // $table.innerHTML = "";
 
     let pixelsPerSide = $pixelCanvas.width/size;
@@ -163,12 +166,12 @@ pixenaryConnection.on("PixelGridUpdate", function(pixelPosition, pixelColor) {
 pixenaryConnection.on("PixelWord", function(word) {
     console.log(word);
     $scoreButton.classList.remove("hidden");
-    document.querySelector('.js-fill-button').classList.remove("hidden");
+    document.querySelector('.js-tool-bar').classList.remove("hidden");
     document.querySelector('.js-pixel-canvas-container').classList.remove('hidden');
     document.querySelector('.js-color-container').classList.remove('hidden');
     $colorModal.querySelector('.modal-title').textContent = `Word: ${word.word}`;
     $colorModal.classList.remove('popup-hidden');
-    $wordToDraw.textContent = word.word;
+    $wordToDraw.textContent = `Draw this: ${word.word}`;
 
     colorContext.clearRect(0, 0, $colourCanvas.width, $colourCanvas.height);
     colorContext.drawImage(img, 0, 0, 300, 300);
@@ -185,6 +188,10 @@ pixenaryConnection.on("PixelWord", function(word) {
 });
 
 pixenaryConnection.on("ResetGame", function() {
+    let $eraser = document.querySelector('.js-tool-bar').querySelector('.eraser');
+    if($eraser !== null) {
+        $eraser.remove();
+    }
     $wordToDraw.textContent = "";
     $resetButton.textContent = "Next round";
     $resetButton.classList.add('hidden');
@@ -216,15 +223,18 @@ function drawColours() {
         $el.style.backgroundColor = myColor;
 
         $el.classList.remove("eraser");
-        if (myColor === "white") {
-            $el.classList.add("eraser");
-        }
 
         $el.addEventListener('click', function () {
             color = myColor;
             selectColor($el);
         })
 
+        if (myColor === "white") {
+            $el.classList.add("eraser");
+            document.querySelector('.js-tool-bar').appendChild($el);
+            return;
+        }
+        
         $colorTable.appendChild($el);
     })
 }
@@ -261,6 +271,9 @@ function selectColor($color) {
     colorEls.forEach(function($el) {
         $el.classList.remove('--selected-color');
     });
+
+    document.querySelector('.js-fill-button').style.background = `repeating-linear-gradient(45deg, black 0, black 2px, ${color} 2px, ${color} 4px)`;
+    document.querySelector('.js-fill-button').style.color = `${color}`;
     
     $color.classList.add('--selected-color')
 }
@@ -304,8 +317,8 @@ $scoreButton.addEventListener('click', function() {
     let name = document.querySelector('#my-name').value;
     $scoreNamesContainer.classList.remove('hidden');
     $scoreButton.classList.add('hidden');
-    document.querySelector('.js-fill-button').classList.add("hidden");
-    connection.invoke('DisplayScores', connectionName, name);
+    document.querySelector('.js-tool-bar').classList.add("hidden");
+    connection.invoke('DisplayScores', connectionName, name, 2);
 });
 
 connection.on("ManuallyIncrementedScore", function(score) {
@@ -313,7 +326,7 @@ connection.on("ManuallyIncrementedScore", function(score) {
     document.querySelector('.js-word-choice').innerText = "";
     document.querySelector('.js-pixel-canvas-container').classList.remove('hidden');
     $scoreButton.classList.add("hidden");
-    document.querySelector('.js-fill-button').classList.add("hidden");
+    document.querySelector('.js-tool-bar').classList.add("hidden");
     $resetButton.classList.remove('hidden');
     document.getElementById('score').textContent = score;
     let name = document.querySelector('#my-name').value;

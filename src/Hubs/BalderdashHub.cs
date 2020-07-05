@@ -52,11 +52,13 @@ namespace Chat.Hubs
             Rooms.RoomsList[roomId].Balderdash.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Keys);
             Rooms.RoomsList[roomId].Balderdash.Reset();
 
+            var loggedInUsers = Rooms.RoomsList[roomId].Users.Select(x => x.Key).ToList().OrderBy(x => x); 
+            await Clients.Group(roomId).SendAsync("LoggedInUsers", loggedInUsers);
             // ToDo: add the game to the server and set up anything that needs to be set
             // ToDo: Trigger off the back of login
         }
 
-        public void SetUpUser(string roomId, string userId)
+        public async Task SetUpUser(string roomId, string userId)
         {
             // ToDo: connect user name to server
             // ToDO: connect user to group server for group updates
@@ -131,7 +133,7 @@ namespace Chat.Hubs
         {
             var users = Rooms.RoomsList[roomId].Users;
             var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
-            var names = users.Select(x => x.Key).Where(y => y != dasher);
+            var names = users.Select(x => x.Key).Where(y => y != dasher).ToList().OrderBy(x => x);
             await Clients.Group(roomId).SendAsync("DisplayBalderdashScores", names);
         }
 

@@ -3,6 +3,9 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
 var connectionName = "GroupOfJoshua";
 
+var $loggedInUserContainer = document.querySelector('.js-logged-in-container');
+var $loggedInUserItemsContainer = document.querySelector('.js-logged-in-items-container');
+
 var $nextArrow = document.querySelector('.js-next-card');
 var $previousArrow = document.querySelector('.js-previous-card');
 var $carousel = document.querySelector('.js-carousel');
@@ -158,6 +161,7 @@ balderdashConnection.on("DasherSelected", function(dasher) {
 })
 
 balderdashConnection.on("Reset", function() {
+    $loggedInUserContainer.classList.add('hidden');
     $waitingForPlayersContainer.classList.add('hidden');
     $answerEntry.value = "";
 
@@ -213,4 +217,18 @@ function countActive(names) {
 balderdashConnection.on("UpdateUserScore", function (score) {
     console.log(score);
     document.getElementById('score').innerText = score;
+})
+
+balderdashConnection.on("LoggedInUsers", function(users) {
+    $loggedInUserItemsContainer.innerHTML = "";
+    
+    users.forEach(function(user) {
+        let loggedInUserItem  = document.createElement('div');
+        loggedInUserItem.className = 'logged-in-item';
+        loggedInUserItem.textContent = user;
+        $loggedInUserItemsContainer.appendChild(loggedInUserItem);
+    });
+    
+    console.log(users);
+    console.log('logged-in');
 })

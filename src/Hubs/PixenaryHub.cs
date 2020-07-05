@@ -49,6 +49,9 @@ namespace Chat.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
             await Groups.AddToGroupAsync(Context.ConnectionId, userId);
             Console.WriteLine("Joined game");
+            
+            var loggedInUsers = Rooms.RoomsList[roomId].Users.Select(x => x.Key).ToList().OrderBy(x => x); 
+            await Clients.Group(roomId).SendAsync("LoggedInUsers", loggedInUsers);
             // await Clients.Group(userId).SendAsync("PixelGridResponse", JsonConvert.SerializeObject(game.Grid), true);
             //
             // Rooms.RoomsList[roomId].PixenaryGame.AddPlayersToGame(Rooms.RoomsList[roomId].Users.Values.Select(x => x.Name).ToList());

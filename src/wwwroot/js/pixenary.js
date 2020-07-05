@@ -5,6 +5,9 @@ var connectionName = "GroupOfJoshua"
 
 // var $table = document.querySelector('.js-pixenary-table');
 
+var $loggedInUserContainer = document.querySelector('.js-logged-in-container');
+var $loggedInUserItemsContainer = document.querySelector('.js-logged-in-items-container');
+
 var $colorTable = document.querySelector('.js-color-container');
 var $setColoursButton = document.querySelector('.js-set-colors-button');
 
@@ -197,6 +200,7 @@ pixenaryConnection.on("ResetGame", function() {
     $resetButton.classList.add('hidden');
     $scoreNamesContainer.classList.add('hidden');
     document.querySelector('.js-color-container').classList.remove('hidden');
+    $loggedInUserContainer.classList.add('hidden');
 });
 
 $resetButton.addEventListener('click', function() {
@@ -345,4 +349,18 @@ pixenaryConnection.on("BackgroundColor", function(backgroundColor){
 document.querySelector('.js-fill-button').addEventListener('click', function() {
     console.log("Hello");
     pixenaryConnection.invoke("SetBackgroundColor", connectionName, color);
+});
+
+pixenaryConnection.on("LoggedInUsers", function(users) {
+    $loggedInUserItemsContainer.innerHTML = "";
+
+    users.forEach(function(user) {
+        let loggedInUserItem  = document.createElement('div');
+        loggedInUserItem.className = 'logged-in-item';
+        loggedInUserItem.textContent = user;
+        $loggedInUserItemsContainer.appendChild(loggedInUserItem);
+    });
+
+    console.log(users);
+    console.log('logged-in');
 });

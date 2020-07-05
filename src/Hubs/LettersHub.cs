@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Chat.GameManager;
@@ -133,7 +134,7 @@ namespace Chat.Hubs
             }
         }
 
-        public void SetupNewUser(string roomId, string name)
+        public async Task SetupNewUser(string roomId, string name)
         {
             Console.WriteLine("New user");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
@@ -148,6 +149,9 @@ namespace Chat.Hubs
                 var game = Rooms.RoomsList[roomId].Word;
                 _gameManager.SetUpNewWordUser(roomId, name, game);
             }
+            
+            var loggedInUsers = Rooms.RoomsList[roomId].Users.Select(x => x.Key).ToList().OrderBy(x => x); 
+            await Clients.Group(roomId).SendAsync("LoggedInUsers", loggedInUsers);
         }
         
         public async Task ServerIsValidWord(string word, string roomId, string name)

@@ -103,12 +103,23 @@ $resetButton.addEventListener('click', function () {
 
 $submitAnswer.addEventListener('click', function() {
     
+    if($answerEntry.value === "") {
+        $answerEntry.classList.add('error');
+        return;
+    }
+
+    $answerEntry.classList.remove('error');
+
     $answerContainer.classList.add('hidden');
     console.log($answerEntry.value);
-    
+
     let name = document.getElementById('my-name').value;
 
-    balderdashConnection.invoke("PassToDasher", connectionName, name, $answerEntry.value)
+    balderdashConnection.invoke("PassToDasher", connectionName, name, $answerEntry.value);
+
+    
+    
+   
     // $specialContainer.classList.
 });
 
@@ -116,11 +127,11 @@ balderdashConnection.on("ReceivedGuess", function(dasher) {
     console.log(dasher);
     $currentDasher.textContent = dasher;
     $answerContainer.classList.add('hidden');
-    $waitingForPlayersContainer.classList.remove('hidden');
 });
 
 balderdashConnection.on("RevealCardsToDasher", function(guesses) {
-    console.log("Here is the stuff")
+    console.log("Here is the stuff");
+    $waitingForPlayersContainer.classList.remove('hidden');
     $cardContainer.classList.remove('hidden');
     console.log(guesses.length);
     
@@ -161,6 +172,9 @@ balderdashConnection.on("DasherSelected", function(dasher) {
 })
 
 balderdashConnection.on("Reset", function() {
+    let name = document.querySelector('#my-name').value;
+
+    balderdashConnection.invoke('DisplayBalderdashScores', connectionName, name);
     $loggedInUserContainer.classList.add('hidden');
     $waitingForPlayersContainer.classList.add('hidden');
     $answerEntry.value = "";

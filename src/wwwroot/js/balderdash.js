@@ -22,6 +22,8 @@ var $currentDasher = document.querySelector('.js-current-dasher');
 var $answerTitle = document.querySelector('.js-answer-title');
 var totalScoresToChoose = 0;
 
+$roundScoreContainer = document.querySelector('.js-round-score-container');
+
 balderdashConnection.start().then(function () {
 
 });
@@ -187,6 +189,8 @@ balderdashConnection.on("Reset", function() {
     let name = document.querySelector('#my-name').value;
     $contextTitle.textContent = "";
     
+    $roundScoreContainer.classList.add('hidden');
+    
     balderdashConnection.invoke('DisplayBalderdashScores', connectionName, name);
     $loggedInUserContainer.classList.add('hidden');
     $waitingForPlayersContainer.classList.add('hidden');
@@ -197,7 +201,6 @@ balderdashConnection.on("Reset", function() {
     $cardContainer.classList.add('hidden')
     $resetButton.classList.add('hidden');
     $answerContainer.classList.remove('hidden');
-
 })
 
 
@@ -237,9 +240,54 @@ function countActive(names) {
     console.log(names.length === usersToScore.querySelectorAll('.--disabled').length);
     
     if (names.length === usersToScore.querySelectorAll('.--disabled').length) {
-        balderdashConnection.invoke("ResetGame", connectionName);
+        balderdashConnection.invoke("DisplayRoundInformation", connectionName);
     }
 }
+
+balderdashConnection.on("RoundReviewPage", function(userRoundScores) {
+    $roundScoreContainer.innerHTML = "";
+    
+    for (let user in userRoundScores) {
+        if(userRoundScores.hasOwnProperty(user))
+        {
+            console.log(user);
+            console.log(userRoundScores[user])
+
+
+            let scoreWrapper = document.createElement('div');
+            let scoreNameBorder = document.createElement('div');
+            let scoreNameText = document.createElement('div');
+            let scoreValueBorder = document.createElement('div');
+            let scoreValueText = document.createElement('div');
+            
+            scoreWrapper.className = 'individual-score-wrapper';
+            scoreNameBorder.className = 'individual-score-name-border';
+            scoreNameText.className = 'individual-score-name-text';
+            scoreValueBorder.className = 'individual-score-value-border';
+            scoreValueText.className = 'individual-score-value-text';
+
+            scoreNameText.innerText = user[0].toUpperCase() + user.slice(1);
+            scoreValueText.innerText = userRoundScores[user];
+
+            scoreNameBorder.appendChild(scoreNameText);
+            scoreValueBorder.appendChild(scoreValueText);
+            
+            scoreWrapper.appendChild(scoreNameBorder);
+            scoreWrapper.appendChild(scoreValueBorder);
+            
+            $roundScoreContainer.appendChild(scoreWrapper);
+        }
+        
+        $roundScoreContainer.classList.remove('hidden');
+    }
+
+    $contextTitle.textContent = "Scores for this round";
+
+    $waitingForPlayersContainer.classList.add('hidden');
+
+    $cardContainer.classList.add('hidden')
+    $resetButton.classList.remove('hidden');
+})
 
 balderdashConnection.on("UpdateUserScore", function (score) {
     console.log(score);

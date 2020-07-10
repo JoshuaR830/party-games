@@ -157,22 +157,26 @@ balderdashConnection.on("RevealCardsToDasher", function(guesses) {
     $carousel.innerHTML = "";
     guesses.forEach(function(guess, index) {
         let $card = document.createElement('div');
-        $card.className = "balderdash-card";
-        $card.setAttribute('data-card-number', index);
-        $card.setAttribute('data-user', guess.name);
-        $card.setAttribute('data-player-who-proposed', guess.name);
+        let $cardBorder = document.createElement('div');
+       
+        $cardBorder.className = "content-border info-border --centered";
+       
+        $card.className = "balderdash-card inner-content";
+        $cardBorder.setAttribute('data-card-number', index);
+        $cardBorder.setAttribute('data-user', guess.name);
+        $cardBorder.setAttribute('data-player-who-proposed', guess.name);
         $card.textContent = guess.guess;
 
         if(index === 0) {
-            $card.classList.add("--active")
+            $cardBorder.classList.add("--active")
             $contextTitle.textContent = `${guess.name}'s guess`;
         } else {
-            $card.classList.add('hidden');
+            $cardBorder.classList.add('hidden');
         }
 
-        $carousel.appendChild($card);
+        $cardBorder.appendChild($card);
+        $carousel.appendChild($cardBorder);
     })
-    // ToDo: only the dasher should see this
 });
 
 balderdashConnection.on("DasherSelected", function(dasher) {
@@ -212,9 +216,13 @@ balderdashConnection.on("DisplayBalderdashScores", function(names)
     
     names.forEach(function(playerWhoGuessed) {
         console.log("Name");
-        var $el = document.createElement('div');
-        $el.className = "button";
-        $el.addEventListener('click', function() {
+        let $el = document.createElement('div');
+        let $elBorder = document.createElement('div');
+
+        $elBorder.className = "content-border button-border --centered js-submit-answer";
+        
+        $el.className = "inner-content button-border";
+        $elBorder.addEventListener('click', function() {
             if ($el.classList.contains('--disabled')) {
                 return;
             }
@@ -224,22 +232,25 @@ balderdashConnection.on("DisplayBalderdashScores", function(names)
             balderdashConnection.invoke("BalderdashScores", connectionName, playerWhoGuessed, playerWhoProposed);
             balderdashConnection.invoke("GetScoresForAllUsers", connectionName);
             $el.classList.add('--disabled');
+            $elBorder.classList.add('--disabled');
             countActive(names);
         });
 
         $el.textContent = playerWhoGuessed;
 
-        usersToScore.appendChild($el);
+        $elBorder.appendChild($el)
+
+        usersToScore.appendChild($elBorder);
     })
 })
 
 function countActive(names) {
     let usersToScore = document.querySelector('.js-score-user-selector');
-    console.log(usersToScore.querySelectorAll('.--disabled').length);
+    console.log(usersToScore.querySelectorAll('.inner-content.--disabled').length);
     console.log(names.length);
-    console.log(names.length === usersToScore.querySelectorAll('.--disabled').length);
+    console.log(names.length === usersToScore.querySelectorAll('.inner-content.--disabled').length);
     
-    if (names.length === usersToScore.querySelectorAll('.--disabled').length) {
+    if (names.length === usersToScore.querySelectorAll('.inner-content.--disabled').length) {
         balderdashConnection.invoke("DisplayRoundInformation", connectionName);
     }
 }
@@ -298,10 +309,15 @@ balderdashConnection.on("LoggedInUsers", function(users) {
     $loggedInUserItemsContainer.innerHTML = "";
     
     users.forEach(function(user) {
+        let loggedInUserBorder  = document.createElement('div');
+        loggedInUserBorder.className = "content-border info-border --centered";
+        
         let loggedInUserItem  = document.createElement('div');
-        loggedInUserItem.className = 'logged-in-item';
+        loggedInUserItem.className = 'inner-content info-border --extra-width';
         loggedInUserItem.textContent = user;
-        $loggedInUserItemsContainer.appendChild(loggedInUserItem);
+        
+        loggedInUserBorder.appendChild(loggedInUserItem)
+        $loggedInUserItemsContainer.appendChild(loggedInUserBorder);
     });
     
     console.log(users);

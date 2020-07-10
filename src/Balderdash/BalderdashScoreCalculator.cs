@@ -16,7 +16,9 @@ namespace Chat.Balderdash
             var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
 
             if (playerWhoProposed != dasher)
+            {
                 Rooms.RoomsList[roomId].Users[playerWhoProposed].BalderdashGame.SetScore(1);
+            }
         }
 
         public void CalculateDasherScore(string roomId, string dasher)

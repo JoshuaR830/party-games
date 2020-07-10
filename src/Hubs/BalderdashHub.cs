@@ -89,6 +89,12 @@ namespace Chat.Hubs
             _balderdashScoreCalculator.CalculateGuesser(roomId, playerWhoGuessed, playerWhoProposed);
             _balderdashScoreCalculator.CalculateProposer(roomId, playerWhoGuessed, playerWhoProposed);
 
+            if (playerWhoProposed == Rooms.RoomsList[roomId].Balderdash.SelectedPlayer)
+            {
+                Rooms.RoomsList[roomId].Balderdash.SetIsDasherGuessed(true);
+            }
+            
+
             var shouldDasherGetPoint = users
                 .Where(x => x.Key != balderdash.SelectedPlayer)
                 .All(x => x.Value.BalderdashGame.HasMadeGuessThisRound);

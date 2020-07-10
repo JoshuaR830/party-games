@@ -112,6 +112,19 @@ namespace Chat.Hubs
             // ToDo: update score if user gets theirs discarded
         }
 
+        public async Task DisplayRoundInformation(string roomId)
+        {
+            var room = Rooms.RoomsList[roomId];
+            var userRoundScores = new Dictionary<string, int>();
+            
+            foreach (var user in room.Users)
+            {
+                userRoundScores.Add(user.Key, user.Value.BalderdashGame.RoundScore);
+            }
+
+            await Clients.Group(roomId).SendAsync("RoundReviewPage", userRoundScores);
+        }
+
         public async Task ResetGame(string roomId)
         {
             var room = Rooms.RoomsList[roomId];

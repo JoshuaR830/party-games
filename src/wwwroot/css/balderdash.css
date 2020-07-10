@@ -91,6 +91,56 @@
     color: #4e555b;
 }
 
+.individual-score-container
+{
+    margin-top: 16px;
+}
+
+.individual-score-wrapper
+{
+    display: flex;
+    justify-content: center;
+    color:  #ffffff;
+    font-size: 20px;
+    margin: 8px;
+}   
+
+.individual-score-name-border
+{
+    border-radius: 20px 56px 56px 20px;
+    background: linear-gradient(45deg, rgb(0, 140, 255) 0%, rgb(255, 225, 0) 100%);
+    padding: 4px;
+}
+
+.individual-score-name-text
+{
+    width: 200px;
+    border-radius: 20px 56px 56px 20px;
+    padding-left: 16px;
+    line-height: 48px;
+    height: 48px;
+    background-color: #55475c;
+}
+
+.individual-score-value-border 
+{
+    width: 56px;
+    border-radius: 56px;
+    background: linear-gradient(45deg, rgb(255, 225, 0) 0%, rgb(0, 140, 255) 100%);
+    margin-left: 8px;
+}
+
+.individual-score-value-text
+{
+    width: 48px;
+    height: 48px;
+    border-radius: 56px;
+    line-height: 48px;
+    text-align: center;
+    margin: 4px;
+    background-color: #55475c;
+}
+
 .extra-info
 {
     padding-top: 16px;

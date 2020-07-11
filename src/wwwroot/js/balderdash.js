@@ -22,6 +22,8 @@ var $currentDasher = document.querySelector('.js-current-dasher');
 var $answerTitle = document.querySelector('.js-answer-title');
 var totalScoresToChoose = 0;
 
+var $spinnerContainer = document.querySelector('.js-round-spinner-container');
+
 $roundScoreContainer = document.querySelector('.js-round-score-container');
 
 balderdashConnection.start().then(function () {
@@ -205,6 +207,8 @@ balderdashConnection.on("Reset", function() {
     $cardContainer.classList.add('hidden')
     $resetButton.classList.add('hidden');
     $answerContainer.classList.remove('hidden');
+
+    $spinnerContainer.classList.add('hidden');
 })
 
 
@@ -256,7 +260,10 @@ function countActive(names) {
 }
 
 balderdashConnection.on("RoundReviewPage", function(userRoundScores) {
+    // ToDo: pass more things into this - isSpinTurn, spinItems, spinPosition
     $roundScoreContainer.innerHTML = "";
+
+    $spinnerContainer.classList.remove('hidden');
     
     for (let user in userRoundScores) {
         if(userRoundScores.hasOwnProperty(user))
@@ -287,6 +294,8 @@ balderdashConnection.on("RoundReviewPage", function(userRoundScores) {
             scoreWrapper.appendChild(scoreValueBorder);
             
             $roundScoreContainer.appendChild(scoreWrapper);
+
+            // ToDo: if user is supposed to get a spin because of location - show a button, that buttons should have a data property on it that is the number to spin to, this is the result that we need to pass to start spin cycle
         }
         
         $roundScoreContainer.classList.remove('hidden');
@@ -322,4 +331,57 @@ balderdashConnection.on("LoggedInUsers", function(users) {
     
     console.log(users);
     console.log('logged-in');
-})
+});
+
+function startSpinCycle(numberToSpinTo)
+{
+    let chosenLetters = [1, 2, 3, 4, 5, 6];
+    chosenLetters = chosenLetters.reverse();
+    let container = document.querySelector('.js-spinner');
+    container.innerHTML = "";
+    console.log(container);
+    console.log(chosenLetters.length)
+    for (let i = 0; i < chosenLetters.length; i ++) {
+        let letterContainer = document.createElement('div');
+        console.log(letterContainer)
+        document.querySelector(`.js-spinner`).style = "height: 260px; width: 260px; border-radius: 50%; border: 2px solid #55edba5b; box-sizing: content-box; box-shadow: 0 0 10px #55edba5b;"
+        let angle = (2 * Math.PI) / chosenLetters.length;
+        let xPos = (260 / 2) - 30;
+        let yPos = (260 / 2) - 30;
+        let radius = 100;
+        let x = Math.round(radius * (Math.sin(i * angle))) + xPos;
+        let y = Math.round(radius * (Math.cos(i * angle))) + yPos;
+        letterContainer.className = 'js-spinner-item';
+        letterContainer.textContent = chosenLetters[i].toString();
+        letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; height:60px; border-radius: 50%; background-color: red; text-align: center; line-height: 60px;`;
+        container.appendChild(letterContainer);
+    }
+
+    let items = document.querySelectorAll('.js-spinner-item');
+
+    // let numChosen = (Math.floor(Math.random() * items.length) + 1);
+    let numChosen = numberToSpinTo;
+    console.log(">>", chosenLetters.reverse()[numChosen - 1]);
+
+    let rotations = (Math.floor(Math.random() * 10) + 4) * items.length;
+    console.log(rotations);
+
+    let totalRotations = rotations + numChosen;
+
+    for(let j = 0; j < totalRotations; j ++) {
+        let num = j/20
+        setTimeout(spin, 30*j*num, j, items);
+    }
+}
+
+function spin(j, items)
+{
+    items.forEach(function($el) {
+        $el.classList.remove('--active');
+        $el.style.backgroundColor = "red";
+    });
+    // console.log(j%items.length);
+    items[(items.length - 1) - j%items.length].classList.add('--active');
+    items[(items.length - 1) - j%items.length].style.backgroundColor = "blue";
+    console.log('hi');
+}

@@ -21,7 +21,10 @@
         <div class="js-logged-in-items-container"></div>
     </div>
     
-    <div class="pixenary-action-button js-reset-button">Start</div>
+    <div class="content-border action-button-position button-border js-reset-button">
+        <div class="inner-content button-border">Start</div>
+    </div>
+    
     <div id="view-score-option" class="button hidden">View scores</div>
 
     <div class="js-waiting-for-players hidden">
@@ -40,7 +43,10 @@
     <div class="answer-container hidden js-answer-container">
         <div class="extra-info js-answer-title"></div>
         <textarea class="balderdash-answer js-answer-entry-box"></textarea>
-        <div class="button js-submit-answer">Submit</div>
+        
+        <div class="content-border button-border --centered js-submit-answer">
+            <div class="inner-content button-border">Submit</div>
+        </div>
     </div>
     
    
@@ -48,9 +54,13 @@
         <div class="carousel js-carousel"></div>
 
         <div class="arrow-container">
-            <div class="arrow --previous js-previous-card --disabled"><span class="material-icons">navigate_before</span></div>
+            <div class="individual-score-value-border">
+                <div class="arrow individual-score-value-text --previous js-previous-card --disabled"><span class="material-icons">navigate_before</span></div>
+            </div>
             <div class="score-title">Who guessed it</div>
-            <div class="arrow --next js-next-card"><span class="material-icons">navigate_next</span></div>
+            <div class="individual-score-value-border ">
+                <div class="arrow individual-score-value-text --next js-next-card --disabled"><span class="material-icons">navigate_next</span></div>
+            </div>
         </div>
         
         <div class="js-score-user-selector"></div>

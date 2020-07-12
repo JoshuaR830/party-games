@@ -379,9 +379,9 @@ function startSpinCycle(numberToSpinTo, chosenLetters, valueToAdd)
         
         if(chosenLetters[i] !== 0) {
             letterContainer.textContent = chosenLetters[i].toString();
-            letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; height:60px; border-radius: 50%; background: linear-gradient(45deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5;`;
+            letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; height:60px; border-radius: 50%; background: linear-gradient(${(360/chosenLetters.length)*i}deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5; font-size: 24px;`;
         } else {
-            letterContainer.style = `position: absolute; top: ${y+25}px; left: ${x+25}px; margin-top: 0; width: 10px; height:10px; border-radius: 50%; background: linear-gradient(45deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5;`;
+            letterContainer.style = `position: absolute; top: ${y+25}px; left: ${x+25}px; margin-top: 0; width: 10px; height:10px; border-radius: 50%; background: linear-gradient(${(360/chosenLetters.length)*i}deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5; font-size: 24px;`;
         }
         
         container.appendChild(letterContainer);

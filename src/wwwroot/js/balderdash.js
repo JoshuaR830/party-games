@@ -383,13 +383,13 @@ function startSpinCycle(numberToSpinTo, chosenLetters, valueToAdd)
         let radius = 100;
         let x = Math.round(radius * (Math.sin(i * angle))) + xPos;
         let y = Math.round(radius * (Math.cos(i * angle))) + yPos;
-        letterContainer.className = 'js-spinner-item';
+        letterContainer.className = 'spinner-item js-spinner-item';
         
         if(chosenLetters[i] !== 0) {
             letterContainer.textContent = chosenLetters[i].toString();
-            letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; height:60px; border-radius: 50%; background: linear-gradient(${(360/chosenLetters.length)*i}deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5; font-size: 24px;`;
+            letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; width: 60px; height:60px;`;
         } else {
-            letterContainer.style = `position: absolute; top: ${y+25}px; left: ${x+25}px; margin-top: 0; width: 10px; height:10px; border-radius: 50%; background: linear-gradient(${(360/chosenLetters.length)*i}deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5; font-size: 24px;`;
+            letterContainer.style = `position: absolute; top: ${y+25}px; left: ${x+25}px; width: 10px; height:10px;`;
         }
         
         container.appendChild(letterContainer);
@@ -437,11 +437,13 @@ function spin(j, items)
 {
     items.forEach(function($el) {
         $el.classList.remove('--active');
+        $el.classList.remove('--active-spinner');
         
         $el.style.opacity = '0.5';
     });
     
     items[(items.length - 1) - j%items.length].classList.add('--active');
+    items[(items.length - 1) - j%items.length].classList.add('--active-spinner');
     items[(items.length - 1) - j%items.length].style.opacity = '1';
     console.log('hi');
 }

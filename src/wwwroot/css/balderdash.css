@@ -213,6 +213,21 @@
     line-height: 40px;
 }
 
+.spinner-item
+{
+    margin-top: 0;
+    border-radius: 50%;
+    background: linear-gradient(180deg, rgba(255, 140, 0, 0.8) 0%, rgba(255, 0, 0, 0.8) 100%);
+    text-align: center;
+    line-height: 60px;
+    font-size: 24px;
+}
+
+.--active-spinner
+{
+    background: linear-gradient(180deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%);
+}
+
 .error
 {
     box-shadow: 0 0 10px #ff0000;

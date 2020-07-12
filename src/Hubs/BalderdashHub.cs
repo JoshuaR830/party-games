@@ -65,8 +65,6 @@ namespace Chat.Hubs
             {
                 Console.WriteLine("New room 2");
                 _gameManager.SetupNewGame(roomId, name, GameType.Balderdash);
-                // Rooms.RoomsList[roomId].Balderdash;
-                // Console.WriteLine(name);
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList));
@@ -195,7 +193,6 @@ namespace Chat.Hubs
                     await Clients.Group(roomId).SendAsync("BalderdashGameFinished", user.Key);
                     return;
                 }
-
             }
             
             room.Balderdash.Reset();

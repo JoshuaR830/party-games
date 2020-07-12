@@ -22,6 +22,9 @@ var $currentDasher = document.querySelector('.js-current-dasher');
 var $answerTitle = document.querySelector('.js-answer-title');
 var totalScoresToChoose = 0;
 
+var $category = document.querySelector('.js-category-title');
+
+
 var $spinnerContainer = document.querySelector('.js-round-spinner-container');
 
 $roundScoreContainer = document.querySelector('.js-round-score-container');
@@ -136,7 +139,8 @@ balderdashConnection.on("ReceivedGuess", function(dasher) {
     } else {
         $currentDasher.textContent = `${dasher} has got your answer`;
     }
-    
+
+    $category.classList.add('hidden');
     $waitingForPlayersContainer.classList.remove('hidden');
     $answerContainer.classList.add('hidden');
 });
@@ -181,7 +185,7 @@ balderdashConnection.on("RevealCardsToDasher", function(guesses) {
     })
 });
 
-balderdashConnection.on("DasherSelected", function(dasher) {
+balderdashConnection.on("DasherSelected", function(dasher, category) {
     let name = document.querySelector('#my-name').value;
     if (name === dasher)
     {
@@ -189,6 +193,10 @@ balderdashConnection.on("DasherSelected", function(dasher) {
     } else {
         $answerTitle.innerText = `${dasher} is the dasher`;
     }
+    
+    console.log(category);
+    $category.innerText = `Category: ${category}`;
+    $category.classList.remove('hidden');
 })
 
 balderdashConnection.on("Reset", function() {
@@ -429,17 +437,16 @@ function spin(j, items)
 {
     items.forEach(function($el) {
         $el.classList.remove('--active');
-        // if($el.textContent === '')
-        // {
-        //     $el.style.backgroundColor = "green";
-        // } else {
-        //     $el.style.backgroundColor = "red";
-        // }
         
         $el.style.opacity = '0.5';
     });
-    // console.log(j%items.length);
+    
     items[(items.length - 1) - j%items.length].classList.add('--active');
     items[(items.length - 1) - j%items.length].style.opacity = '1';
     console.log('hi');
 }
+
+balderdashConnection.on('BalderdashGameFinished', function(name) {
+    document.querySelector('.js-winner-banner-title').textContent = `${name} has won the game`;
+    document.querySelector('.js-winner-modal').classList.remove('popup-hidden');
+});

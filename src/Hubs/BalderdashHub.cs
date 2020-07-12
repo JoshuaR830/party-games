@@ -156,6 +156,12 @@ namespace Chat.Hubs
                 
                 userRoundScores.Add(user.Key, user.Value.BalderdashGame.RoundScore);
                 var userScore = user.Value.BalderdashGame.Score;
+
+                if (userScore >= _boardGame.Count)
+                {
+                    await Clients.Group(roomId).SendAsync("BalderdashGameFinished", user.Key);
+                    return;
+                }
                 
                 if (_boardGame[userScore].IsSpinner && roundScore > 0)
                 {
@@ -184,13 +190,23 @@ namespace Chat.Hubs
 
                 user.Value.BalderdashGame?.Reset();
 
+                if (user.Value.BalderdashGame?.Score >= _boardGame.Count)
+                {
+                    await Clients.Group(roomId).SendAsync("BalderdashGameFinished", user.Key);
+                    return;
+                }
+
             }
             
             room.Balderdash.Reset();
             await Clients.Group(roomId).SendAsync("Reset");
 
             var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
-            await Clients.Group(roomId).SendAsync("DasherSelected", dasher);
+
+            var category = _boardGame[Rooms.RoomsList[roomId].Users[dasher].BalderdashGame.Score].BoardCategory;
+            Console.WriteLine(Rooms.RoomsList[roomId].Users[dasher].Score);
+
+            await Clients.Group(roomId).SendAsync("DasherSelected", dasher, category);
             
             // ToDo: synchronise deletion by sending update to all devices
         }
@@ -219,6 +235,8 @@ namespace Chat.Hubs
             {
                 var score = user.Value.BalderdashGame.Score;
                 await Clients.Group(user.Key).SendAsync("UpdateUserScore", score);
+                
+                // ToDo: end the game when a certain score is reached
             }
         }
 

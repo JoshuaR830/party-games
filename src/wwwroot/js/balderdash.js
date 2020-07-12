@@ -209,6 +209,9 @@ balderdashConnection.on("Reset", function() {
     $answerContainer.classList.remove('hidden');
 
     $spinnerContainer.classList.add('hidden');
+
+    let container = document.querySelector('.js-spinner');
+    container.classList.remove('hidden');
 })
 
 
@@ -260,17 +263,31 @@ function countActive(names) {
 }
 
 balderdashConnection.on("RoundReviewPage", function(userRoundScores) {
+    
+    console.log(userRoundScores)
+    
     // ToDo: pass more things into this - isSpinTurn, spinItems, spinPosition
     $roundScoreContainer.innerHTML = "";
 
-    $spinnerContainer.classList.remove('hidden');
+    let container = document.querySelector('.js-spinner');
+    container.innerHTML = "";
     
     for (let user in userRoundScores) {
         if(userRoundScores.hasOwnProperty(user))
         {
+            console.log(userRoundScores[user].score)
+            console.log(userRoundScores[user].isSpinner)
+            console.log(userRoundScores[user].spinnerPosition)
+            console.log(userRoundScores[user].spinnerScore)
+            console.log(userRoundScores[user].spinnerItems)
+
+            let name = document.querySelector('#my-name').value;
+            
+            console.log(name)
+            console.log(user)
+            
             console.log(user);
             console.log(userRoundScores[user])
-
 
             let scoreWrapper = document.createElement('div');
             let scoreNameBorder = document.createElement('div');
@@ -285,7 +302,8 @@ balderdashConnection.on("RoundReviewPage", function(userRoundScores) {
             scoreValueText.className = 'individual-score-value-text';
 
             scoreNameText.innerText = user[0].toUpperCase() + user.slice(1);
-            scoreValueText.innerText = userRoundScores[user];
+            scoreValueText.innerText = userRoundScores[user].score;
+            scoreValueText.setAttribute('data-name', user.toLowerCase())
 
             scoreNameBorder.appendChild(scoreNameText);
             scoreValueBorder.appendChild(scoreValueText);
@@ -296,6 +314,11 @@ balderdashConnection.on("RoundReviewPage", function(userRoundScores) {
             $roundScoreContainer.appendChild(scoreWrapper);
 
             // ToDo: if user is supposed to get a spin because of location - show a button, that buttons should have a data property on it that is the number to spin to, this is the result that we need to pass to start spin cycle
+            
+            if(userRoundScores[user].isSpinner && name.toLowerCase() === user.toLowerCase()) {
+                $spinnerContainer.classList.remove('hidden');
+                startSpinCycle(userRoundScores[user].spinnerPosition, userRoundScores[user].spinnerItems, userRoundScores[user].spinnerScore)
+            }
         }
         
         $roundScoreContainer.classList.remove('hidden');
@@ -333,11 +356,12 @@ balderdashConnection.on("LoggedInUsers", function(users) {
     console.log('logged-in');
 });
 
-function startSpinCycle(numberToSpinTo)
+function startSpinCycle(numberToSpinTo, chosenLetters, valueToAdd)
 {
-    let chosenLetters = [1, 2, 3, 4, 5, 6];
+    // let chosenLetters = [1, 2, 3, 4, 5, 6];
     chosenLetters = chosenLetters.reverse();
     let container = document.querySelector('.js-spinner');
+    container.classList.remove('hidden');
     container.innerHTML = "";
     console.log(container);
     console.log(chosenLetters.length)
@@ -352,8 +376,14 @@ function startSpinCycle(numberToSpinTo)
         let x = Math.round(radius * (Math.sin(i * angle))) + xPos;
         let y = Math.round(radius * (Math.cos(i * angle))) + yPos;
         letterContainer.className = 'js-spinner-item';
-        letterContainer.textContent = chosenLetters[i].toString();
-        letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; height:60px; border-radius: 50%; background-color: red; text-align: center; line-height: 60px;`;
+        
+        if(chosenLetters[i] !== 0) {
+            letterContainer.textContent = chosenLetters[i].toString();
+            letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; height:60px; border-radius: 50%; background: linear-gradient(45deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5;`;
+        } else {
+            letterContainer.style = `position: absolute; top: ${y+25}px; left: ${x+25}px; margin-top: 0; width: 10px; height:10px; border-radius: 50%; background: linear-gradient(45deg, rgba(0, 140, 255, 0.8) 0%, rgba(255, 225, 0, 0.8) 100%); text-align: center; line-height: 60px; opacity: 0.5;`;
+        }
+        
         container.appendChild(letterContainer);
     }
 
@@ -363,25 +393,53 @@ function startSpinCycle(numberToSpinTo)
     let numChosen = numberToSpinTo;
     console.log(">>", chosenLetters.reverse()[numChosen - 1]);
 
-    let rotations = (Math.floor(Math.random() * 10) + 4) * items.length;
+    let rotations = (Math.floor(Math.random() * 6) + 2) * items.length;
     console.log(rotations);
 
     let totalRotations = rotations + numChosen;
 
+    let totalTime = 0;
+    
     for(let j = 0; j < totalRotations; j ++) {
         let num = j/20
-        setTimeout(spin, 30*j*num, j, items);
+        totalTime = (5*j*num);
+        setTimeout(spin, 5*j*num, j, items);
     }
+
+    console.log(totalTime);
+    setTimeout(updateScores, totalTime, valueToAdd)
 }
+
+function updateScores(valueToAdd)
+{
+    console.log("Set the score");
+    let name = document.querySelector('#my-name').value;
+    // document.querySelector('div[data-name="' + name.toLowerCase() + '"]').textContent = parseInt(document.querySelector('div[data-name="' + name.toLowerCase() + '"]').textContent) + valueToAdd;
+    document.querySelector('#score').textContent = parseInt(document.querySelector('#score').textContent) + valueToAdd;
+    
+    balderdashConnection.invoke('UpdateUserScoreOnSpin', connectionName, name);
+}
+
+balderdashConnection.on('UpdateUserScoreOnSpin', function(nameToUpdate, newRoundValue) {
+    console.log(">>>>>" + nameToUpdate);
+    document.querySelector('div[data-name="' + nameToUpdate.toLowerCase() + '"]').textContent = newRoundValue;
+});
 
 function spin(j, items)
 {
     items.forEach(function($el) {
         $el.classList.remove('--active');
-        $el.style.backgroundColor = "red";
+        // if($el.textContent === '')
+        // {
+        //     $el.style.backgroundColor = "green";
+        // } else {
+        //     $el.style.backgroundColor = "red";
+        // }
+        
+        $el.style.opacity = '0.5';
     });
     // console.log(j%items.length);
     items[(items.length - 1) - j%items.length].classList.add('--active');
-    items[(items.length - 1) - j%items.length].style.backgroundColor = "blue";
+    items[(items.length - 1) - j%items.length].style.opacity = '1';
     console.log('hi');
 }

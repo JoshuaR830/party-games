@@ -1,3 +1,9 @@
+using System;
+using Amazon;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.Lambda;
+using Amazon.Runtime;
+using Amazon.Runtime.CredentialManagement;
 using Chat.Balderdash;
 using Chat.GameManager;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +35,27 @@ namespace Chat
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+            // var chain = new CredentialProfileStoreChain();
+            // if (chain.TryGetProfile("aarrgghh", out var basicProfile))
+            // {
+            //     Console.WriteLine(basicProfile);
+            // }
+            
+            // services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonLambda>();
+            
+            // services.AddAWSService<IAmazonLambda>(new AWSOptions
+            // {
+            //     
+            // });
+            
+            // services.AddAWSService<IAmazonLambda>(new AWSOptions
+            // {
+            //     Credentials = new BasicAWSCredentials(basicProfile.Options.AccessKey, basicProfile.Options.SecretKey),
+            //     Region = RegionEndpoint.EUWest2
+            // });
+            
             services.AddSignalR();
             services.AddSingleton<IGameManager, GameManager.GameManager>();
             services.AddSingleton<IScoreHelper, ScoreHelper>();

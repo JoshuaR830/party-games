@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using Amazon.Lambda;
+using Amazon.Lambda.Model;
 using Chat.GameManager;
 using Newtonsoft.Json;
 using Chat.Letters;
@@ -19,14 +21,16 @@ namespace Chat.Hubs
         private readonly IFilenameHelper _filenameHelper;
         private readonly IJoinRoomHelper _joinRoomHelper;
         private readonly IGameManager _gameManager;
+        private readonly IAmazonLambda _amazonLambda;
 
-        public LettersHub(IWordService wordService, IFileHelper fileHelper, IFilenameHelper filenameHelper, IJoinRoomHelper joinRoomHelper, IGameManager gameManager)
+        public LettersHub(IWordService wordService, IFileHelper fileHelper, IFilenameHelper filenameHelper, IJoinRoomHelper joinRoomHelper, IGameManager gameManager, IAmazonLambda amazonLambda)
         {
             _wordService = wordService;
             _fileHelper = fileHelper;
             _filenameHelper = filenameHelper;
             _joinRoomHelper = joinRoomHelper;
             _gameManager = gameManager;
+            _amazonLambda = amazonLambda;
 
             if (!File.Exists(_filenameHelper.GetDictionaryFilename()))
                 File.Create(_filenameHelper.GetDictionaryFilename());
@@ -156,6 +160,27 @@ namespace Chat.Hubs
         
         public async Task ServerIsValidWord(string word, string roomId, string name)
         {
+            
+            // var lambdaClient = new AmazonLambdaClient();
+            
+            var request = new InvokeRequest
+            {
+                FunctionName = "WordServiceExistenceProcessor",
+                InvocationType = InvocationType.RequestResponse,
+                Payload = JsonConvert.SerializeObject(word.ToLower())
+            };
+            
+            var response = await _amazonLambda.InvokeAsync(request);
+
+            var json = await new StreamReader(response.Payload).ReadToEndAsync();
+            
+            // var jsonReader = new JsonTextReader(reader);
+            
+            // var serializer = new JsonSerializer();
+            // var jsonResult = serializer.Deserialize(jsonReader);
+
+            Console.WriteLine(JsonConvert.DeserializeObject(json));
+            
             var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);
             _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
             Rooms.RoomsList[roomId].Users[name].WordGame.AddWordToList(word);

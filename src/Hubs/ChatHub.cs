@@ -133,7 +133,7 @@ namespace Chat.Hubs
         {
             Console.WriteLine("New room 1");
             await Groups.AddToGroupAsync(Context.ConnectionId, name);
-
+            
             if (!Rooms.RoomsList.ContainsKey(roomId))
             {
                 // The problem here is that this is getting invoked to build pixenary - but this requires a ThoughtsAndCrosses game to be made
@@ -152,13 +152,16 @@ namespace Chat.Hubs
                 Rooms.RoomsList[roomId].ThoughtsAndCrosses.CalculateTopics();
                 Rooms.RoomsList[roomId].ThoughtsAndCrosses.SetLetter();
             }
-            
-            var loggedInUsers = Rooms.RoomsList[roomId].Users.Select(x => x.Key).ToList().OrderBy(x => x); 
-            await Clients.Group(roomId).SendAsync("LoggedInUsers", loggedInUsers);
         }
 
-        public void SetupNewUser(string roomId, string name)
+        public async Task SetupNewUser(string roomId, string name)
         {
+            if (name == "")
+            {
+                return;
+            }
+                
+            
             Console.WriteLine("New user");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
@@ -172,6 +175,9 @@ namespace Chat.Hubs
                 var game = Rooms.RoomsList[roomId].ThoughtsAndCrosses;
                 _gameManager.SetupNewThoughtsAndCrossesUser(roomId, name, game);
             }
+            
+            var loggedInUsers = Rooms.RoomsList[roomId].Users.Select(x => x.Key).ToList().OrderBy(x => x); 
+            await Clients.Group(roomId).SendAsync("LoggedInUsers", loggedInUsers);
         }
         
         public async Task StartServerGame(string user, int[] time)

@@ -160,9 +160,6 @@ namespace Chat.Hubs
         
         public async Task ServerIsValidWord(string word, string roomId, string name)
         {
-            
-            // var lambdaClient = new AmazonLambdaClient();
-            
             var request = new InvokeRequest
             {
                 FunctionName = "WordServiceExistenceProcessor",
@@ -174,11 +171,6 @@ namespace Chat.Hubs
 
             var json = await new StreamReader(response.Payload).ReadToEndAsync();
             
-            // var jsonReader = new JsonTextReader(reader);
-            
-            // var serializer = new JsonSerializer();
-            // var jsonResult = serializer.Deserialize(jsonReader);
-
             Console.WriteLine(JsonConvert.DeserializeObject(json));
             
             var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);

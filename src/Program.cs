@@ -30,8 +30,8 @@ namespace Chat
             WebHost.CreateDefaultBuilder(args)
 	            .ConfigureAppConfiguration(config =>
 	            {
-		            config.AddJsonFile("appsettings.json");
-		            config.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.ToLowerInvariant()}.json");
+		            // config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+		            // config.AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.ToLowerInvariant()}.json", optional: true, reloadOnChange: true);
 		            config.AddEnvironmentVariables();
 	            })
                 .UseStartup<Startup>();

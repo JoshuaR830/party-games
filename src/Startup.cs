@@ -43,18 +43,20 @@ namespace Chat
             // }
             
             // services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
-            services.AddAWSService<IAmazonLambda>();
+            // services.AddAWSService<IAmazonLambda>();
             
             // services.AddAWSService<IAmazonLambda>(new AWSOptions
             // {
             //     
             // });
-            
-            // services.AddAWSService<IAmazonLambda>(new AWSOptions
-            // {
-            //     Credentials = new BasicAWSCredentials(basicProfile.Options.AccessKey, basicProfile.Options.SecretKey),
-            //     Region = RegionEndpoint.EUWest2
-            // });
+            var thing = Environment.GetEnvironmentVariable("AWS_ACCESS_KEY");
+            var thing2 = Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY");
+            var thing3 = Environment.GetEnvironmentVariable("DOCKER_CERT_PATH");
+            services.AddAWSService<IAmazonLambda>(new AWSOptions
+            {
+                Credentials = new BasicAWSCredentials(Environment.GetEnvironmentVariable("AWS_ACCESS_KEY"), Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY")),
+                Region = RegionEndpoint.EUWest2
+            });
             
             services.AddSignalR();
             services.AddSingleton<IGameManager, GameManager.GameManager>();

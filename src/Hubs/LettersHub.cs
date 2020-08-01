@@ -171,13 +171,13 @@ namespace Chat.Hubs
 
             var json = await new StreamReader(response.Payload).ReadToEndAsync();
             
-            Console.WriteLine(JsonConvert.DeserializeObject(json));
+            var wordResponse = JsonConvert.DeserializeObject<WordResponseWrapper>(json);
             
-            var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);
+            // Console.WriteLine(_wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word));
             _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
             Rooms.RoomsList[roomId].Users[name].WordGame.AddWordToList(word);
             Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users[name].WordGame.WordList));
-            await Clients.Group(name).SendAsync("WordStatusResponse", isValid, word);
+            await Clients.Group(name).SendAsync("WordStatusResponse", wordResponse.IsSuccessful, word);
         }
 
         public async Task GetUserData(string roomId, string name)

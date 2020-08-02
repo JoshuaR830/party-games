@@ -6,16 +6,28 @@ var $scoreNamesContainer = document.querySelector('.js-score-user-selector');
 document.querySelector('.login-button').addEventListener('click', userLogin);
 
 function userLogin() {
+    let nameInput = document.getElementById('my-name');
+    var name = nameInput.value;
+    if (name.length > 0) {
+        document.querySelector('.login-button').disabled = true;
+        connection.invoke("UserSuccessfulLogIn", connectionName)
+    } else {
+        nameInput.style.borderColor = "#ff0000";
+        document.querySelector('.login-button').disabled = false;
+    }
+}
+
+connection.on("UserSuccessfulLogIn", function() {
     console.log("Logged in");
     let nameInput = document.getElementById('my-name');
     var name = nameInput.value;
     if (name.length > 0) {
         document.querySelector('.js-login-modal').classList.add('popup-hidden');
     } else {
-        nameInput.style.borderColor = "#ff0000";
+        document.querySelector('.login-button').disabled = false;
     }
     console.log();
-}
+})
 
 document.getElementById("completeRoundButton").addEventListener('click', function(event) {
     connection.invoke("CompleteRound", connectionName);

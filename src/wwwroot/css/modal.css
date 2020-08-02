@@ -137,6 +137,8 @@
     border-radius: 8px;
     border: 4px solid #55edbb;
     box-sizing: content-box;
+    background-color: transparent;
+    color: #ffffff;
 }
 
 .login-button:hover

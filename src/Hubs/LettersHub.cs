@@ -119,6 +119,9 @@ namespace Chat.Hubs
         
         public async Task Startup(string roomId, string name, int gameId)
         {
+            if (name == "")
+                return;
+            
             Console.WriteLine("New room 1");
             await Groups.AddToGroupAsync(Context.ConnectionId, name);
 
@@ -144,8 +147,10 @@ namespace Chat.Hubs
 
         public async Task SetupNewUser(string roomId, string name)
         {
-            Console.WriteLine("New user");
+            if (name == "")
+                return;
             
+            Console.WriteLine("New user");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
                 var game = Rooms.RoomsList[roomId].Word;

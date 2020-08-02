@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Chat.WordGame.LocalDictionaryHelpers;
+using System.Threading.Tasks;
 using Chat.WordGame.WordHelpers;
 
 namespace Chat.RoomManager
@@ -7,19 +7,19 @@ namespace Chat.RoomManager
     public class UserWordGame
     {
         private readonly IWordService _wordService;
-        private readonly IFilenameHelper _filenameHelper;
         public Dictionary<string, WordManager> WordList { get; }
 
-        public UserWordGame(IWordService wordService, IFilenameHelper filenameHelper)
+        public UserWordGame(IWordService wordService)
         {
             _wordService = wordService;
-            _filenameHelper = filenameHelper;
             WordList = new Dictionary<string, WordManager>();
         }
 
-        public void AddWordToList(string word)
+        public async Task AddWordToList(string word)
         {
-            WordList.Add(word, new WordManager(_wordService, _filenameHelper, word));
+            var definition = await _wordService.GetDefinition(word);
+            var status = await _wordService.GetWordStatus(word);
+            WordList.Add(word, new WordManager(word, definition, status));
         }
 
         public void ChangeWordStatus(string word, bool status)

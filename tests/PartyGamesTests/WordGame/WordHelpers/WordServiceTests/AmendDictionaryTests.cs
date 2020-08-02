@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Amazon.Lambda;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
@@ -14,13 +15,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
     {
         private const string Filename = "./amend-dictionary-tests.json";
         private const string GuessedWordsFilename = "./amend-dictionary-tests.json";
-        private IWordExistenceHelper _wordExistenceHelper;
-        private IWordHelper _wordHelper;
-        private IWordDefinitionHelper _wordDefinitionHelper;
         private FileHelper _fileHelper;
         private IFilenameHelper _filenameHelper;
 
         private readonly WordService _wordService;
+        private IAmazonLambda _lambda;
 
         public AmendDictionaryTests()
         {
@@ -43,10 +42,12 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .GetGuessedWordsFilename()
                 .Returns(GuessedWordsFilename);
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
+            
+            _lambda = Substitute.For<IAmazonLambda>();
 
             TestFileHelper.CreateCustomFile(Filename, data);
             _fileHelper = new FileHelper(_filenameHelper);
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
         }
 
         [Fact]

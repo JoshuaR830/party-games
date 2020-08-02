@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
 using Amazon.Lambda;
-using Amazon.Lambda.Model;
 using Chat.GameManager;
 using Newtonsoft.Json;
 using Chat.Letters;
@@ -56,7 +55,7 @@ namespace Chat.Hubs
 
         public async Task IsValidWord(string word, string group)
         {
-            var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);
+            var isValid = await _wordService.GetWordStatus(word);
             _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
         }
@@ -71,8 +70,8 @@ namespace Chat.Hubs
 
         public async Task GetDefinition(string group, string word)
         {
-            var definition = _wordService.GetDefinition(_filenameHelper.GetDictionaryFilename(), word);
-            var category = _wordService.GetCategory(_filenameHelper.GetDictionaryFilename(), word);
+            var definition = await _wordService.GetDefinition(word);
+            var category = await _wordService.GetCategory(word);
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
             await Clients.Group(group).SendAsync("ReceiveCategory", category);
         }
@@ -88,7 +87,6 @@ namespace Chat.Hubs
         public void UpdateDictionary(string group, string word, string definition, int category = 0)
         {
             Console.WriteLine(word);
-            Console.WriteLine(definition);
             _wordService.UpdateExistingWord(_filenameHelper.GetDictionaryFilename(), word, definition, (WordCategory) category);
         }
 
@@ -160,24 +158,10 @@ namespace Chat.Hubs
         
         public async Task ServerIsValidWord(string word, string roomId, string name)
         {
-            var request = new InvokeRequest
-            {
-                FunctionName = "WordServiceExistenceProcessor",
-                InvocationType = InvocationType.RequestResponse,
-                Payload = JsonConvert.SerializeObject(word.ToLower())
-            };
-            
-            var response = await _amazonLambda.InvokeAsync(request);
-
-            var json = await new StreamReader(response.Payload).ReadToEndAsync();
-            
-            var wordResponse = JsonConvert.DeserializeObject<WordResponseWrapper>(json);
-            
-            // Console.WriteLine(_wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word));
+            var isSuccessful = await _wordService.GetWordStatus(word);
             _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
-            Rooms.RoomsList[roomId].Users[name].WordGame.AddWordToList(word);
-            Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users[name].WordGame.WordList));
-            await Clients.Group(name).SendAsync("WordStatusResponse", wordResponse.IsSuccessful, word);
+            await Rooms.RoomsList[roomId].Users[name].WordGame.AddWordToList(word);
+            await Clients.Group(name).SendAsync("WordStatusResponse", isSuccessful, word);
         }
 
         public async Task GetUserData(string roomId, string name)

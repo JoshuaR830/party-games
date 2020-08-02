@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Chat.RoomManager;
-using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using NSubstitute;
@@ -10,16 +9,13 @@ using Xunit;
 
 namespace PartyGamesTests.RoomManager
 {
-    public class UserWordGameTests
+    public class UserWordGameTests : IDisposable
     {
-        private IFilenameHelper _filenameHelper;
-        private IWordService _wordService;
+        private readonly IWordService _wordService;
         private const string Filename = "./some-file.json";
 
         public UserWordGameTests()
         {
-            _filenameHelper = Substitute.For<IFilenameHelper>();
-            _filenameHelper.GetDictionaryFilename().Returns(Filename);
             _wordService = Substitute.For<IWordService>();
         }
         
@@ -27,7 +23,7 @@ namespace PartyGamesTests.RoomManager
         public void TestUserWordGame()
         {
             TestFileHelper.Create(Filename);
-            var userGame = new UserWordGame(_wordService, _filenameHelper);
+            var userGame = new UserWordGame(_wordService);
 
             userGame.AddWordToList("sheep");
             userGame.AddWordToList("sloth");

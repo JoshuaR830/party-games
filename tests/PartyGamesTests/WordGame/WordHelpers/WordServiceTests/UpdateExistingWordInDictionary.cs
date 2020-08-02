@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Amazon.Lambda;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
@@ -15,12 +16,10 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 
         private const string TempDefinition = "A fluffy animal that sits, eats grass, sits, eats grass and is commonly counted by children who can't sleep (they love the attention).";
         private const string PermDefinition = "An animal with a wool laden coat that lives on a farm";
-        private IWordExistenceHelper _wordExistenceHelper;
-        private IWordHelper _wordHelper;
-        private IWordDefinitionHelper _wordDefinitionHelper;
         private readonly FileHelper _fileHelper;
         private IFilenameHelper _filenameHelper;
         private readonly WordService _wordService;
+        private readonly IAmazonLambda _lambda;
         
         public UpdateExistingWordInDictionary()
         {
@@ -30,9 +29,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Returns(Filename);
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
 
+            _lambda = Substitute.For<IAmazonLambda>();
+
             TestFileHelper.Create(Filename);
             _fileHelper = new FileHelper(_filenameHelper);
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             
         }
         

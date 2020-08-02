@@ -12,7 +12,6 @@ namespace Chat.GameManager
         private readonly IShuffleHelper<string> _shuffleStringHelper;
         private readonly IShuffleHelper<WordData> _shuffleWordDataHelper;
         private readonly IScoreHelper _scoreHelper;
-        private readonly IFilenameHelper _filenameHelper;
         private readonly IWordService _wordService;
         private readonly IWordCategoryHelper _wordCategoryHelper;
         public GameType ActiveGameType { get; private set; }
@@ -22,7 +21,6 @@ namespace Chat.GameManager
             _joinRoomHelper = joinRoomHelper;
             _shuffleStringHelper = shuffleStringHelper;
             _scoreHelper = scoreHelper;
-            _filenameHelper = filenameHelper;
             _wordService = wordService;
             _shuffleWordDataHelper = shuffleWordDataHelper;
             _wordCategoryHelper = wordCategoryHelper;
@@ -101,7 +99,7 @@ namespace Chat.GameManager
         public void SetUpNewWordUser(string roomId, string userId, GameWordGame game)
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
-            var userWordGame = new UserWordGame(_wordService, _filenameHelper);
+            var userWordGame = new UserWordGame(_wordService);
             Rooms.RoomsList[roomId].Users[userId].SetUpGame(userWordGame);
         }
 

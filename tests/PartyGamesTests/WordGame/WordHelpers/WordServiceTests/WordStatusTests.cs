@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
+using Amazon.Lambda;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
 using Newtonsoft.Json;
 using NSubstitute;
+using NSubstitute.Exceptions;
 using Xunit;
 
 namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
@@ -12,13 +14,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
     public class WordStatusTests : IDisposable
     {
         private WordService _wordService;
-        private IWordDefinitionHelper _wordDefinitionHelper;
         private IFilenameHelper _filenameHelper;
-        private IWordExistenceHelper _wordExistenceHelper;
-        private IWordHelper _wordHelper;
         private ITemporaryDefinitionHelper _temporaryDefinitionHelper;
         private FileHelper _fileHelper;
         private WordDictionary _wordDictionary;
+        private IAmazonLambda _lambda;
         private const string Filename = "./word-status-tests.json";
         
         public WordStatusTests()
@@ -33,14 +33,11 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
                 .Returns(Filename);
 
             TestFileHelper.Create(Filename);
-            var json = TestFileHelper.Read(Filename);
             
-            _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
-            _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
-            _wordHelper = Substitute.For<IWordHelper>();
             _fileHelper = new FileHelper(_filenameHelper);
+            _lambda = Substitute.For<IAmazonLambda>();
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordDictionary = _wordService.GetDictionary();
         }
         
@@ -71,7 +68,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "pelican";
             var newDefinition = TestFileHelper.PelicanPermanentDefinition;
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.UpdateExistingWord(Filename, word, newDefinition);
             _wordService.UpdateDictionaryFile();
 
@@ -93,7 +90,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             var word = "hello";
             var newDefinition = "A friendly greeting";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.AddNewWordToDictionary(Filename, word, newDefinition);
             _wordService.UpdateDictionaryFile();
 
@@ -114,7 +111,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "sheep";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
             _wordService.UpdateDictionaryFile();
 
@@ -135,7 +132,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "lion";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
             _wordService.UpdateDictionaryFile();
 
@@ -156,7 +153,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "boxing";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
             _wordService.UpdateDictionaryFile();
 
@@ -177,7 +174,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "dodo";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
             _wordService.UpdateDictionaryFile();
 
@@ -198,7 +195,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "unicorn";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
             _wordService.UpdateDictionaryFile();
 
@@ -219,7 +216,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "dinosaur";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
             _wordService.UpdateDictionaryFile();
 
@@ -240,7 +237,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "sheep";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, true);
             _wordService.UpdateDictionaryFile();
 
@@ -261,7 +258,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             var word = "dinosaur";
             
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordService.ToggleIsWordInDictionary(Filename, word, false);
             _wordService.UpdateDictionaryFile();
 

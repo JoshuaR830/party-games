@@ -71,6 +71,12 @@ namespace Chat.Hubs
         public async Task GetDefinition(string group, string word)
         {
             var definition = await _wordService.GetDefinition(word);
+            await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
+        }
+        
+        public async Task GetCrowdSourceDefinition(string group, string word)
+        {
+            var definition = await _wordService.GetDefinition(word);
             var category = await _wordService.GetCategory(word);
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
             await Clients.Group(group).SendAsync("ReceiveCategory", category);
@@ -139,6 +145,9 @@ namespace Chat.Hubs
         public async Task SetupNewUser(string roomId, string name)
         {
             Console.WriteLine("New user");
+            
+            // Hit the lambda on login to get it up and running for when it will actually be needed (avoid the boot times later)
+            await _wordService.GetWordStatus("WarmingUpTheLambda");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
                 var game = Rooms.RoomsList[roomId].Word;

@@ -36,7 +36,7 @@ lettersConnection.on("ReceiveGuessedWord", function(data){
         
         wordItem.addEventListener('click', function($el) {
             $originalWordStatus.value = val.Status;
-            lettersConnection.invoke("GetDefinition", connectionName, val.Word);
+            lettersConnection.invoke("GetCrowdSourceDefinition", connectionName, val.Word);
         })
         
         wordContainer.appendChild(wordItem);

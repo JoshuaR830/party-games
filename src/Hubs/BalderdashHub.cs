@@ -12,16 +12,45 @@ namespace Chat.Hubs
 {
     public class BalderdashHub : Hub
     {
-        
         private readonly IGameManager _gameManager;
         private readonly IShuffleHelper<GuessMade> _shuffleGameOrder;
         private readonly IBalderdashScoreCalculator _balderdashScoreCalculator;
+
+        private readonly List<BoardGameSpinner> _boardGame;
+        private readonly List<int> _spinner = new List<int> { +2, 0, -1, 0, +2, 0, +3, 0, +2, 0, -1, 0, +2, 0, +3, 0 }; 
 
         public BalderdashHub(IGameManager gameManager, IShuffleHelper<GuessMade> shuffleGameOrder, IBalderdashScoreCalculator balderdashScoreCalculator)
         {
             _gameManager = gameManager;
             _shuffleGameOrder = shuffleGameOrder;
             _balderdashScoreCalculator = balderdashScoreCalculator;
+            _boardGame = new List<BoardGameSpinner>();
+            
+            _boardGame.Add(new BoardGameSpinner("Start", false));
+            _boardGame.Add(new BoardGameSpinner("People", true));
+            _boardGame.Add(new BoardGameSpinner("Initials", false));
+            _boardGame.Add(new BoardGameSpinner("Laws", true));
+            _boardGame.Add(new BoardGameSpinner("Words", false));
+            _boardGame.Add(new BoardGameSpinner("Events", false));
+            _boardGame.Add(new BoardGameSpinner("Any", false));
+            _boardGame.Add(new BoardGameSpinner("People", true));
+            _boardGame.Add(new BoardGameSpinner("Initials", false));
+            _boardGame.Add(new BoardGameSpinner("Laws", false));
+            _boardGame.Add(new BoardGameSpinner("Words", true));
+            _boardGame.Add(new BoardGameSpinner("Events", false));
+            _boardGame.Add(new BoardGameSpinner("Any", false));
+            _boardGame.Add(new BoardGameSpinner("People", true));
+            _boardGame.Add(new BoardGameSpinner("Initials", false));
+            _boardGame.Add(new BoardGameSpinner("Laws", true));
+            _boardGame.Add(new BoardGameSpinner("Words", false));
+            _boardGame.Add(new BoardGameSpinner("Events", false));
+            _boardGame.Add(new BoardGameSpinner("Any", true));
+            _boardGame.Add(new BoardGameSpinner("People", false));
+            _boardGame.Add(new BoardGameSpinner("Initials", false));
+            _boardGame.Add(new BoardGameSpinner("Laws", false));
+            _boardGame.Add(new BoardGameSpinner("Words", true));
+            _boardGame.Add(new BoardGameSpinner("Events", false));
+            _boardGame.Add(new BoardGameSpinner("Finish", false));
         }
 
         public async Task StartUp(string roomId, string name, int gameId)
@@ -36,8 +65,6 @@ namespace Chat.Hubs
             {
                 Console.WriteLine("New room 2");
                 _gameManager.SetupNewGame(roomId, name, GameType.Balderdash);
-                // Rooms.RoomsList[roomId].Balderdash;
-                // Console.WriteLine(name);
             }
 
             Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList));
@@ -116,13 +143,37 @@ namespace Chat.Hubs
         {
             var room = Rooms.RoomsList[roomId];
             var userRoundScores = new Dictionary<string, int>();
+            var userRoundReview = new Dictionary<string, RoundReview>();
+            
+            var random = new Random();
+
             
             foreach (var user in room.Users)
             {
+                var roundScore = user.Value.BalderdashGame.RoundScore;
+                
                 userRoundScores.Add(user.Key, user.Value.BalderdashGame.RoundScore);
+                var userScore = user.Value.BalderdashGame.Score;
+
+                if (userScore >= _boardGame.Count)
+                {
+                    await Clients.Group(roomId).SendAsync("BalderdashGameFinished", user.Key);
+                    return;
+                }
+                
+                if (_boardGame[userScore].IsSpinner && roundScore > 0)
+                {
+                    var spinnerBonus = random.Next(0, _spinner.Count);
+                    user.Value.BalderdashGame.SetScore(_spinner[spinnerBonus]);
+                    userRoundReview.Add(user.Key, new RoundReview(roundScore, true, spinnerBonus + 1, _spinner, _spinner[spinnerBonus]));
+                }
+                else
+                {
+                    userRoundReview.Add(user.Key, new RoundReview(roundScore, false, 0, new List<int>(), 0));
+                }
             }
 
-            await Clients.Group(roomId).SendAsync("RoundReviewPage", userRoundScores);
+            await Clients.Group(roomId).SendAsync("RoundReviewPage", userRoundReview);
         }
 
         public async Task ResetGame(string roomId)
@@ -137,13 +188,22 @@ namespace Chat.Hubs
 
                 user.Value.BalderdashGame?.Reset();
 
+                if (user.Value.BalderdashGame?.Score >= _boardGame.Count)
+                {
+                    await Clients.Group(roomId).SendAsync("BalderdashGameFinished", user.Key);
+                    return;
+                }
             }
             
             room.Balderdash.Reset();
             await Clients.Group(roomId).SendAsync("Reset");
 
             var dasher = Rooms.RoomsList[roomId].Balderdash.SelectedPlayer;
-            await Clients.Group(roomId).SendAsync("DasherSelected", dasher);
+
+            var category = _boardGame[Rooms.RoomsList[roomId].Users[dasher].BalderdashGame.Score].BoardCategory;
+            Console.WriteLine(Rooms.RoomsList[roomId].Users[dasher].Score);
+
+            await Clients.Group(roomId).SendAsync("DasherSelected", dasher, category);
             
             // ToDo: synchronise deletion by sending update to all devices
         }
@@ -155,6 +215,14 @@ namespace Chat.Hubs
             var names = users.Select(x => x.Key).Where(y => y != dasher).ToList().OrderBy(x => x);
             await Clients.Group(roomId).SendAsync("DisplayBalderdashScores", names);
         }
+        
+        public async Task UpdateUserScoreOnSpin(string roomId, string name)
+        {
+            var user = Rooms.RoomsList[roomId].Users[name];
+            var roundScore = user.BalderdashGame.RoundScore;
+            
+            await Clients.Group(roomId).SendAsync("UpdateUserScoreOnSpin", name, roundScore);
+        }
 
         public async Task GetScoresForAllUsers(string roomId)
         {
@@ -164,6 +232,8 @@ namespace Chat.Hubs
             {
                 var score = user.Value.BalderdashGame.Score;
                 await Clients.Group(user.Key).SendAsync("UpdateUserScore", score);
+                
+                // ToDo: end the game when a certain score is reached
             }
         }
 
@@ -234,6 +304,36 @@ namespace Chat.Hubs
             {
                 Name = name;
                 Guess = guess;
+            }
+        }
+
+        public class BoardGameSpinner
+        {
+            public string BoardCategory { get; }
+            public bool IsSpinner { get; }
+            
+            public BoardGameSpinner(string boardCategory, bool isSpinner)
+            {
+                BoardCategory = boardCategory;
+                IsSpinner = isSpinner;
+            }
+        }
+
+        public class RoundReview
+        {
+            public int Score { get; }
+            public bool IsSpinner { get; }
+            public int SpinnerPosition { get; }
+            public int SpinnerScore { get; }
+            public List<int> SpinnerItems { get; }
+
+            public RoundReview(int score, bool isSpinner, int spinnerPosition, List<int> spinner, int spinnerScore)
+            {
+                Score = score;
+                IsSpinner = isSpinner;
+                SpinnerPosition = spinnerPosition;
+                SpinnerItems = spinner;
+                SpinnerScore = spinnerScore;
             }
         }
     }

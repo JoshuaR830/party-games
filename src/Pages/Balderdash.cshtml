@@ -34,14 +34,18 @@
     <div class="button js-score-test hidden">Complete</div>
     <div class="word-choice js-word-choice"></div>
     
+    <div class="hidden js-round-spinner-container">
+        <div class="letter-selection-container js-spinner"></div>
+    </div>
+    
     <div class="individual-score-container js-round-score-container"></div>
 
     <div class="top-score-fab js-score-fab fab hidden"></div>
     <div class="timer-fab hidden"></div>
-    
-    
+
     <div class="answer-container hidden js-answer-container">
         <div class="extra-info js-answer-title"></div>
+        <div class="word-choice js-category-title"></div>
         <textarea class="balderdash-answer js-answer-entry-box"></textarea>
         
         <div class="content-border button-border --centered js-submit-answer">
@@ -58,7 +62,7 @@
                 <div class="arrow individual-score-value-text --previous js-previous-card --disabled"><span class="material-icons">navigate_before</span></div>
             </div>
             <div class="score-title">Who guessed it</div>
-            <div class="individual-score-value-border ">
+            <div class="individual-score-value-border">
                 <div class="arrow individual-score-value-text --next js-next-card --disabled"><span class="material-icons">navigate_next</span></div>
             </div>
         </div>
@@ -89,6 +93,10 @@
 
 <div class="popup-modal popup-hidden js-color-modal">
     @await Html.PartialAsync("ColorPopup");
+</div>
+
+<div class="popup-modal popup-hidden js-winner-modal">
+    @await Html.PartialAsync("Winner");
 </div>
 
 <script src="~/js/balderdash.js"></script>

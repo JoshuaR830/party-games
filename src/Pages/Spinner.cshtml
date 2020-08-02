@@ -1,0 +1,75 @@
+﻿@page
+@model Chat.Pages.Spinner
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<div class="letter-selection-container js-spinner"></div>
+<button onclick="startSpinCycle(1)">Spin 1</button>
+<button onclick="startSpinCycle(2)">Spin 2</button>
+<button onclick="startSpinCycle(3)">Spin 3</button>
+<button onclick="startSpinCycle(4)">Spin 4</button>
+<button onclick="startSpinCycle(5)">Spin 5</button>
+<button onclick="startSpinCycle(6)">Spin 6</button>
+</body>
+</html>
+
+
+<script>
+    function startSpinCycle(numberToSpinTo)
+    {
+        let chosenLetters = [1, 2, 3, 4, 5, 6];
+        chosenLetters = chosenLetters.reverse();
+        let container = document.querySelector('.js-spinner');
+        container.innerHTML = "";
+        console.log(container);
+        console.log(chosenLetters.length)
+        for (let i = 0; i < chosenLetters.length; i ++) {   
+            let letterContainer = document.createElement('div');
+            console.log(letterContainer)
+            document.querySelector(`.js-spinner`).style = "height: 260px; width: 260px; border-radius: 50%; border: 2px solid #55edba5b; box-sizing: content-box; box-shadow: 0 0 10px #55edba5b;"
+            let angle = (2 * Math.PI) / chosenLetters.length;
+            let xPos = (260 / 2) - 30;
+            let yPos = (260 / 2) - 30;
+            let radius = 100;
+            let x = Math.round(radius * (Math.sin(i * angle))) + xPos;
+            let y = Math.round(radius * (Math.cos(i * angle))) + yPos;
+            letterContainer.className = 'js-spinner-item';
+            letterContainer.textContent = chosenLetters[i].toString();
+            letterContainer.style = `position: absolute; top: ${y}px; left: ${x}px; margin-top: 0; width: 60px; height:60px; border-radius: 50%; background-color: red; text-align: center; line-height: 60px;`;
+            container.appendChild(letterContainer);
+        }
+        
+        let items = document.querySelectorAll('.js-spinner-item');
+        
+        // let numChosen = (Math.floor(Math.random() * items.length) + 1);
+        let numChosen = numberToSpinTo;
+        console.log(">>", chosenLetters.reverse()[numChosen - 1]);
+       
+        let rotations = (Math.floor(Math.random() * 10) + 4) * items.length;
+        console.log(rotations);
+        
+        let totalRotations = rotations + numChosen;
+        
+        for(let j = 0; j < totalRotations; j ++) {
+            let num = j/20
+            setTimeout(spin, 30*j*num, j, items);
+        }
+    } 
+    
+    function spin(j, items)
+    {
+        items.forEach(function($el) {
+            $el.classList.remove('--active');
+            $el.style.backgroundColor = "red";
+        });
+        // console.log(j%items.length);
+        items[(items.length - 1) - j%items.length].classList.add('--active');
+        items[(items.length - 1) - j%items.length].style.backgroundColor = "blue";
+        console.log('hi');
+    }
+</script>

@@ -214,6 +214,23 @@ input[type=number]
     color: #ffffff;
 }
 
+.game-winner-banner
+{
+    height: 200px;
+    text-align: center;
+    border-radius: 8px;
+    position: absolute;
+    top: calc(50% - 100px);
+    padding: 32px;
+    font-size: 32px;
+    line-height: 136px;
+
+    width: 100%;
+    background: linear-gradient(45deg, #03dbfc 0%, #00ff40 100%);
+    color: #ffffff;
+}
+
+
 .complete-round-button
 {
     margin-top: 48px;

@@ -34,38 +34,13 @@ namespace Chat.WordGame.WordHelpers
 
         public async Task<bool> GetWordStatus(string word)
         {
-            // ToDo: some duplicated code for invoking the lambda that could be moved into a function
-            var request = new InvokeRequest
-            {
-                FunctionName = "WordServiceExistenceProcessor",
-                InvocationType = InvocationType.RequestResponse,
-                Payload = JsonConvert.SerializeObject(word.ToLower())
-            };
-            
-            var response = await _amazonLambda.InvokeAsync(request);
-
-            var json = await new StreamReader(response.Payload).ReadToEndAsync();
-            
-            var wordResponse = JsonConvert.DeserializeObject<WordResponseWrapper>(json);
-
+            var wordResponse = await InvokeWordExistenceLambda(word);
             return wordResponse.IsSuccessful;
         }
 
         public async Task<string> GetDefinition(string word)
         {
-            var request = new InvokeRequest
-            {
-                FunctionName = "WordServiceExistenceProcessor",
-                InvocationType = InvocationType.RequestResponse,
-                Payload = JsonConvert.SerializeObject(word.ToLower())
-            };
-            
-            var response = await _amazonLambda.InvokeAsync(request);
-
-            var json = await new StreamReader(response.Payload).ReadToEndAsync();
-            
-            var wordResponse = JsonConvert.DeserializeObject<WordResponseWrapper>(json);
-
+            var wordResponse = await InvokeWordExistenceLambda(word);
             return wordResponse.WordResponse?.Definition;
         }
         
@@ -199,6 +174,22 @@ namespace Chat.WordGame.WordHelpers
         {
             var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
             return wordDictionary;
+        }
+
+        private async Task<WordResponseWrapper> InvokeWordExistenceLambda(string word)
+        {
+            var request = new InvokeRequest
+            {
+                FunctionName = "WordServiceExistenceProcessor",
+                InvocationType = InvocationType.RequestResponse,
+                Payload = JsonConvert.SerializeObject(word.ToLower())
+            };
+            
+            var response = await _amazonLambda.InvokeAsync(request);
+
+            var json = await new StreamReader(response.Payload).ReadToEndAsync();
+            
+            return JsonConvert.DeserializeObject<WordResponseWrapper>(json);
         }
     }
 }

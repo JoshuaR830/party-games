@@ -146,8 +146,6 @@ namespace Chat.Hubs
         {
             Console.WriteLine("New user");
             
-            // Hit the lambda on login to get it up and running for when it will actually be needed (avoid the boot times later)
-            await _wordService.GetWordStatus("WarmingUpTheLambda");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
                 var game = Rooms.RoomsList[roomId].Word;

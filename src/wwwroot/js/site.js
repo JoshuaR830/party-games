@@ -9,6 +9,8 @@ function userLogin() {
     let nameInput = document.getElementById('my-name');
     var name = nameInput.value;
     if (name.length > 0) {
+        document.querySelector('.js-login-content').classList.add("hidden");
+        document.querySelector('.js-loading-spinner').classList.remove("hidden");
         document.querySelector('.login-button').disabled = true;
         connection.invoke("UserSuccessfulLogIn", connectionName)
     } else {

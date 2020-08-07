@@ -58,6 +58,7 @@ namespace Chat.Hubs
         
         public async Task CollectScores(string user)
         {
+            Console.WriteLine("<<Aroo>>");
             await Clients.Group(user).SendAsync("CompletedScores");
         }
 
@@ -85,9 +86,18 @@ namespace Chat.Hubs
             await Clients.Group(user).SendAsync("ReceiveStopTimer");
         }
 
-        public async Task CompleteRound(string user)
+        public async Task CompleteRound(string roomId)
         {
-            await Clients.Group(user).SendAsync("ReceiveCompleteRound");
+            Console.WriteLine("Completed round");
+            foreach (var user in Rooms.RoomsList[roomId].Users)
+            {
+                var myGrid = user.Value.ThoughtsAndCrossesGame.WordsGrid
+                    .ToDictionary(something => something.category, something => something.userGuess);
+                await Clients.Group(user.Key).SendAsync("ReceiveWordGrid", user.Value.ThoughtsAndCrossesGame.WordsGrid);
+                Console.WriteLine(JsonConvert.SerializeObject(myGrid));
+            }
+
+            await Clients.Group(roomId).SendAsync("ReceiveCompleteRound");
         }
 
         public async Task AddToGroup(string groupName)
@@ -220,6 +230,9 @@ namespace Chat.Hubs
             {
                 Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.UncheckWord(category);
             }
+
+            var user = Rooms.RoomsList[roomId].Users[name];
+            await Clients.Group(user.Name).SendAsync("ReceiveWordGrid", user.ThoughtsAndCrossesGame.WordsGrid);
         }
 
         public async Task CalculateScore(string roomId, string name)
@@ -260,8 +273,8 @@ namespace Chat.Hubs
             var score = Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.Score;
             var message = $"{name}: {score}";
             // await SendDirectMessage("my group", "user", message);
-            Console.WriteLine("Indirect");
-
+            Console.WriteLine(">>>Indirect");
+            Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.Scores.Add(score);
             await Clients.Group(roomId).SendAsync("ReceiveMessage", Context.ConnectionId, roomId, message);
         }
 
@@ -310,6 +323,20 @@ namespace Chat.Hubs
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
             await Groups.AddToGroupAsync(Context.ConnectionId, name);
+        }
+
+        public async Task GetScores(string roomId, string gameId)
+        {
+            var userScores = new Dictionary<string, List<int>>();
+            foreach (var user in Rooms.RoomsList[roomId].Users)
+            {
+                var scores = user.Value.ThoughtsAndCrossesGame.Scores;
+                Console.WriteLine(JsonConvert.SerializeObject(scores));
+                userScores.Add(user.Key, scores);
+            }
+
+            Console.WriteLine(JsonConvert.SerializeObject(userScores));
+            await Clients.Caller.SendAsync("ScoreBoard", userScores);
         }
     }
 }

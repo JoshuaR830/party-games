@@ -12,11 +12,14 @@ namespace Chat.RoomManager
         public List<(string category, string userGuess, bool isAccepted)> WordsGrid { get; private set; }
         public int Score { get; private set; }
 
+        public List<int> Scores { get; }
+
         public UserThoughtsAndCrossesGame(IScoreHelper scoreHelper, IShuffleHelper<string> shuffleHelper)
         {
             _scoreHelper = scoreHelper;
             _shuffleHelper = shuffleHelper;
             WordsGrid = new List<(string category, string userGuess, bool isAccepted)>();
+            Scores = new List<int>();
         }
 
         public void CreateGrid(List<string> categories)
@@ -68,6 +71,7 @@ namespace Chat.RoomManager
             var isAcceptedList = WordsGrid.Select(x => x.isAccepted).ToList();
             Console.WriteLine(JsonConvert.SerializeObject(isAcceptedList));
             Score = _scoreHelper.CalculateThoughtsAndCrossesScore(isAcceptedList);
+
             Console.WriteLine(Score);
         }
 
@@ -79,6 +83,13 @@ namespace Chat.RoomManager
                 return -1;
             
             return WordsGrid.IndexOf(cells.First());
+        }
+
+        public void Reset(string roomId)
+        {
+            var topics = Rooms.RoomsList[roomId].ThoughtsAndCrosses.Topics.ChosenTopics;
+            CreateGrid(topics);
+            Score = 0;
         }
     }
 }

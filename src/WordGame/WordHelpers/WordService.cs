@@ -67,7 +67,6 @@ namespace Chat.WordGame.WordHelpers
             {
                 AddNewWordToDictionary(filename, word, definition, category);
             }
-            
         }
 
         public void AddNewWordToDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None)

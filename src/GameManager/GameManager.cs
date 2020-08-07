@@ -68,13 +68,7 @@ namespace Chat.GameManager
 
         public void ResetThoughtsAndCrossesForUser(string roomId, string userId, GameThoughtsAndCrosses game)
         {
-            var topics = Rooms.RoomsList[roomId].ThoughtsAndCrosses.Topics.ChosenTopics;
-
-            Rooms.RoomsList[roomId].Users[userId].ThoughtsAndCrossesGame.CreateGrid(topics);
-            var userThoughtsAndCrosses = new UserThoughtsAndCrossesGame(_scoreHelper, _shuffleStringHelper);
-            userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
-            
-            Rooms.RoomsList[roomId].Users[userId].SetUpGame(userThoughtsAndCrosses);
+            Rooms.RoomsList[roomId].Users[userId].ThoughtsAndCrossesGame.Reset(roomId);
         }
 
         public void ResetWordGame(string roomId)

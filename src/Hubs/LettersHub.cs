@@ -119,6 +119,9 @@ namespace Chat.Hubs
         
         public async Task Startup(string roomId, string name, int gameId)
         {
+            if (name == "")
+                return;
+            
             Console.WriteLine("New room 1");
             await Groups.AddToGroupAsync(Context.ConnectionId, name);
 
@@ -144,10 +147,10 @@ namespace Chat.Hubs
 
         public async Task SetupNewUser(string roomId, string name)
         {
-            Console.WriteLine("New user");
+            if (name == "")
+                return;
             
-            // Hit the lambda on login to get it up and running for when it will actually be needed (avoid the boot times later)
-            await _wordService.GetWordStatus("WarmingUpTheLambda");
+            Console.WriteLine("New user");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
                 var game = Rooms.RoomsList[roomId].Word;

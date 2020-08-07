@@ -8,6 +8,7 @@ using Chat.RoomManager;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Newtonsoft.Json;
 using System.Reflection;
+using Chat.WordGame.WordHelpers;
 using Microsoft.Extensions.Logging.Console;
 
 namespace Chat.Hubs
@@ -15,10 +16,12 @@ namespace Chat.Hubs
     public class ChatHub : Hub
     {
         private readonly IGameManager _gameManager;
+        private readonly IWordService _wordService;
 
-        public ChatHub(IGameManager gameManager)
+        public ChatHub(IGameManager gameManager, IWordService wordService)
         {
             _gameManager = gameManager;
+            _wordService = wordService;
         }
 
         public async Task StartGame(string user, string letter, int[] time, string topics)
@@ -218,6 +221,13 @@ namespace Chat.Hubs
         {
             Console.WriteLine(userGuess);
             Rooms.RoomsList[roomId].Users[name].ThoughtsAndCrossesGame.ManageGuess(category, userGuess);   
+        }
+        
+        public async Task UserSuccessfulLogIn(string roomId)
+        {
+            // Hit the lambda on login to get it up and running for when it will actually be needed (avoid the boot times later)
+            await _wordService.GetWordStatus("WarmingUpTheLambda");
+            await Clients.Group(roomId).SendAsync("UserSuccessfulLogIn");
         }
         
         public async Task SetIsValidForCategory(string roomId, string name, string category, bool isValid)

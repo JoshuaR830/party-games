@@ -195,8 +195,8 @@ namespace Chat.Hubs
         
         public async Task StartServerGame(string user, int[] time)
         {
-            await Clients.Group(user).SendAsync("ReceiveTimeStart", time);
             await Clients.Group(user).SendAsync("StartNewRound");
+            await Clients.Group(user).SendAsync("ReceiveTimeStart", time);
         }
         
         public async Task JoinRoom(string roomId, string name, int gameId)

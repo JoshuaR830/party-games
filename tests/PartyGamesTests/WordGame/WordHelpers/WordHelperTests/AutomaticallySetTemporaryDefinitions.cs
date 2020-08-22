@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Amazon.Lambda;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WebHelpers;
 using Chat.WordGame.WordHelpers;
@@ -21,6 +22,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
         private readonly WordService _wordService;
         private WordDictionary _wordDictionary;
         private IFilenameHelper _filenameHelper;
+        private IAmazonLambda _lambda;
         private const string Filename = "./automatically-set-temporary-definitions";
         
         public AutomaticallySetTemporaryDefinitions()
@@ -37,8 +39,10 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordHelperTests
             _filenameHelper.GetGuessedWordsFilename().Returns(Filename);
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
             
+            _lambda = Substitute.For<IAmazonLambda>();
+
             _fileHelper = new FileHelper(_filenameHelper);
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             _wordDictionary = _wordService.GetDictionary();
         }
 

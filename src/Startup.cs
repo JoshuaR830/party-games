@@ -1,4 +1,12 @@
+using System;
+using Amazon;
+using Amazon.DynamoDBv2;
+using Amazon.Extensions.NETCore.Setup;
+using Amazon.Lambda;
+using Amazon.Runtime;
+using Amazon.Runtime.CredentialManagement;
 using Chat.Balderdash;
+using Chat.DatabasePopulator;
 using Chat.GameManager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,6 +37,23 @@ namespace Chat
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var awsCredentials = new BasicAWSCredentials(
+                Environment.GetEnvironmentVariable("AWS_ACCESS_KEY"),
+                Environment.GetEnvironmentVariable("AWS_SECRET_ACCESS_KEY")
+            );
+            
+            services.AddAWSService<IAmazonLambda>(new AWSOptions
+            {
+                Credentials = awsCredentials,
+                Region = RegionEndpoint.EUWest2
+            });
+            
+            services.AddAWSService<IAmazonDynamoDB>(new AWSOptions
+            {
+                Credentials = awsCredentials,
+                Region = RegionEndpoint.EUWest2
+            });
+            
             services.AddSignalR();
             services.AddSingleton<IGameManager, GameManager.GameManager>();
             services.AddSingleton<IScoreHelper, ScoreHelper>();
@@ -47,6 +72,7 @@ namespace Chat
             services.AddSingleton<IShuffleHelper<BalderdashHub.GuessMade>, ShuffleHelper<BalderdashHub.GuessMade>>();
             services.AddSingleton<IWordCategoryHelper, WordCategoryHelper>();
             services.AddSingleton<IBalderdashScoreCalculator, BalderdashScoreCalculator>();
+            services.AddSingleton<IAddItemsToDatabase, AddItemsToDatabase>();
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.

@@ -12,7 +12,6 @@ namespace Chat.GameManager
         private readonly IShuffleHelper<string> _shuffleStringHelper;
         private readonly IShuffleHelper<WordData> _shuffleWordDataHelper;
         private readonly IScoreHelper _scoreHelper;
-        private readonly IFilenameHelper _filenameHelper;
         private readonly IWordService _wordService;
         private readonly IWordCategoryHelper _wordCategoryHelper;
         public GameType ActiveGameType { get; private set; }
@@ -22,7 +21,6 @@ namespace Chat.GameManager
             _joinRoomHelper = joinRoomHelper;
             _shuffleStringHelper = shuffleStringHelper;
             _scoreHelper = scoreHelper;
-            _filenameHelper = filenameHelper;
             _wordService = wordService;
             _shuffleWordDataHelper = shuffleWordDataHelper;
             _wordCategoryHelper = wordCategoryHelper;
@@ -70,13 +68,7 @@ namespace Chat.GameManager
 
         public void ResetThoughtsAndCrossesForUser(string roomId, string userId, GameThoughtsAndCrosses game)
         {
-            var topics = Rooms.RoomsList[roomId].ThoughtsAndCrosses.Topics.ChosenTopics;
-
-            Rooms.RoomsList[roomId].Users[userId].ThoughtsAndCrossesGame.CreateGrid(topics);
-            var userThoughtsAndCrosses = new UserThoughtsAndCrossesGame(_scoreHelper, _shuffleStringHelper);
-            userThoughtsAndCrosses.CreateGrid(game.Topics.ChosenTopics);
-            
-            Rooms.RoomsList[roomId].Users[userId].SetUpGame(userThoughtsAndCrosses);
+            Rooms.RoomsList[roomId].Users[userId].ThoughtsAndCrossesGame.Reset(roomId);
         }
 
         public void ResetWordGame(string roomId)
@@ -101,7 +93,7 @@ namespace Chat.GameManager
         public void SetUpNewWordUser(string roomId, string userId, GameWordGame game)
         {
             _joinRoomHelper.CreateRoom(userId, roomId);
-            var userWordGame = new UserWordGame(_wordService, _filenameHelper);
+            var userWordGame = new UserWordGame(_wordService);
             Rooms.RoomsList[roomId].Users[userId].SetUpGame(userWordGame);
         }
 

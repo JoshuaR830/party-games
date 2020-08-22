@@ -1,30 +1,22 @@
 ﻿using System;
 using System.Linq;
 using Chat.Letters;
-using Chat.WordGame.LocalDictionaryHelpers;
-using Chat.WordGame.WordHelpers;
 
 namespace Chat.RoomManager
 {
     public class WordManager
     {
-        readonly IWordService _wordService;
-        private readonly IFilenameHelper _filenameHelper;
-        
         public string Word { get; }
         public string Definition { get; }
         public int Score { get; }
         public bool IsValid { get; private set; }
 
-
-        public WordManager(IWordService wordService, IFilenameHelper filenameHelper, string word)
+        public WordManager(string word, string definition, bool status)
         {
-            _wordService = wordService;
             Word = word;
-            _filenameHelper = filenameHelper;
-            Definition = GetDefinition();
+            Definition = definition;
             Score = CalculateWordScore();
-            IsValid = SetInitialValidity();
+            IsValid = status;
         }
 
         private int CalculateWordScore()
@@ -44,16 +36,6 @@ namespace Chat.RoomManager
             return score;
         }
 
-        private string GetDefinition()
-        {
-            return _wordService.GetDefinition(_filenameHelper.GetDictionaryFilename(), Word);
-        }
-
-        private bool SetInitialValidity()
-        {
-            return _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), Word);
-        }
-        
         public void ChangeValidity(bool status)
         {
             IsValid = status;

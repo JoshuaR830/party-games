@@ -72,7 +72,7 @@ document.getElementById("sendButton").addEventListener("click", function (event)
 document.getElementById("submitScoresButton").addEventListener("click", submitScores());
 
 function submitScores() {
-    let name = document.getElementById('my-name').value; 
+    let name = document.getElementById('my-name').value;
 
     connection.invoke("UpdateScoreBoard", connectionName, name).catch(function (err) {
         return console.error(err.toString());

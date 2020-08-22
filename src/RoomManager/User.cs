@@ -1,4 +1,5 @@
-﻿using Chat.Balderdash;
+﻿using System.Collections.Generic;
+using Chat.Balderdash;
 using Chat.Pixenary;
 
 namespace Chat.RoomManager

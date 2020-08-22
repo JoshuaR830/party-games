@@ -1,5 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
+using Amazon.Lambda;
+using Amazon.Lambda.Model;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Newtonsoft.Json;
 
@@ -7,21 +11,17 @@ namespace Chat.WordGame.WordHelpers
 {
     public class WordService : IWordService
     {
-        private readonly IWordHelper _wordHelper;
-        private readonly IWordExistenceHelper _wordExistenceHelper;
-        private readonly IWordDefinitionHelper _wordDefinitionHelper;
         private readonly IFileHelper _fileHelper;
         private readonly IFilenameHelper _filenameHelper;
-        
+        private readonly IAmazonLambda _amazonLambda;
+
         private readonly GuessedWords _guessedWords;
 
-        public WordService(IWordExistenceHelper wordExistenceHelper, IWordHelper wordHelper, IWordDefinitionHelper wordDefinitionHelper, IFileHelper fileHelper, IFilenameHelper filenameHelper)
+        public WordService(IFileHelper fileHelper, IFilenameHelper filenameHelper, IAmazonLambda amazonLambda)
         {
-            _wordExistenceHelper = wordExistenceHelper;
-            _wordHelper = wordHelper;
-            _wordDefinitionHelper = wordDefinitionHelper;
             _fileHelper = fileHelper;
             _filenameHelper = filenameHelper;
+            _amazonLambda = amazonLambda;
 
             if (_guessedWords == null)
             {
@@ -32,30 +32,21 @@ namespace Chat.WordGame.WordHelpers
             }
         }
 
-        public bool GetWordStatus(string filename, string word)
+        public async Task<bool> GetWordStatus(string word)
         {
-            var wordExists = _wordExistenceHelper.DoesWordExist(word);
-            
-            if (wordExists)
-                return true;
-
-            var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
-            wordExists = _wordHelper.StrippedSuffixDictionaryCheck(wordDictionary, word);
-
-            return wordExists;
+            var wordResponse = await InvokeWordExistenceLambda(word);
+            return wordResponse.IsSuccessful;
         }
 
-        public string GetDefinition(string filename, string word)
+        public async Task<string> GetDefinition(string word)
         {
-            if (GetWordStatus(filename, word))
-                return _wordDefinitionHelper.GetDefinitionForWord(word);
-
-            return null;
+            var wordResponse = await InvokeWordExistenceLambda(word);
+            return wordResponse.WordResponse?.Definition;
         }
         
-        public WordCategory GetCategory(string filename, string word)
+        public async Task<WordCategory> GetCategory(string word)
         {
-            if (GetWordStatus(filename, word))
+            if (await GetWordStatus(word))
             {
                 var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
                 return wordDictionary.Words.Where(x => x.Word.ToLower() == word.ToLower()).ToList()[0].Category;
@@ -76,7 +67,6 @@ namespace Chat.WordGame.WordHelpers
             {
                 AddNewWordToDictionary(filename, word, definition, category);
             }
-            
         }
 
         public void AddNewWordToDictionary(string filename, string word, string definition, WordCategory category = WordCategory.None)
@@ -183,6 +173,22 @@ namespace Chat.WordGame.WordHelpers
         {
             var wordDictionary = _fileHelper.ReadDictionary(_filenameHelper.GetDictionaryFilename());
             return wordDictionary;
+        }
+
+        private async Task<WordResponseWrapper> InvokeWordExistenceLambda(string word)
+        {
+            var request = new InvokeRequest
+            {
+                FunctionName = "WordServiceExistenceProcessor",
+                InvocationType = InvocationType.RequestResponse,
+                Payload = JsonConvert.SerializeObject(word.ToLower())
+            };
+            
+            var response = await _amazonLambda.InvokeAsync(request);
+
+            var json = await new StreamReader(response.Payload).ReadToEndAsync();
+            
+            return JsonConvert.DeserializeObject<WordResponseWrapper>(json);
         }
     }
 }

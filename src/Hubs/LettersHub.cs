@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
+using Amazon.Lambda;
 using Chat.GameManager;
 using Newtonsoft.Json;
 using Chat.Letters;
@@ -19,14 +20,16 @@ namespace Chat.Hubs
         private readonly IFilenameHelper _filenameHelper;
         private readonly IJoinRoomHelper _joinRoomHelper;
         private readonly IGameManager _gameManager;
+        private readonly IAmazonLambda _amazonLambda;
 
-        public LettersHub(IWordService wordService, IFileHelper fileHelper, IFilenameHelper filenameHelper, IJoinRoomHelper joinRoomHelper, IGameManager gameManager)
+        public LettersHub(IWordService wordService, IFileHelper fileHelper, IFilenameHelper filenameHelper, IJoinRoomHelper joinRoomHelper, IGameManager gameManager, IAmazonLambda amazonLambda)
         {
             _wordService = wordService;
             _fileHelper = fileHelper;
             _filenameHelper = filenameHelper;
             _joinRoomHelper = joinRoomHelper;
             _gameManager = gameManager;
+            _amazonLambda = amazonLambda;
 
             if (!File.Exists(_filenameHelper.GetDictionaryFilename()))
                 File.Create(_filenameHelper.GetDictionaryFilename());
@@ -52,7 +55,7 @@ namespace Chat.Hubs
 
         public async Task IsValidWord(string word, string group)
         {
-            var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);
+            var isValid = await _wordService.GetWordStatus(word);
             _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
             await Clients.Group(group).SendAsync("WordStatusResponse", isValid, word);
         }
@@ -67,8 +70,14 @@ namespace Chat.Hubs
 
         public async Task GetDefinition(string group, string word)
         {
-            var definition = _wordService.GetDefinition(_filenameHelper.GetDictionaryFilename(), word);
-            var category = _wordService.GetCategory(_filenameHelper.GetDictionaryFilename(), word);
+            var definition = await _wordService.GetDefinition(word);
+            await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
+        }
+        
+        public async Task GetCrowdSourceDefinition(string group, string word)
+        {
+            var definition = await _wordService.GetDefinition(word);
+            var category = await _wordService.GetCategory(word);
             await Clients.Group(group).SendAsync("ReceiveDefinition", definition, word);
             await Clients.Group(group).SendAsync("ReceiveCategory", category);
         }
@@ -84,7 +93,6 @@ namespace Chat.Hubs
         public void UpdateDictionary(string group, string word, string definition, int category = 0)
         {
             Console.WriteLine(word);
-            Console.WriteLine(definition);
             _wordService.UpdateExistingWord(_filenameHelper.GetDictionaryFilename(), word, definition, (WordCategory) category);
         }
 
@@ -111,6 +119,9 @@ namespace Chat.Hubs
         
         public async Task Startup(string roomId, string name, int gameId)
         {
+            if (name == "")
+                return;
+            
             Console.WriteLine("New room 1");
             await Groups.AddToGroupAsync(Context.ConnectionId, name);
 
@@ -136,6 +147,9 @@ namespace Chat.Hubs
 
         public async Task SetupNewUser(string roomId, string name)
         {
+            if (name == "")
+                return;
+            
             Console.WriteLine("New user");
             if (!Rooms.RoomsList[roomId].Users.ContainsKey(name))
             {
@@ -156,11 +170,10 @@ namespace Chat.Hubs
         
         public async Task ServerIsValidWord(string word, string roomId, string name)
         {
-            var isValid = _wordService.GetWordStatus(_filenameHelper.GetDictionaryFilename(), word);
+            var isSuccessful = await _wordService.GetWordStatus(word);
             _wordService.AddWordToGuessedWords(_filenameHelper.GetDictionaryFilename(), _filenameHelper.GetGuessedWordsFilename(), word);
-            Rooms.RoomsList[roomId].Users[name].WordGame.AddWordToList(word);
-            Console.WriteLine(JsonConvert.SerializeObject(Rooms.RoomsList[roomId].Users[name].WordGame.WordList));
-            await Clients.Group(name).SendAsync("WordStatusResponse", isValid, word);
+            await Rooms.RoomsList[roomId].Users[name].WordGame.AddWordToList(word);
+            await Clients.Group(name).SendAsync("WordStatusResponse", isSuccessful, word);
         }
 
         public async Task GetUserData(string roomId, string name)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Amazon.Lambda;
 using Chat.WordGame;
 using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
@@ -16,21 +17,20 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         private const string GuessedWordsFilename = "./test-guessed-words";
         private const string DictionaryFilename = "./guessed-words-dictionary";
         
-        private readonly IWordDefinitionHelper _wordDefinitionHelper;
-        private readonly IWordExistenceHelper _wordExistenceHelper;
-        private readonly IWordHelper _wordHelper;
         private readonly IFilenameHelper _filenameHelper;
 
         private readonly FileHelper _fileHelper;
         private readonly List<string> _words = new List<string> {"cow", "dog", "frog", "pigeon"};
         private readonly WordDictionary _wordDictionary;
         private readonly WordService _wordService;
+        private IAmazonLambda _lambda;
 
         public AddWordToGuessedWordsTest()
         {
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _filenameHelper.GetDictionaryFilename().Returns(DictionaryFilename);
-            
+            _lambda = Substitute.For<IAmazonLambda>();
+
             _fileHelper = new FileHelper(_filenameHelper);
             
             _wordDictionary = new WordDictionary
@@ -77,7 +77,7 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
             TestFileHelper.CreateCustomFile(GuessedWordsFilename, null);
             TestFileHelper.CreateCustomFile(DictionaryFilename, _wordDictionary);
 
-            _wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
+            _wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
             
         }
         

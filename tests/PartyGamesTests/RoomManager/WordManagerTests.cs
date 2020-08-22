@@ -1,11 +1,7 @@
 ﻿using System;
 using System.IO;
 using Chat.RoomManager;
-using Chat.WordGame.LocalDictionaryHelpers;
-using Chat.WordGame.WebHelpers;
-using Chat.WordGame.WordHelpers;
 using FluentAssertions;
-using NSubstitute;
 using PartyGamesTests.WordGame;
 using Xunit;
 
@@ -13,31 +9,16 @@ namespace PartyGamesTests.RoomManager
 {
     public class WordManagerTests : IDisposable
     {
-        private readonly IFilenameHelper _filenameHelper;
-        private readonly IWordService _wordService;
         private const string Filename = "./WordManger.json";
         public WordManagerTests()
         {
             TestFileHelper.Create(Filename);
-            
-            _filenameHelper = Substitute.For<IFilenameHelper>();
-            _filenameHelper.GetDictionaryFilename().Returns(Filename);
-            _wordService = Substitute.For<IWordService>();
-
         }
         
         [Fact]
         public void WhenANewWordIsCreatedThenTheWordShouldBeInitialised()
         {
-            _wordService
-                .GetDefinition(_filenameHelper.GetDictionaryFilename(), "sheep")
-                .Returns(TestFileHelper.SheepPermanentDefinition);
-
-            _wordService
-                .GetWordStatus(_filenameHelper.GetDictionaryFilename(), "sheep")
-                .Returns(true);
-            
-            var word = new WordManager(_wordService, _filenameHelper, "sheep");
+            var word = new WordManager("sheep", TestFileHelper.SheepPermanentDefinition, true);
             
             word.Word.Should().Be("sheep");
             word.Definition.Should().Be(TestFileHelper.SheepPermanentDefinition);
@@ -48,15 +29,7 @@ namespace PartyGamesTests.RoomManager
         [Fact]
         public void WhenDefinitionIsOnlyTemporaryThenTheWordShouldBeInitialised()
         {
-            _wordService
-                .GetDefinition(_filenameHelper.GetDictionaryFilename(), "boxing")
-                .Returns(TestFileHelper.BoxingTemporaryDefinition);
-
-            _wordService
-                .GetWordStatus(_filenameHelper.GetDictionaryFilename(), "boxing")
-                .Returns(true);
-            
-            var word = new WordManager(_wordService, _filenameHelper,"boxing");
+            var word = new WordManager("boxing", TestFileHelper.BoxingTemporaryDefinition, true);
             
             word.Word.Should().Be("boxing");
             word.Score.Should().Be(6);
@@ -67,15 +40,7 @@ namespace PartyGamesTests.RoomManager
         [Fact]
         public void WhenNotAWordThenStatusShouldBeFalse()
         {
-            _wordService
-                .GetDefinition(_filenameHelper.GetDictionaryFilename(), "boxing")
-                .Returns("");
-            
-            _wordService
-                .GetWordStatus(_filenameHelper.GetDictionaryFilename(), "dinosaur")
-                .Returns(false);
-            
-            var word = new WordManager(_wordService, _filenameHelper, "dinosaur");
+            var word = new WordManager("dinosaur", "", false);
             
             word.Score.Should().Be(8);
             word.Word.Should().Be("dinosaur");
@@ -85,15 +50,7 @@ namespace PartyGamesTests.RoomManager
         [Fact]
         public void WhenValidityChangedTheValidityShouldBeChanged()
         {
-            _wordService
-                .GetDefinition(_filenameHelper.GetDictionaryFilename(), "boxing")
-                .Returns("");
-            
-            _wordService
-                .GetWordStatus(_filenameHelper.GetDictionaryFilename(), "dinosaur")
-                .Returns(false);
-            
-            var word = new WordManager(_wordService, _filenameHelper, "dinosaur");
+            var word = new WordManager("dinosaur", "", false);
 
             word.ChangeValidity(true);
             word.IsValid.Should().BeTrue();

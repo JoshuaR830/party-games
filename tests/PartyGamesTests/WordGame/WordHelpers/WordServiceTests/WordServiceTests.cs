@@ -1,6 +1,12 @@
-﻿using Chat.WordGame.LocalDictionaryHelpers;
+﻿using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+using Amazon.Lambda;
+using Amazon.Lambda.Model;
+using Chat.WordGame.LocalDictionaryHelpers;
 using Chat.WordGame.WordHelpers;
 using FluentAssertions;
+using Newtonsoft.Json;
 using NSubstitute;
 using Xunit;
 
@@ -8,11 +14,9 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
 {
     public class WordServiceTests
     {
-        private readonly IWordHelper _wordHelper;
-        private readonly IWordExistenceHelper _wordExistenceHelper;
-        private IWordDefinitionHelper _wordDefinitionHelper;
-        private IFileHelper _fileHelper;
-        private IFilenameHelper _filenameHelper;
+        private readonly IFileHelper _fileHelper;
+        private readonly IFilenameHelper _filenameHelper;
+        private readonly IAmazonLambda _lambda;
 
         private const string Filename = "";
 
@@ -20,153 +24,245 @@ namespace PartyGamesTests.WordGame.WordHelpers.WordServiceTests
         {
             _filenameHelper = Substitute.For<IFilenameHelper>();
             _filenameHelper.GetDictionaryFilename().Returns(Filename);
-
-            _wordHelper = Substitute.For<IWordHelper>();
-            _wordExistenceHelper = Substitute.For<IWordExistenceHelper>();
-            _wordDefinitionHelper = Substitute.For<IWordDefinitionHelper>();
+            
             _fileHelper = Substitute.For<IFileHelper>();
+            _lambda = Substitute.For<IAmazonLambda>();
         }
         
         [Fact]
-        public void WhenWordExistsInTheDictionaryThenTheWordServiceShouldReturnTrue()
+        public async Task WhenWordExistsInTheDictionaryThenTheWordServiceShouldReturnTrue()
         {
             var word = "sheep";
             
-            _wordExistenceHelper
-                .DoesWordExist(word)
-                .Returns(true);
+            _lambda.ClearReceivedCalls();
             
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            var response = wordService.GetWordStatus(Filename, word);
+            var wordResponse = new WordResponseWrapper
+            {
+                IsSuccessful = true,
+                WordResponse = new WordResponse
+                {
+                    Word = word,
+                    Definition = "Multiple baaing animals",
+                    Status = WordStatus.Temporary
+                }
+            };
+
+            var json = JsonConvert.SerializeObject(wordResponse);
+
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var stream = new MemoryStream();
+            stream.Write(jsonBytes, 0, jsonBytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            _lambda.InvokeAsync(Arg.Any<InvokeRequest>()).Returns(new InvokeResponse
+            {
+                Payload = stream
+            });
+            
+            var wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
+            var response = await wordService.GetWordStatus(word);
+            
+            await _lambda.Received(1).InvokeAsync(Arg.Any<InvokeRequest>());
             response.Should().BeTrue();
         }
         
         [Fact]
-        public void WhenWordIsPluralThenWordServiceShouldReturnTrue()
+        public async Task WhenWordIsPluralThenWordServiceShouldReturnTrue()
         {
             var word = "ducks";
             
-            _wordExistenceHelper
-                .DoesWordExist(word)
-                .Returns(false);
+            _lambda.ClearReceivedCalls();
 
-            _wordHelper
-                .StrippedSuffixDictionaryCheck(Arg.Any<WordDictionary>(), word)
-                .Returns(true);
+            var wordResponse = new WordResponseWrapper
+            {
+                IsSuccessful = true,
+                WordResponse = new WordResponse
+                {
+                    Word = word,
+                    Definition = "Big quackers",
+                    Status = WordStatus.Temporary
+                }
+            };
+            
+            var json = JsonConvert.SerializeObject(wordResponse);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            var response = wordService.GetWordStatus(Filename, word);
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var stream = new MemoryStream();
+            stream.Write(jsonBytes, 0, jsonBytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            _lambda.InvokeAsync(Arg.Any<InvokeRequest>()).Returns(new InvokeResponse
+            {
+                Payload = stream
+            });
+
+            var wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
+            var response = await wordService.GetWordStatus(word);
+            
+            await _lambda.Received(1).InvokeAsync(Arg.Any<InvokeRequest>());
             response.Should().BeTrue();
         }
         
         [Fact]
-        public void WhenNotInLocalDictionaryThenWordServiceShouldReturnFalse()
+        public async Task WhenNotInLocalDictionaryThenWordServiceShouldReturnFalse()
         {
             var word = "sheeps";
             
-            _wordExistenceHelper
-                .DoesWordExist(word)
-                .Returns(false);
+            _lambda.ClearReceivedCalls();
 
-            _wordHelper
-                .StrippedSuffixDictionaryCheck(Arg.Any<WordDictionary>(), word)
-                .Returns(false);
+            var wordResponse = new WordResponseWrapper
+            {
+                IsSuccessful = false,
+                WordResponse = null
+            };
+            
+            var json = JsonConvert.SerializeObject(wordResponse);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            var response = wordService.GetWordStatus(Filename, word);
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var stream = new MemoryStream();
+            stream.Write(jsonBytes, 0, jsonBytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            _lambda.InvokeAsync(Arg.Any<InvokeRequest>()).Returns(new InvokeResponse
+            {
+                Payload = stream
+            });
+
+            var wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
+            var response = await wordService.GetWordStatus(word);
+            
+            await _lambda.Received(1).InvokeAsync(Arg.Any<InvokeRequest>());
             response.Should().BeFalse();
         }
         
         [Fact]
-        public void WhenWordIsNotAPluralButExistsInSingularThenWordServiceShouldReturnFalse()
+        public async Task WhenWordIsNotAPluralButExistsInSingularThenWordServiceShouldReturnFalse()
         {
             var word = "sheeps";
             
-            _wordExistenceHelper
-                .DoesWordExist(word)
-                .Returns(false);
+            _lambda.ClearReceivedCalls();
+
+            var wordResponse = new WordResponseWrapper
+            {
+                IsSuccessful = false,
+                WordResponse = null
+            };
             
-            _wordExistenceHelper
-                .DoesWordExist("sheep")
-                .Returns(true);
+            var json = JsonConvert.SerializeObject(wordResponse);
 
-            _wordHelper
-                .StrippedSuffixDictionaryCheck(Arg.Any<WordDictionary>(), word)
-                .Returns(false);
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var stream = new MemoryStream();
+            stream.Write(jsonBytes, 0, jsonBytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            _lambda.InvokeAsync(Arg.Any<InvokeRequest>()).Returns(new InvokeResponse
+            {
+                Payload = stream
+            });
+            
+            var wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
+            var response = await wordService.GetWordStatus(word);
 
-            _wordHelper
-                .CheckWordWithEndingExists(word, "sheep")
-                .Returns(false);
-
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            var response = wordService.GetWordStatus(Filename, word);
+            await _lambda.Received(1).InvokeAsync(Arg.Any<InvokeRequest>());
             response.Should().BeFalse();
         }
         
         [Fact]
-        public void WhenAWordFormattedAsPluralDoesNotExistInTheSingularThenWordServiceShouldReturnFalse()
+        public async Task WhenAWordFormattedAsPluralDoesNotExistInTheSingularThenWordServiceShouldReturnFalse()
         {
             var word = "notawords";
-            
-            _wordExistenceHelper
-                .DoesWordExist(word)
-                .Returns(false);
-            
-            _wordExistenceHelper
-                .DoesWordExist(Arg.Any<string>())
-                .Returns(false);
 
-            _wordHelper
-                .StrippedSuffixDictionaryCheck(Arg.Any<WordDictionary>(), word)
-                .Returns(false);
+            _lambda.ClearReceivedCalls();
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            var response = wordService.GetWordStatus(Filename, word);
+            var wordResponse = new WordResponseWrapper
+            {
+                IsSuccessful = false,
+                WordResponse = null
+            };
+            
+            var json = JsonConvert.SerializeObject(wordResponse);
+
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var stream = new MemoryStream();
+            stream.Write(jsonBytes, 0, jsonBytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            _lambda.InvokeAsync(Arg.Any<InvokeRequest>()).Returns(new InvokeResponse
+            {
+                Payload = stream
+            });
+
+            var wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
+            var response = await wordService.GetWordStatus(word);
             response.Should().BeFalse();
         }
 
         [Fact]
-        public void WhenWordIsInTheDictionaryThenACallShouldBeMadeToGetTheDefinition()
+        public async Task WhenWordIsInTheDictionaryThenACallShouldBeMadeToGetTheDefinition()
         {
             var word = "sheep";
             
-            _wordDefinitionHelper.ClearReceivedCalls();
+            _lambda.ClearReceivedCalls();
+
+            var wordResponse = new WordResponseWrapper
+            {
+                IsSuccessful = true,
+                WordResponse = new WordResponse
+                {
+                    Word = word,
+                    Definition = "An absolutely baaing animal",
+                    Status = WordStatus.Temporary
+                }
+            };
             
-            _wordExistenceHelper
-                .DoesWordExist(word)
-                .Returns(true);
+            var json = JsonConvert.SerializeObject(wordResponse);
 
-            _wordDefinitionHelper.GetDefinitionForWord(word).Returns("An absolutely baaing animal");
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var stream = new MemoryStream();
+            stream.Write(jsonBytes, 0, jsonBytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            _lambda.InvokeAsync(Arg.Any<InvokeRequest>()).Returns(new InvokeResponse
+            {
+                Payload = stream
+            });
+            
+            var wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
+            var response = await wordService.GetDefinition(word);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            var response = wordService.GetDefinition(Filename, word);
-
-            _wordDefinitionHelper.Received().GetDefinitionForWord(word);
+            await _lambda.Received(1).InvokeAsync(Arg.Any<InvokeRequest>());
             response.Should().Be("An absolutely baaing animal");
         }
         
         [Fact]
-        public void WhenWordIsNotInTheDictionaryThenNoCallShouldBeMadeToGetDefinition()
+        public async Task WhenWordIsNotInTheDictionaryThenNoCallShouldBeMadeToGetDefinition()
         {
             var word = "sheep";
             
-            _wordDefinitionHelper.ClearReceivedCalls();
+            _lambda.ClearReceivedCalls();
             
-            _wordExistenceHelper
-                .DoesWordExist(word)
-                .Returns(false);
+            var wordResponse = new WordResponseWrapper
+            {
+                IsSuccessful = false,
+                WordResponse = null
+            };
             
-            _wordHelper
-                .StrippedSuffixDictionaryCheck(Arg.Any<WordDictionary>(), word)
-                .Returns(false);
+            var json = JsonConvert.SerializeObject(wordResponse);
 
-            var wordService = new WordService(_wordExistenceHelper, _wordHelper, _wordDefinitionHelper, _fileHelper, _filenameHelper);
-            var response = wordService.GetDefinition(Filename, word);
+            var jsonBytes = Encoding.UTF8.GetBytes(json);
+            var stream = new MemoryStream();
+            stream.Write(jsonBytes, 0, jsonBytes.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            _lambda.InvokeAsync(Arg.Any<InvokeRequest>()).Returns(new InvokeResponse
+            {
+                Payload = stream
+            });
 
-            _wordDefinitionHelper
-                .DidNotReceive()
-                .GetDefinitionForWord(word);
-
+            var wordService = new WordService(_fileHelper, _filenameHelper, _lambda);
+            var response = await wordService.GetDefinition(word);
+            
+            await _lambda.Received(1).InvokeAsync(Arg.Any<InvokeRequest>());
             response.Should().Be(null);
         }
     }
